@@ -44,5 +44,6 @@
     </build>
     <modules>
         <module>jaqpot3-standalone</module>
-    </modules>
+    <module>jaqpot3-servlet</module>
+  </modules>
 </project>
