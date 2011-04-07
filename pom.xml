@@ -27,36 +27,6 @@
         </dependency>
     </dependencies>
 
-
-    <profiles>
-        <profile>
-            <id>jaqpot</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jaqpot_domain>localhost</jaqpot_domain>
-                <jaqpot_ver>3.0.4</jaqpot_ver>
-                <jaqpot_port>8080</jaqpot_port>
-                <jaqpot_do_authentication>false</jaqpot_do_authentication>
-            </properties>
-        </profile>
-        <profile>
-            <id>toxotis-db</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <toxotis.db.scheme>jdbc:mysql://localhost/toxotis</toxotis.db.scheme>
-                <toxotis.db.hostname>localhost</toxotis.db.hostname>
-                <toxotis.db.port>3306</toxotis.db.port>
-                <toxotis.db.database>toxotisdb</toxotis.db.database>
-                <toxotis.db.user>root</toxotis.db.user>
-                <toxotis.db.password>opensess@me</toxotis.db.password>
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -74,6 +44,5 @@
     </build>
     <modules>
         <module>jaqpot3-standalone</module>
-        <module>jaqpot3-servlet</module>    
-  </modules>
+    </modules>
 </project>

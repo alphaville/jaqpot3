@@ -35,12 +35,12 @@ public class IndexResource extends JaqpotResource {
 
         final MediaType mediatype = variant.getMediaType();
         ReferenceList list = new ReferenceList();
-        list.add(Configuration.getBaseUri().augment("algorithm").toString());
-        list.add(Configuration.getBaseUri().augment("model").toString());
-        list.add(Configuration.getBaseUri().augment("task").toString());
-        list.add(Configuration.getBaseUri().augment("dbstats").toString());
-        list.add(Configuration.getBaseUri().augment("bibtex").toString());
-        
+        list.add(Configuration.BASE_URI + "/algorithm");
+        list.add(Configuration.BASE_URI + "/model");
+        list.add(Configuration.BASE_URI + "/task");
+        list.add(Configuration.BASE_URI + "/bibtex");
+        list.add(Configuration.BASE_URI + "/status");
+        list.add(Configuration.BASE_URI + "/user");
 
         Representation rep;
         if (mediatype == MediaType.TEXT_HTML) {

@@ -1,21 +1,35 @@
 package org.opentox.jaqpot3.www;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 import org.opentox.jaqpot3.resources.*;
+import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.util.DatabaseJanitor;
 import org.opentox.jaqpot3.www.guard.OpenSSOAuthorizer;
+import org.opentox.toxotis.client.ClientFactory;
+import org.opentox.toxotis.client.IGetClient;
+import org.opentox.toxotis.client.VRI;
+import org.opentox.toxotis.core.component.Algorithm;
+import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.database.pool.DataSourceFactory;
+import org.opentox.toxotis.util.LoggingConfiguration;
+import org.opentox.toxotis.util.aa.PasswordFileManager;
 import org.opentox.toxotis.util.aa.SSLConfiguration;
+import org.opentox.toxotis.util.aa.TokenPool;
 import org.restlet.Component;
 import org.restlet.Context;
 import org.restlet.Restlet;
@@ -28,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ *57
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
@@ -94,12 +108,10 @@ final public class WebApplecation extends JaqpotWebApplication {
         Context.getCurrentLogger().addHandler(fh);
         Context.getCurrentLogger().setLevel(Level.INFO);
         setTunnelService(new TunnelService(true, true, true, true, true, true, true));
-        System.setErr(new PrintStream(new File("/dev/null")));
     }
 
     @Override
     public Restlet createInboundRoot() {
-
         Router router = new YaqpRouter(this.getContext().createChildContext());
         router.attachDefault(IndexResource.class);
         protectResource(router, BibTexAllResource.class);
@@ -115,7 +127,6 @@ final public class WebApplecation extends JaqpotWebApplication {
 
         protectResource(router, ModelResource.class);
         protectResource(router, ShutDownResource.class);
-        
 
         return router;
     }
