@@ -1,0 +1,142 @@
+package org.opentox.jaqpot3.qsar.doa;
+
+import Jama.Matrix;
+import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.jaqpot3.qsar.AbstractPredictor;
+import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.qsar.IPredictor;
+import org.opentox.jaqpot3.qsar.InstancesUtil;
+import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
+import org.opentox.jaqpot3.qsar.exceptions.QSARException;
+import org.opentox.jaqpot3.qsar.filter.AttributeCleanup;
+import org.opentox.toxotis.client.VRI;
+import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.Task.Status;
+import org.opentox.toxotis.factory.DatasetFactory;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Add;
+
+import static org.opentox.jaqpot3.qsar.filter.AttributeCleanup.ATTRIBUTE_TYPE.*;
+
+/**
+ *
+ * @author Pantelis Sopasakis
+ * @author Charalampos Chomenides
+ */
+public class LeveragesPredictor extends AbstractPredictor {
+
+    private VRI datasetServiceUri = Services.ideaconsult().augment("dataset");
+    private transient org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesPredictor.class);
+
+    public LeveragesPredictor() {
+        super();
+    }
+
+    @Override
+    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
+        String datasetServiceString = clientParameters.getFirstValue("dataset_uri");
+        if (datasetServiceString != null) {
+            try {
+                datasetServiceUri = new VRI(datasetServiceString);
+            } catch (URISyntaxException ex) {
+                throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public Dataset predict(Dataset data) throws JaqpotException {
+return null;
+//        LeveragesModel actualModel = (LeveragesModel) model.getActualModel();
+//        Matrix matrix = actualModel.getDataMatrix();
+//        double gamma = actualModel.getGamma();
+//        Instances inputSet = data.getInstances();
+//        Instances orderedDataset = null;
+//        try {
+//            orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);
+//        } catch (JaqpotException ex) {
+//            String message = "It is not possible to apply the dataset " + (data != null ? data.getUri().toString() : "(no URI)")
+//                    + " to the model : " + (model != null ? model.getUri().toString() : "(no URI)") + ". Most probably the dataset does not contain "
+//                    + "the independent features for this model.";
+//            logger.debug(message, ex);
+//            throw new ProcessorException(ErrorCause.PredictionError, message, ex);
+//        }
+//
+//
+//        AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
+//        Instances compounds = null;
+//        try {
+//            compounds = justCompounds.filter(inputSet);
+//        } catch (QSARException ex) {
+//            logger.debug(null, ex);
+//        }
+//
+//        int numInstances = orderedDataset.numInstances();
+//        int numAttributes = orderedDataset.numAttributes();
+//        /*Dataset containing the predictions (DoA estimations) [predictions]*/
+//        Instances predictions = new Instances(orderedDataset);
+//        /* ADD TO THE NEW DATA THE PREDICTION FEATURE*/
+//        Add attributeAdder = new Add();
+//        attributeAdder.setAttributeIndex("last");
+//        attributeAdder.setAttributeName(model.getPredictedFeatures().iterator().next().getUri().toString());
+//        try {
+//            attributeAdder.setInputFormat(predictions);
+//            predictions = Filter.useFilter(predictions, attributeAdder);
+//            predictions.setClass(predictions.attribute(model.getPredictedFeatures().iterator().next().getUri().toString()));
+//        } catch (Exception ex) {
+//            String message = "Exception while trying to add prediction feature to Instances";
+//            logger.debug(message, ex);
+//            throw new ProcessorException(ErrorCause.PredictionError, message, ex);
+//        }
+//
+//
+//        Matrix x = null;
+//        for (int i = 0; i < numInstances; i++) {
+//            x = new Matrix(orderedDataset.instance(i).toDoubleArray(), numAttributes);
+//            double indicator = Math.max(0, (gamma - x.transpose().times(matrix).times(x).get(0, 0)) / gamma);
+//            predictions.instance(i).setClassValue(indicator);
+//        }
+//
+//        try {
+//
+//            Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
+//            Future<VRI> future = output.publish(datasetServiceUri, token);
+//            float counter = 1;
+//            while (!future.isDone()) {
+//                try {
+//                    Thread.sleep(1000);
+//                    float prc = 100f - (50.0f / (float) Math.sqrt(counter));
+//                    getTask().setPercentageCompleted(prc);
+//                    new RegisterTool().storeTask(getTask());
+//                    counter++;
+//                } catch (InterruptedException ex) {
+//                    logger.error("Interrupted Operation", ex);
+//                    throw new ProcessorException(ErrorCause.UnknownCauseOfException, ex);
+//                }
+//            }
+//            try {
+//                VRI resultUri = future.get();
+//                getTask().setHttpStatus(200).setPercentageCompleted(100.0f).setResultUri(resultUri).setStatus(Status.COMPLETED);
+//                new RegisterTool().storeTask(getTask());
+//                return output;
+//            } catch (InterruptedException ex) {
+//                logger.error(null, ex);
+//                throw new ProcessorException(ex);
+//            } catch (ExecutionException ex) {
+//                logger.error(null, ex);
+//                throw new ProcessorException(ex);
+//            }
+//        } catch (ToxOtisException ex) {
+//            logger.error(null, ex);
+//            throw new ProcessorException(ex);
+//        }
+//
+
+    }
+}

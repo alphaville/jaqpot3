@@ -1,0 +1,2 @@
+2011-04-07 15:58:59.925 [INFO] com.mchange.v2.log.MLog:80 - MLog clients using log4j logging.
+2011-04-07 15:58:59.998 [INFO] com.mchange.v2.c3p0.C3P0Registry:204 - Initializing c3p0-0.9.1 [built 16-January-2007 14:46:42; debug? true; trace: 10]

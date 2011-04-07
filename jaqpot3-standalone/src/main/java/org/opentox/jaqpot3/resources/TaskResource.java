@@ -1,0 +1,159 @@
+package  org.opentox.jaqpot3.resources;
+
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import org.opentox.jaqpot3.pool.ExecutionPool;
+import org.opentox.jaqpot3.resources.publish.Publisher;
+import org.opentox.jaqpot3.util.Configuration;
+import org.opentox.jaqpot3.www.URITemplate;
+import org.opentox.toxotis.core.IRestOperation;
+import org.opentox.toxotis.core.component.HttpMediatype;
+import org.opentox.toxotis.core.component.HttpStatus;
+import org.opentox.toxotis.core.component.RestOperation;
+import org.opentox.toxotis.core.component.ServiceRestDocumentation;
+import org.opentox.toxotis.core.component.Task;
+import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.engine.task.FindTask;
+import org.opentox.toxotis.ontology.MetaInfo;
+import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
+import org.opentox.toxotis.ontology.collection.OTRestClasses;
+import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
+import org.restlet.data.MediaType;
+import org.restlet.data.Status;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.ResourceException;
+
+/**
+ *
+ * @author Pantelis Sopasakis
+ * @author Charalampos Chomenides
+ */
+public class TaskResource extends JaqpotResource {
+
+    public static final URITemplate template = new URITemplate("task", "task_id", null);
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TaskResource.class);
+
+    @Override
+    protected void doInit() throws ResourceException {
+        super.doInit();
+        setAutoCommitting(false);
+        initialize(
+                MediaType.TEXT_HTML,
+                MediaType.APPLICATION_RDF_XML,
+                MediaType.register("application/rdf+xml-abbrev", NEWLINE),
+                MediaType.APPLICATION_RDF_TURTLE,
+                MediaType.APPLICATION_PDF,
+                MediaType.TEXT_URI_LIST,
+                MediaType.TEXT_RDF_N3,
+                MediaType.TEXT_RDF_NTRIPLES);
+        parseStandardParameters();
+        updatePrimaryId(template);
+    }
+
+    @Override
+    protected Representation get(Variant variant) throws ResourceException {        
+        try {
+            if (acceptString != null) {
+                variant.setMediaType(MediaType.valueOf(acceptString));
+            }
+            Task task = null;
+            FindTask taskFinder = new  FindTask(Configuration.getBaseUri(), true, true);
+            taskFinder.setSearchById(primaryId);
+            IDbIterator<Task> tasksFound = taskFinder.list();
+            if (tasksFound.hasNext()){
+                task = tasksFound.next();
+            }
+            tasksFound.close();
+            taskFinder.close();
+            
+            if (task == null) {
+                toggleNotFound();            
+                return errorReport("TaskNotFound", "The task you requested was not found in our database",
+                        "The task with id " + primaryId + " was not found in the database",
+                        variant.getMediaType(), false);
+            }
+            float httpStatus = task.getHttpStatus();
+            getResponse().setStatus(Status.valueOf((int) httpStatus));
+
+            if (MediaType.TEXT_URI_LIST.equals(variant.getMediaType())) {
+                if (Task.Status.COMPLETED.equals(task.getStatus())) {
+                    return new StringRepresentation(task.getResultUri().toString(), MediaType.TEXT_URI_LIST);
+                } else {
+                    return new StringRepresentation(task.getUri().toString(), MediaType.TEXT_URI_LIST);
+                }
+
+            }
+            Publisher p = new Publisher(variant.getMediaType());
+            return p.createRepresentation(task, true);
+        } catch (final Exception ex) {
+            logger.error("Exception thrown from task : " + getReference(), ex);
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
+        } 
+
+    }
+
+    @Override
+    protected ServiceRestDocumentation getServiceDocumentation(Variant variant) {
+        ServiceRestDocumentation doc = new ServiceRestDocumentation(new Task(getCurrentVRINoQuery()));
+
+        RestOperation delete = new RestOperation();
+        delete.addHttpStatusCodes(
+                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                addDescription("The task was successfully deleted from the database").
+                addComment("The status code 200 is returned in any case of successful deletion but excluding the "
+                + "case where the underlying task was not found in the database")),
+                new HttpStatus(OTRestClasses.STATUS_404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
+                addDescription("The task was not found in the database")),
+                new HttpStatus(OTRestClasses.STATUS_403()),
+                new HttpStatus(OTRestClasses.STATUS_401()));
+        delete.setMethod(MethodsEnum.DELETE);
+        delete.addOntologicalClasses(OTRestClasses.DELETE_Task(), OTRestClasses.OperationTask(), OTRestClasses.OperationNoResult());
+        delete.getMeta().addDescription("Cancels a running task.");
+        delete.setProtectedResource(false);
+
+
+        RestOperation get = new RestOperation();
+        get.addHttpStatusCodes(
+                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                addDescription("The task is successfully retrieved from the database and has completed redirecting to the result "
+                + "of the calculation")),
+                new HttpStatus(OTRestClasses.STATUS_202()).setMeta(new MetaInfoImpl().addTitle("Success").
+                addDescription("The task is successfully retrieved from the database and is still running/processing")),
+                new HttpStatus(OTRestClasses.STATUS_201()).setMeta(new MetaInfoImpl().addTitle("Success").
+                addDescription("The task is successfully retrieved from the database has completed its own part of the overall work but redirect to "
+                + "some other task on some other server")),
+                new HttpStatus(OTRestClasses.STATUS_404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
+                addDescription("The task was successfully deleted from the database")));
+        get.addUrlParameter("media", true, XSDDatatype.XSDstring, new MetaInfoImpl().addTitle("media").
+                addDescription("Specify your prefered MIME type in the URL of the request. In particular useful if "
+                + "the service is invoked via a browser."));
+        get.addUrlParameter("method", true, XSDDatatype.XSDstring, new MetaInfoImpl().addTitle("method").
+                addDescription("Override the GET method. Can be used to view the content of "
+                + "an OPTIONS response from your browser."));
+        doc.addRestOperations(delete, get);
+
+        return doc;
+    }
+
+    @Override
+    protected Representation delete(Variant variant) throws ResourceException {
+        return null;
+//        String taskUri = Configuration.getBaseUri().augment("task", primaryId).toString();
+//        Task task = (Task) getNewSession().createCriteria(Task.class).add(Restrictions.like("uri", "%/task/" + primaryId)).uniqueResult();
+//        if (task == null) {
+//            toggleNotFound();
+//            return errorReport("TaskNotFound", "The task you requested was not found in our database",
+//                    "The task with id " + primaryId + " was not found in the database",
+//                    variant.getMediaType(), false);
+//        }
+//        task.setStatus(Task.Status.CANCELLED);
+//        ExecutionPool.POOL.cancel(primaryId);
+//        task.setDuration(0L);
+//        new RegisterTool().storeTask(task);
+//        toggleSuccess();
+//        closeSession();
+//        return new StringRepresentation("Task " + taskUri + " cancelled" + NEWLINE);
+        
+    }
+}
