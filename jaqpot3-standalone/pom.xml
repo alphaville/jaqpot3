@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.opentox</groupId>
     <artifactId>jaqpot3-standalone</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>${jaqpot_ver}</version>
     <name>jaqpot3-standalone</name>
     <url>http://maven.apache.org</url>
 
@@ -33,33 +33,6 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>jaqpot</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jaqpot_domain>localhost</jaqpot_domain>
-            </properties>
-        </profile>
-    </profiles>
-<!--
-    <profiles>
-        <profile>
-            <id>jaqpot</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jaqpot_home>${user.home}/ot</jaqpot_home>
-                <jaqpot.keys>/home/chung/toxotisKeys</jaqpot.keys>
-                <jaqpot.key>${jaqpot.keys}/my.key</jaqpot.key>
-                <jaqpot.master_key>${jaqpot.keys}/master.key</jaqpot.master_key>
-                <jaqpot_domain>localhost</jaqpot_domain>
-            </properties>
-        </profile>
-    </profiles>-->
 
     <build>
         <resources>

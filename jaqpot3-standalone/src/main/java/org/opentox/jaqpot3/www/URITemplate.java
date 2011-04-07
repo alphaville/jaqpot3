@@ -31,6 +31,8 @@
  */
 package org.opentox.jaqpot3.www;
 
+import org.opentox.jaqpot3.util.Configuration;
+
 /**
  *
  * @author Pantelis Sopasakis
@@ -38,13 +40,10 @@ package org.opentox.jaqpot3.www;
  */
 public final class URITemplate {
 
-
     private String base;
     private String primaryKey;
     private String metaKey;
-
     private static final String separator = "/";
-
 
     public URITemplate(String base, String primaryKey, String metaKey) {
         this.base = base;
@@ -78,30 +77,33 @@ public final class URITemplate {
 
     @Override
     public String toString() {
-        String string = separator+"jaqpot"+separator;
-        if (base!=null){
+        String suffix = Configuration.getStringProperty("url.suffix");
+        String string = separator;
+        if (suffix == null || (suffix != null && suffix.isEmpty())) {
+        } else {
+//            string += suffix + "/";
+        }
+        if (base != null) {
             string += base;
-            if (primaryKey!=null){
-                string += separator+inCurledBrackets(primaryKey);
-                if (metaKey!=null){
-                    string += separator+inCurledBrackets(metaKey);
+            if (primaryKey != null) {
+                string += separator + inCurledBrackets(primaryKey);
+                if (metaKey != null) {
+                    string += separator + inCurledBrackets(metaKey);
                 }
             }
         }
         return string;
     }
 
-    private String inCurledBrackets(String in){
-        return "{"+in+"}";
+    private String inCurledBrackets(String in) {
+        return "{" + in + "}";
     }
 
-    public static URITemplate primarySubtemplateOf(URITemplate other, String primaryKey){
+    public static URITemplate primarySubtemplateOf(URITemplate other, String primaryKey) {
         return new URITemplate(other.getBase(), primaryKey, null);
     }
 
-    public static URITemplate secondarySubTemplateOf(URITemplate other, String metaKey){
+    public static URITemplate secondarySubTemplateOf(URITemplate other, String metaKey) {
         return new URITemplate(other.getBase(), other.getPrimaryKey(), metaKey);
     }
-
-
 }

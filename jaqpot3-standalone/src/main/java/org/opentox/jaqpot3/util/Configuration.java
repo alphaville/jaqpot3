@@ -21,10 +21,9 @@ public class Configuration {
 
     private static Logger logger = LoggerFactory.getLogger(Configuration.class);
     private static Properties properties = null;
-    public static final String BASE_URI = "http://" + getProperties().getProperty("server.domainName")
+    public static final String BASE_URI = "http://" + getProperties().getProperty("server.domainName")            
             + ":" + getProperties().getProperty("server.port") + "/" + getProperties().getProperty("url.suffix", "jaqpot");
     public static final int SERVER_PORT = Integer.parseInt(getProperties().getProperty("server.port"));
-    
     private static String version = null;
 
     public static String getVersion() {

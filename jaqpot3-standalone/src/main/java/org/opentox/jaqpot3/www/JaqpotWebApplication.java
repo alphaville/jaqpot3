@@ -30,7 +30,6 @@ public class JaqpotWebApplication extends WadlApplication {
     @Override
     public ApplicationInfo getApplicationInfo(Request request, Response response) {
         ApplicationInfo result = super.getApplicationInfo(request, response);
-
         DocumentationInfo docInfo = new DocumentationInfo(getName());
         docInfo.setTitle(getName());
         docInfo.setLanguage(Language.ENGLISH);

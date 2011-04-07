@@ -1,0 +1,322 @@
+Apr 7, 2011 4:47:35 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 4:47:36 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	16:47:36	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	625	-	26	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 4:51:12 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	16:51:12	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	625	-	6	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 4:57:17 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 5:11:44 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 5:11:44 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:11:44	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/	-	200	625	-	23	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:11:47 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:11:47	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/dbstats	-	200	625	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:11:51 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:11:51	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task	-	200	625	-	4	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:12:45 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 5:12:46 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:12:46	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	625	-	49	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:12:52 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:12:52	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task	-	200	625	-	2	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:14:51 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 5:14:51 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:14:51	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	625	-	22	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:14:59 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:14:59	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	625	-	6	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:15:02 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:15:02	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	625	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:15:23 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:15:23	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/mlr	-	200	625	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:17:14 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 5:17:15 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:17:15	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/mlr	-	200	625	-	38	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:17:40 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:17:40	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servletalgorithm/mlr	-	200	625	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 5:17:43 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	17:17:43	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/algorithm/mlr	-	200	-	-	185	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 6:06:01 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 6:06:01 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	18:06:01	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/dbstats	-	200	733	-	62	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 6:19:17 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	18:19:17	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	733	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/dbstats
+Apr 7, 2011 7:39:06 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:39:06 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:39:06	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task	-	200	733	-	25	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:39:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:39:08	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	733	-	2	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/task
+Apr 7, 2011 7:39:17 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:39:17	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/algorithm	-	200	1373	-	156	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:39:22 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:39:22	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/algorithm/mlr	-	200	-	-	25	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:43:18 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:43:19 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:43:19	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	733	-	24	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:43:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:43:27	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/model	-	200	-	-	76	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:43:56 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:43:56 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:43:56	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	-	-	117	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:44:00 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:44:00	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	-	-	36	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:44:07 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:44:07	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	1053	-	154	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:44:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:44:13	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/scaling	-	200	-	-	44	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:46:05 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:46:05 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:46:05	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	733	-	49	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:46:05 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:46:05	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	733	-	64	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:46:09 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:46:09	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	733	-	3	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/algorithm
+Apr 7, 2011 7:46:20 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:46:20	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/algorithm	-	200	1373	-	169	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:50:48 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:50:49 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:50:49	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	471	-	31	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:51:15 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:51:15 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:15	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	631	-	71	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:51:18 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:18	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	1373	-	181	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet
+Apr 7, 2011 7:51:19 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:19	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/mlr	-	200	-	-	36	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/algorithm
+Apr 7, 2011 7:51:20 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:20	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model	-	200	-	-	32	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet
+Apr 7, 2011 7:51:25 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:25	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/dbstats	-	200	-	-	163	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet
+Apr 7, 2011 7:51:47 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:47	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	1373	-	4	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet
+Apr 7, 2011 7:51:50 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:51:50	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/mlr	-	200	-	-	13	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/algorithm
+Apr 7, 2011 7:52:06 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:06	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	POST	/jaqpot3-servlet/algorithm/scaling	-	202	-	62	1956	http://localhost:8080	curl/7.19.5 (x86_64-pc-linux-gnu) libcurl/7.19.5 OpenSSL/0.9.8g zlib/1.2.3.3 libidn/1.15	-
+Apr 7, 2011 7:52:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:08	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	125	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:09 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:09	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	122	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	15	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	174	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	11	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	20	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:11 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:11	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	106	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:11 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:11	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	50	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:12 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:12	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	43	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:12 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:12	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	26	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:12 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:12	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	7	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:13	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	9	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:13	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	11	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:13	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	20	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:14 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:14	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	113	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:14 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:14	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	9	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:15 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:15	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	9	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:15 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:15	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	34	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:15 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:15	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	15	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:16 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:16	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	23	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:16 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:16	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	20	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:16 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:16	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	202	-	-	27	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:17 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:17	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	200	-	-	78	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:17 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:17	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8	-	200	-	-	10	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:52:19 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:52:19	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/model/8c19205f-2f18-4179-8e7d-f6e69bb58854	-	200	-	-	76	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/task/762f9f11-13bb-4d16-8f97-9df1d11cffe8
+Apr 7, 2011 7:54:08 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 7:54:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:08	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/jaqpot3-servlet/algorithm/mlr	-	200	631	-	24	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:54:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm	-	200	1373	-	160	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/jaqpot3-servlet/algorithm/mlr
+Apr 7, 2011 7:54:18 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:18	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/mlr	-	200	-	-	19	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/jaqpot3-servlet/algorithm
+Apr 7, 2011 7:54:26 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:26	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/sv	-	404	-	-	8	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:54:28 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:28	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/algorithm/svm	-	200	-	-	9	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:54:42 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:54:42	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/dbstats	-	200	-	-	2081	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:55:02 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:55:02	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/	-	200	631	-	3	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:55:04 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:55:04	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/bibtex	-	200	-	-	148	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	http://localhost:8080/jaqpot3-servlet/
+Apr 7, 2011 7:55:38 PM org.restlet.resource.UniformResource doCatch
+INFO: Exception or error caught in resource
+java.lang.NullPointerException
+	at org.opentox.jaqpot3.resources.publish.Representer.process(Representer.java:32)
+	at org.opentox.jaqpot3.resources.publish.Publisher.createRepresentation(Publisher.java:51)
+	at org.opentox.jaqpot3.resources.BibTexResource.get(BibTexResource.java:61)
+	at org.restlet.resource.ServerResource.doHandle(ServerResource.java:462)
+	at org.restlet.resource.ServerResource.doNegotiatedHandle(ServerResource.java:522)
+	at org.restlet.resource.ServerResource.doConditionalHandle(ServerResource.java:258)
+	at org.restlet.resource.ServerResource.handle(ServerResource.java:752)
+	at org.restlet.resource.Finder.handle(Finder.java:515)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.engine.application.ApplicationHelper.handle(ApplicationHelper.java:72)
+	at org.restlet.Application.handle(Application.java:379)
+	at org.restlet.ext.wadl.WadlApplication.handle(WadlApplication.java:769)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.Component.handle(Component.java:385)
+	at org.restlet.Server.handle(Server.java:474)
+	at org.restlet.engine.ServerHelper.handle(ServerHelper.java:71)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:150)
+	at org.restlet.ext.servlet.ServerServlet.service(ServerServlet.java:1035)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:151)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:129)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:298)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:857)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:588)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:489)
+	at java.lang.Thread.run(Thread.java:662)
+Apr 7, 2011 7:55:38 PM org.restlet.service.StatusService getStatus
+SEVERE: Unhandled exception or error intercepted
+java.lang.NullPointerException
+	at org.opentox.jaqpot3.resources.publish.Representer.process(Representer.java:32)
+	at org.opentox.jaqpot3.resources.publish.Publisher.createRepresentation(Publisher.java:51)
+	at org.opentox.jaqpot3.resources.BibTexResource.get(BibTexResource.java:61)
+	at org.restlet.resource.ServerResource.doHandle(ServerResource.java:462)
+	at org.restlet.resource.ServerResource.doNegotiatedHandle(ServerResource.java:522)
+	at org.restlet.resource.ServerResource.doConditionalHandle(ServerResource.java:258)
+	at org.restlet.resource.ServerResource.handle(ServerResource.java:752)
+	at org.restlet.resource.Finder.handle(Finder.java:515)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.engine.application.ApplicationHelper.handle(ApplicationHelper.java:72)
+	at org.restlet.Application.handle(Application.java:379)
+	at org.restlet.ext.wadl.WadlApplication.handle(WadlApplication.java:769)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.Component.handle(Component.java:385)
+	at org.restlet.Server.handle(Server.java:474)
+	at org.restlet.engine.ServerHelper.handle(ServerHelper.java:71)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:150)
+	at org.restlet.ext.servlet.ServerServlet.service(ServerServlet.java:1035)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:151)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:129)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:298)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:857)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:588)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:489)
+	at java.lang.Thread.run(Thread.java:662)
+Apr 7, 2011 7:55:38 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	19:55:38	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet/bibtex/000e7bcd-c824-48b5-a8a4-0f49459906c6	-	500	398	-	27	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 7:59:28 PM org.restlet.engine.http.connector.HttpClientHelper stop
+INFO: Stopping the default HTTP client
+Apr 7, 2011 8:04:48 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 8:18:56 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 8:18:57 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	20:18:57	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/jaqpot3-servlet	-	200	631	-	61	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 8:21:03 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 8:21:04 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	20:21:04	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/mycontext	-	200	631	-	33	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 8:22:03 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Apr 7, 2011 8:22:03 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	20:22:03	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/	-	200	631	-	22	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 8:22:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	20:22:10	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/algorithm	-	200	1373	-	188	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
+Apr 7, 2011 8:22:16 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-04-07	20:22:16	0:0:0:0:0:0:0:1	-	0:0:0:0:0:0:0:1	8080	GET	/algorithm/mlr	-	200	-	-	48	http://localhost:8080	Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110323 Ubuntu/9.10 (karmic) Firefox/3.6.16	-
