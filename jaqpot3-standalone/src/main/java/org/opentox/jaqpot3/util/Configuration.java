@@ -67,6 +67,20 @@ public class Configuration {
         }
     }
 
+    public static String getStringProperty(String key, String defaultValue) {
+        try {
+            String val = properties.getProperty(key);
+            if (val!=null && !val.isEmpty()){
+                return val;
+            }else{
+                return defaultValue;
+            }
+        } catch (RuntimeException ex) {
+            logger.warn(null, ex);
+            return null;
+        }
+    }
+
     public static int getIntegerProperty(String key) {
         return Integer.parseInt(properties.getProperty(key));
     }
