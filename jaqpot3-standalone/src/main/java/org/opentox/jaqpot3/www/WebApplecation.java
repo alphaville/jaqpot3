@@ -124,6 +124,7 @@ final public class WebApplecation extends JaqpotWebApplication {
         router.attach(ErrorResource.template.toString(), ErrorResource.class);
         router.attach(ErrorsResource.template.toString(), ErrorsResource.class);
         router.attach(DbStatisticsResource.template.toString(), DbStatisticsResource.class);
+        router.attach(RescueResource.template.toString(), RescueResource.class);
 
         protectResource(router, ModelResource.class);
         protectResource(router, ShutDownResource.class);

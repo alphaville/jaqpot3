@@ -25,9 +25,12 @@ import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.engine.DisableComponent;
 import org.opentox.toxotis.database.engine.model.FindModel;
 import org.opentox.toxotis.database.engine.task.AddTask;
 import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.ontology.ResourceValue;
+import org.opentox.toxotis.ontology.collection.OTClasses;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
 import org.restlet.data.MediaType;
@@ -123,14 +126,20 @@ public class ModelResource extends JaqpotResource {
 
     @Override
     protected Representation delete(Variant variant) throws ResourceException {
-//        Model mdl = (Model) getNewSession().createCriteria(Model.class).add(Restrictions.like("uri", "%/model/" + primaryId)).uniqueResult();
-//        mdl.setEnabled(false);
-//        getNewSession().beginTransaction();
-//        getNewSession().update(mdl);
-//        getNewSession().getTransaction().commit();
-//        //RegisterTool.storeModel(m, getNewSession());
-//        closeSession();
-        return new StringRepresentation("");
+        DisableComponent disabler = new DisableComponent(primaryId);
+        try {
+            int count = disabler.disable();
+            return new StringRepresentation(count + " components where disabled.\n", MediaType.TEXT_PLAIN);
+        } catch (DbException ex) {
+            Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                disabler.close();
+            } catch (DbException ex) {
+                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
 
     }
 
@@ -161,7 +170,11 @@ public class ModelResource extends JaqpotResource {
 
 
         Task task = TaskFactory.newQueuedTask(creator, uuid);
-//        task.getMeta().addDescription("Asynchronous Task").addComment("Asynchronous task created for a background job initiated by the model: " + primaryId);
+        task.getMeta().
+                addDescription("Asynchronous Task for Prediction").
+                addComment("Asynchronous task created for a background job initiated by the model: " + primaryId).
+                addHasSource(new ResourceValue(getCurrentVRI(), OTClasses.Model()));
+
 
 
         AddTask taskAdder = new AddTask(task);

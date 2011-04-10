@@ -4,14 +4,12 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.shared.JenaException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.pool.PolicyCreationPool;
-import org.opentox.jaqpot3.resources.publish.DatabaseIteratorPublisher;
+import org.opentox.jaqpot3.resources.publish.DbListStreamPublisher;
 import org.opentox.jaqpot3.resources.publish.Publisher;
-import org.opentox.jaqpot3.resources.publish.Representer;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.client.collection.Services;
@@ -27,10 +25,8 @@ import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.bibtex.AddBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.ListBibTeX;
-import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
-import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.util.aa.policy.GroupSubject;
 import org.opentox.toxotis.util.aa.policy.Policy;
 import org.opentox.toxotis.util.aa.policy.PolicyRule;
@@ -38,8 +34,6 @@ import org.opentox.toxotis.util.aa.policy.SingleSubject;
 import org.opentox.toxotis.util.spiders.BibTeXSprider;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.data.ReferenceList;
-import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
@@ -57,6 +51,7 @@ public class BibTexAllResource extends JaqpotResource {
     private Logger logger = LoggerFactory.getLogger(BibTexAllResource.class);
     public static final URITemplate template = new URITemplate("bibtex", null, null);
     private UUID uuid = UUID.randomUUID();
+
     public BibTexAllResource() {
     }
 
@@ -112,8 +107,9 @@ public class BibTexAllResource extends JaqpotResource {
         IDbIterator<String> iterator = null;
         try {
             iterator = lister.list();
-            Representer rep = new Representer(true);
-            return rep.process(new DatabaseIteratorPublisher(iterator, Configuration.getBaseUri().augment("bibtex")));
+            DbListStreamPublisher publisher = new DbListStreamPublisher();
+            publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
+            return publisher.process(iterator);
         } catch (JaqpotException ex) {
             java.util.logging.Logger.getLogger(BibTexAllResource.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DbException ex) {
@@ -375,10 +371,10 @@ public class BibTexAllResource extends JaqpotResource {
             Publisher pub = new Publisher(acceptHeader);
             createPolicy(bibTex);
             return pub.createRepresentation(bibTex, true);
-        } catch (final JaqpotException ex) {            
-                logger.error("Exception while trying to create a representation "
-                        + "for a BibTeX object!", ex);
-                return fatalException("UnknownCauseOfException", ex, "Fatal Error while trying to register "
+        } catch (final JaqpotException ex) {
+            logger.error("Exception while trying to create a representation "
+                    + "for a BibTeX object!", ex);
+            return fatalException("UnknownCauseOfException", ex, "Fatal Error while trying to register "
                     + "a new BibTex entry in the database");
         } catch (final Exception ex) {
             logger.error("Unknown source of error.", ex);

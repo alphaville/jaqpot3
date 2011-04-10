@@ -2,15 +2,22 @@ package org.opentox.jaqpot3.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.Publisher;
+import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.core.component.BibTeX;
+import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.engine.DisableComponent;
 import org.opentox.toxotis.database.engine.bibtex.FindBibTeX;
+import org.opentox.toxotis.database.exception.DbException;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 
@@ -22,7 +29,6 @@ import org.restlet.resource.ResourceException;
 public class BibTexResource extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("bibtex", "bibtex_id", null);
-    private String bibTexId;
 
     public BibTexResource() {
     }
@@ -41,8 +47,8 @@ public class BibTexResource extends JaqpotResource {
                 MediaType.TEXT_RDF_N3,
                 MediaType.TEXT_RDF_NTRIPLES,
                 MediaType.TEXT_PLAIN);
-        bibTexId = Reference.decode(getRequest().getAttributes().get(template.getPrimaryKey()).toString());
         acceptString = getRequest().getResourceRef().getQueryAsForm().getFirstValue("accept");
+        updatePrimaryId(template);
     }
 
     @Override
@@ -50,15 +56,32 @@ public class BibTexResource extends JaqpotResource {
         if (acceptString != null) {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
-        BibTeX myBibTex = null;
 
-        FindBibTeX fb = new FindBibTeX();
+        FindBibTeX fb = new FindBibTeX(Configuration.getBaseUri().augment("bibtex"));
+        System.out.println("Searching for... " + primaryId);
+        fb.setSearchById(primaryId);
+        IDbIterator<BibTeX> bibtexFound = null;
+        BibTeX bibtex = null;
+        try {
+            bibtexFound = fb.list();
+            if (bibtexFound.hasNext()) {
+                bibtex = bibtexFound.next();
+            }
+        } catch (DbException ex) {
+            Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
-        
+        if (bibtex == null || (bibtex != null && !bibtex.isEnabled())) {
+            toggleNotFound();
+            return errorReport("BibTeXNotFound", "The bibtex you requested was not found in our database",
+                    "The bibtex with id " + primaryId + " was not found in the database",
+                    variant.getMediaType(), false);
+        }
+
         Publisher pub = new Publisher(variant.getMediaType());
         try {
-            return pub.createRepresentation(myBibTex, true);
+            return pub.createRepresentation(bibtex, true);
         } catch (JaqpotException ex) {
             toggleServerError();
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
@@ -68,23 +91,19 @@ public class BibTexResource extends JaqpotResource {
 
     @Override
     protected Representation delete(Variant variant) throws ResourceException {
+        DisableComponent disabler = new DisableComponent(primaryId);
+        try {
+            int count = disabler.disable();
+            return new StringRepresentation(count+" components where disabled.\n", MediaType.TEXT_PLAIN);
+        } catch (DbException ex) {
+            Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            try {
+                disabler.close();
+            } catch (DbException ex) {
+                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         return null;
-//        BibTeX prototype = new BibTeX();
-//        prototype.setId(bibTexId);
-//
-//        try {
-//            prototype.delete(YAQP.getDb());
-//            return sendMessage("The bibtex " + Configuration.BASE_URI + "/" + bibTexId
-//                    + " is successfully deleted from the database." + NEWLINE);
-//        } catch (NoUniqueFieldException ex) {
-//            if (prototype.search(YAQP.getDb()).size() == 0) {
-//                toggleNotFound();
-//                return errorReport(Cause.BibTexNotFoundInDatabase, "The BibTex you specified was not found in the database",
-//                        "You can find a list of all available BibTex references on the server at " + Configuration.BASE_URI + "/bibtex",
-//                        variant.getMediaType(), false);
-//            } else {
-//                return fatalException(Cause.UnknownCauseOfException, ex, null);
-//            }
-//        }
     }
 }

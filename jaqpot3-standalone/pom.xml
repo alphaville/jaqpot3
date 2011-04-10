@@ -33,33 +33,64 @@
         </dependency>
     </dependencies>
 
-    <profiles>
+     <profiles>
         <profile>
-            <id>jaqpot</id>
+            <id>jaqpot_properties</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <jaqpot_domain>localhost</jaqpot_domain>
+
+                <!-- ***** BASIC PROPERTIES ***** -->
+
+                <!--Port on which the service starts
+                Default value is: 8080-->
+                <jaqpot_port>8080</jaqpot_port>
+                <!--Domain name of the service
+                Default value: localhost-->
+                <jaqpot_domain>alphaville</jaqpot_domain>
+                <!--Maximum number of allowed models per user
+                Service providers might specify per-user
+                limits accessing the database (table User)
+                Default value: 2000-->
+                <jaqpot.max_models_per_user>2000</jaqpot.max_models_per_user>
+                <!--Maximum number of allowed bibtex entries per user
+                Service providers might specify per-user
+                limits accessing the database (table User)
+                Default value: 2000-->
+                <jaqpot.max_bibtex_per_user>2000</jaqpot.max_bibtex_per_user>
+                <!--Maximum number of allowed active tasks per user
+                Service providers might specify per-user
+                limits accessing the database (table User)
+                Default value: 10-->
+                <jaqpot.max_tasks_per_user>10</jaqpot.max_tasks_per_user>
+
+
+                <url.suffix></url.suffix>
+
+                <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
+
+                <!-- ***** DATABASE ***** -->
+
+                <!--Database name
+                Default value: toxotisdb-->
+                <jaqpot.database.name>toxotisdb</jaqpot.database.name>
+
+                <!--MySQL server port
+                Default value: 3306-->
+                <jaqpot.database.mysqlport>3306</jaqpot.database.mysqlport>
+
+                <!--Database user
+                Which user is used to access the database
+                Default value: root-->
+                <jaqpot.database.user>root</jaqpot.database.user>
+
+                <!--Password for accessing your MySQL database server
+                Default value: opensess@me [CHANGE IT!!!]-->
+                <jaqpot.database.password>opensess@me</jaqpot.database.password>
             </properties>
         </profile>
     </profiles>
-<!--
-    <profiles>
-        <profile>
-            <id>jaqpot</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jaqpot_home>${user.home}/ot</jaqpot_home>
-                <jaqpot.keys>/home/chung/toxotisKeys</jaqpot.keys>
-                <jaqpot.key>${jaqpot.keys}/my.key</jaqpot.key>
-                <jaqpot.master_key>${jaqpot.keys}/master.key</jaqpot.master_key>
-                <jaqpot_domain>localhost</jaqpot_domain>
-            </properties>
-        </profile>
-    </profiles>-->
 
     <build>
         <resources>

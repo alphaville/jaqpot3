@@ -81,6 +81,7 @@ public class ModelsResource extends JaqpotResource {
         }
         
         DbListStreamPublisher publisher = new DbListStreamPublisher();
+        publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("model"));
         try {
             return publisher.process(list);

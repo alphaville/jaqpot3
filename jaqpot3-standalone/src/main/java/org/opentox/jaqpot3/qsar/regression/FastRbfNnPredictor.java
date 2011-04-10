@@ -15,6 +15,7 @@ import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Task.Status;
+import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.DatasetFactory;
@@ -113,7 +114,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
             }
             predictions.instance(i).setClassValue(sum);
         }
-        
+
         try {
             Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
             Future<VRI> future = output.publish(datasetServiceUri, token);
@@ -123,7 +124,11 @@ public class FastRbfNnPredictor extends AbstractPredictor {
                     Thread.sleep(1000);
                     float prc = 100f - (50.0f / (float) Math.sqrt(counter));
                     getTask().setPercentageCompleted(prc);
-//                    new RegisterTool().storeTask(getTask());
+                    UpdateTask updateTask = new UpdateTask(getTask());
+                    updateTask.setUpdateMeta(true);
+                    updateTask.setUpdatePercentageCompleted(true);
+                    updateTask.update();
+                    updateTask.close();
                     counter++;
                 } catch (InterruptedException ex) {
                     logger.error("Interrupted Operation", ex);
@@ -133,6 +138,12 @@ public class FastRbfNnPredictor extends AbstractPredictor {
             try {
                 VRI resultUri = future.get();
                 getTask().setHttpStatus(200).setPercentageCompleted(100.0f).setResultUri(resultUri).setStatus(Status.COMPLETED);
+
+                UpdateTask updateTask = new UpdateTask(getTask());
+                updateTask.setUpdateTaskStatus(true);
+                updateTask.setUpdateResultUri(true);
+                updateTask.update();
+                updateTask.close();
 //                new RegisterTool().storeTask(getTask());
                 return output;
             } catch (InterruptedException ex) {

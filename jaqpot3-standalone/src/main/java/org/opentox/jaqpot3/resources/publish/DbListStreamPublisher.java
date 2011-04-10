@@ -38,7 +38,7 @@ public class DbListStreamPublisher {
 
     public void setBaseUri(VRI baseUri) {
         this.baseUri = baseUri;
-    }       
+    }
 
     public Representation process(final IDbIterator<String> iterator) throws JaqpotException {
         Representation representation = new OutputRepresentation(media) {
@@ -49,10 +49,30 @@ public class DbListStreamPublisher {
                 try {
                     if (iterator != null) {
                         try {
+
+                            if (MediaType.TEXT_HTML.equals(media)) {
+                                writer.write("<ol>");
+                            }
                             while (iterator.hasNext()) {
-                                writer.write(getBaseUri().toString()+"/");
-                                writer.write(iterator.next());
+                                StringBuilder nextUri = new StringBuilder();
+                                String id = iterator.next();
+                                nextUri.append(getBaseUri().toString());
+                                nextUri.append("/");
+                                nextUri.append(id);
+
+                                if (MediaType.TEXT_HTML.equals(media)) {
+                                    writer.write("<li><a href=\"");
+                                    writer.write(nextUri.toString());
+                                    writer.write("\">");
+                                    writer.write(id);
+                                    writer.write("</a></li>");
+                                } else {
+                                    writer.write(nextUri.toString());
+                                }
                                 writer.write("\n");
+                            }
+                            if (MediaType.TEXT_HTML.equals(media)) {
+                                writer.write("</ol>");
                             }
                             iterator.close();
                         } catch (DbException ex) {
@@ -72,6 +92,7 @@ public class DbListStreamPublisher {
             }
         };
 
+        representation.setMediaType(media);
         return representation;
 
     }
