@@ -49,12 +49,11 @@ public class TasksResource extends JaqpotResource {
         }
 
 
-        ListTasks modelLister = new ListTasks();
+        ListTasks lister = new ListTasks();
         IDbIterator<String> list = null;
         try {
-            list = modelLister.list();
+            list = lister.list();
         } catch (DbException ex) {
-
         }
 
         DbListStreamPublisher publisher = new DbListStreamPublisher();
@@ -63,56 +62,21 @@ public class TasksResource extends JaqpotResource {
         try {
             return publisher.process(list);
         } catch (JaqpotException ex) {
-
+        } finally {
+            if (list != null) {
+                try {
+                    list.close();
+                } catch (DbException ex) {
+                }
+            }
+            if (lister != null) {
+                try {
+                    lister.close();
+                } catch (DbException ex) {
+                }
+            }
         }
 
         return new StringRepresentation("Under Construction");
     }
-
-//    @Override
-//    protected Representation delete(Variant variant) throws ResourceException {
-//        int linesAffected = 0;
-//        try {
-//            User user = getUser();
-//            if (user == null) {
-//                toggleForbidden();
-//                return errorReport("Forbidden", "No token is provided!",
-//                        "Cannot apply a DELETE method on /task without providing your authentication token",
-//                        variant.getMediaType(), false);
-//            }
-//
-//            Query q = getNewSession().createQuery("SELECT uri from Task WHERE createdBy = :creator");
-//            q.setString("creator", user.getUid());
-//            List taskUris = q.list();
-//            for (Object s : taskUris) {
-//                try {
-//                    ExecutionPool.POOL.cancel(new VRI(s.toString()).getId());
-//                } catch (URISyntaxException ex) {
-//                    throw new RuntimeException(ex);
-//                }
-//            }
-//
-//            String hql = "DELETE FROM Task WHERE createdBy = :creatorUid";
-//            Query query = getNewSession().createQuery(hql).setString("creatorUid", user.getUid());
-//            linesAffected = query.executeUpdate();
-//
-//        } catch (ToxOtisException ex) {
-//            logger.trace("Error trying to retrieve user data...", ex);
-//        } catch (HibernateException ex) {
-//            toggleServerError();
-//            logger.warn("Hibernate exception caught while trying to DELETE all tasks for a user", ex);
-//            return errorReport("DatabaseError", "Exceptional event related to task deletion from the database. "
-//                    + "The issue is automatically logged and a team of jackals will tackle it asap.", null, variant.getMediaType(), true);
-//        } finally {
-//            try {
-//                getNewSession().close();
-//            } catch (HibernateException ex) {
-//                toggleServerError();
-//                logger.warn("Hibernate exception caught while trying to close a session", ex);
-//                return errorReport("DatabaseError", "Exceptional event related to session management. "
-//                        + "The issue is automatically logged and a team of jackals will tackle it asap.", null, variant.getMediaType(), true);
-//            }
-//        }
-//        return new StringRepresentation(linesAffected + " tasks were deleted!" + NEWLINE, MediaType.TEXT_PLAIN);
-//    }
 }

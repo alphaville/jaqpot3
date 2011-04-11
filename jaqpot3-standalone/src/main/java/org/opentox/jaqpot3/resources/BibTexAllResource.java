@@ -115,6 +115,21 @@ public class BibTexAllResource extends JaqpotResource {
             java.util.logging.Logger.getLogger(BibTexAllResource.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DbException ex) {
             java.util.logging.Logger.getLogger(BibTexAllResource.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            if (iterator!=null){
+                try {
+                    iterator.close();
+                } catch (DbException ex) {
+
+                }
+            }
+            if (lister!=null){
+                try {
+                    lister.close();
+                } catch (DbException ex) {
+                    
+                }
+            }
         }
         return null;
 
