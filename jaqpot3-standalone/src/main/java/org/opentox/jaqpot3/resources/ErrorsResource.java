@@ -72,13 +72,13 @@ public class ErrorsResource extends JaqpotResource{
             Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        DbListStreamPublisher publisher = new DbListStreamPublisher();
-        publisher.setBaseUri(Configuration.getBaseUri().augment("error"));
-        try {
-            return publisher.process(list);
-        } catch (JaqpotException ex) {
-            Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        DbListStreamPublisher publisher = new DbListStreamPublisher();
+//        publisher.setBaseUri(Configuration.getBaseUri().augment("error"));
+//        try {
+//            return publisher.process(list);
+//        } catch (JaqpotException ex) {
+//            Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         return new StringRepresentation("Under Construction");
     }

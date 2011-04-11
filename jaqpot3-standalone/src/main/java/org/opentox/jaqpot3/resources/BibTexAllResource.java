@@ -22,6 +22,7 @@ import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.ontology.collection.KnoufBibTex;
 import org.opentox.toxotis.ontology.impl.SimpleOntModelImpl;
 import org.opentox.toxotis.core.component.User;
+import org.opentox.toxotis.database.DbReader;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.bibtex.AddBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.ListBibTeX;
@@ -102,36 +103,18 @@ public class BibTexAllResource extends JaqpotResource {
                         variant.getMediaType(), false);
             }
         }
-
-
-        IDbIterator<String> iterator = null;
+        
+        DbListStreamPublisher publisher = new DbListStreamPublisher();
+        publisher.setMedia(variant.getMediaType());
+        publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
         try {
-            iterator = lister.list();
-            DbListStreamPublisher publisher = new DbListStreamPublisher();
-            publisher.setMedia(variant.getMediaType());
-            publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
-            return publisher.process(iterator);
+            return publisher.process(lister);
         } catch (JaqpotException ex) {
-            java.util.logging.Logger.getLogger(BibTexAllResource.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DbException ex) {
-            java.util.logging.Logger.getLogger(BibTexAllResource.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            if (iterator!=null){
-                try {
-                    iterator.close();
-                } catch (DbException ex) {
-
-                }
-            }
-            if (lister!=null){
-                try {
-                    lister.close();
-                } catch (DbException ex) {
-                    
-                }
-            }
+            return errorReport(ex, "DbError", "Error while getting data from the DB",
+                    variant.getMediaType(), false);
         }
-        return null;
+
+        
 
 
     }

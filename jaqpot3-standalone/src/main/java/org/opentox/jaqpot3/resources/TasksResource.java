@@ -4,6 +4,7 @@ import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.DbListStreamPublisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.URITemplate;
+import org.opentox.toxotis.database.DbReader;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.task.ListTasks;
 import org.opentox.toxotis.database.exception.DbException;
@@ -56,27 +57,22 @@ public class TasksResource extends JaqpotResource {
         } catch (DbException ex) {
         }
 
+        
+
+
+
+
+
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("task"));
         try {
-            return publisher.process(list);
+            return publisher.process(lister);
         } catch (JaqpotException ex) {
-        } finally {
-            if (list != null) {
-                try {
-                    list.close();
-                } catch (DbException ex) {
-                }
-            }
-            if (lister != null) {
-                try {
-                    lister.close();
-                } catch (DbException ex) {
-                }
-            }
+            return errorReport(ex, "DbError", "Error while getting data from the DB",
+                    variant.getMediaType(), false);
         }
 
-        return new StringRepresentation("Under Construction");
+        
     }
 }

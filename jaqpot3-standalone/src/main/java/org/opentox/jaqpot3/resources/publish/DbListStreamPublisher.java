@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
+import org.opentox.toxotis.database.DbReader;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.exception.DbException;
 import org.restlet.data.MediaType;
@@ -40,13 +41,15 @@ public class DbListStreamPublisher {
         this.baseUri = baseUri;
     }
 
-    public Representation process(final IDbIterator<String> iterator) throws JaqpotException {
+    public Representation process(final DbReader<String> reader) throws JaqpotException {
+        
         Representation representation = new OutputRepresentation(media) {
 
             @Override
             public void write(OutputStream outputStream) throws IOException {
                 OutputStreamWriter writer = new OutputStreamWriter(outputStream);
                 try {
+                    IDbIterator<String> iterator = reader.list();
                     if (iterator != null) {
                         try {
 
@@ -79,6 +82,8 @@ public class DbListStreamPublisher {
                             Logger.getLogger(DbListStreamPublisher.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                } catch (DbException ex) {
+                    throw new IOException(ex);
                 } catch (IOException ex) {
                     throw ex;
                 } finally {
@@ -86,6 +91,11 @@ public class DbListStreamPublisher {
                     if (outputStream != null) {// Always close the output stream!
                         outputStream.flush();
                         outputStream.close();
+                    }
+                    try {
+                        reader.close();
+                    } catch (DbException ex) {
+                        throw new IOException(ex);
                     }
                     this.release();
                 }

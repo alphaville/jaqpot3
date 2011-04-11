@@ -52,7 +52,7 @@ final public class WebApplecation extends JaqpotWebApplication {
          * Configure Database
          */
         Properties props = new Properties();
-        InputStream propertiesIn = cl.getResourceAsStream("c3p0.properties");
+        InputStream propertiesIn = cl.getResourceAsStream("c3p0.properties");        
         try {
             props.load(propertiesIn);
         } catch (IOException ex) {
@@ -64,6 +64,7 @@ final public class WebApplecation extends JaqpotWebApplication {
             java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        System.out.println("*** KEY : "+props.getProperty("key"));
         org.opentox.toxotis.database.global.DbConfiguration.getInstance().setProperties(props);
 
         DataSourceFactory f = DataSourceFactory.getInstance();
@@ -79,7 +80,7 @@ final public class WebApplecation extends JaqpotWebApplication {
 
         //TODO: Cleanup database
 
-        System.out.print(keyOut_normal + "Database janitor is in place and started working ");
+        System.out.print(keyOut_normal + "Database Janitor is in place and started working ");
         DatabaseJanitor.work();
         System.out.print(done + "\n");
 

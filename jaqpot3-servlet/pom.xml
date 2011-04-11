@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.opentox</groupId>
             <artifactId>jaqpot3-standalone</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0.1</version>
         </dependency>
 
         <dependency>

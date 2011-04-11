@@ -72,39 +72,19 @@ public class ModelsResource extends JaqpotResource {
         }
 
 
-        ListModel modelLister = new ListModel();
-        IDbIterator<String> iterator = null;
-        try {
-            iterator = modelLister.list();
-        } catch (DbException ex) {
-            Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        ListModel lister = new ListModel();
+
+
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("model"));
         try {
-            return publisher.process(iterator);
+            return publisher.process(lister);
         } catch (JaqpotException ex) {
-            Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            if (iterator!=null){
-                try {
-                    iterator.close();
-                } catch (DbException ex) {
-                    Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (modelLister!=null){
-                try {
-                    modelLister.close();
-                } catch (DbException ex) {
-                    Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+            return errorReport(ex, "DbError", "Error while getting data from the DB",
+                    variant.getMediaType(), false);
         }
 
-        return new StringRepresentation("Under Construction");
     }
 
     @Override
