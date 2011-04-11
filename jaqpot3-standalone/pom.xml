@@ -88,6 +88,21 @@
                 <!--Password for accessing your MySQL database server
                 Default value: opensess@me [CHANGE IT!!!]-->
                 <jaqpot.database.password>opensess@me</jaqpot.database.password>
+
+
+                <!--***** EXECUTION POOL ***** -->
+
+                <!--Blocking Queue Size
+                Default Value: 100-->
+                <taskpool.blockingQueueSize>100</taskpool.blockingQueueSize>
+
+                <!--Maximum size of the execution pool
+                Default value: 4-->
+                <taskpool.maxSize>4</taskpool.maxSize>
+
+                <!--Core size of the execution pool
+                Default value: 4-->
+                <taskpool.coreSize>4</taskpool.coreSize>
             </properties>
         </profile>
     </profiles>

@@ -18,6 +18,7 @@ import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.DatasetFactory;
 import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 
 /**
@@ -33,16 +34,20 @@ public class ScalingPredictor extends AbstractPredictor {
 
     @Override
     public Dataset predict(Dataset input) throws JaqpotException {
-        System.out.println(1);
+        
+        getTask().setPercentageCompleted(3);
+        
+
         ScalingModel actualModel = (ScalingModel) model.getActualModel();
 
 
-        for (Feature f : model.getPredictedFeatures()){
-            System.out.println(">>> "+f.getUri());
+        for (Feature f : model.getPredictedFeatures()) {
+            System.out.println(">>> " + f.getUri());
         }
-        
+
         Instances inputData = input.getInstances();
         int Nattr = inputData.numAttributes();
+        int Ninst = inputData.numInstances();
 
         System.out.println(3);
         double[] mins = new double[Nattr - 1];
@@ -84,7 +89,21 @@ public class ScalingPredictor extends AbstractPredictor {
             }
         }
 
-        System.out.println(inputData);
+        /* Scale the data */
+        Attribute currentAttribute = null;
+        Instance currentInstance = null;
+        for (int i = 0; i < Ninst; i++) {
+            currentInstance = inputData.instance(i);
+            for (int j = 1; j < Nattr; j++) {
+                currentAttribute = inputData.attribute(j);
+                if (currentAttribute.isNumeric() && !currentInstance.isMissing(j)) {
+                    double scaledValue = (currentInstance.value(j) - mins[j - 1]) / (maxs[j - 1] - mins[j - 1]);
+                    currentInstance.setValue(j, scaledValue);
+                    System.out.println(scaledValue);
+                }
+            }
+        }
+
 
         try {
             return DatasetFactory.createFromArff(inputData);
@@ -98,8 +117,8 @@ public class ScalingPredictor extends AbstractPredictor {
     private VRI correspondingScaledVri(String independentVri, Model scalingModel) {
         int index = -1;
         for (int i = 0; i < scalingModel.getIndependentFeatures().size(); i++) {
-            System.out.println(scalingModel.getIndependentFeatures().get(i).getUri().toString()+" $$$$");
-            System.out.println(independentVri.toString()+ " @@@@");
+            System.out.println(scalingModel.getIndependentFeatures().get(i).getUri().toString() + " $$$$");
+            System.out.println(independentVri.toString() + " @@@@");
             if (scalingModel.getIndependentFeatures().get(i).getUri().toString().equals(independentVri)) {
                 System.out.println("******");
                 index = i;
@@ -107,7 +126,7 @@ public class ScalingPredictor extends AbstractPredictor {
             }
         }
         if (index != -1) {
-             return scalingModel.getPredictedFeatures().get(index).getUri();
+            return scalingModel.getPredictedFeatures().get(index).getUri();
         }
         return null;
 

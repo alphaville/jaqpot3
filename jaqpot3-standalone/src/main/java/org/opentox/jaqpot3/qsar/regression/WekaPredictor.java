@@ -36,7 +36,7 @@ import static org.opentox.jaqpot3.qsar.filter.AttributeCleanup.ATTRIBUTE_TYPE.*;
  */
 public class WekaPredictor extends AbstractPredictor {
 
-    private VRI datasetServiceUri = Services.ideaconsult().augment("dataset");
+    
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WekaPredictor.class);
 
     public WekaPredictor() {
@@ -45,14 +45,7 @@ public class WekaPredictor extends AbstractPredictor {
 
     @Override
     public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-        String datasetServiceString = clientParameters.getFirstValue("dataset_uri");
-        if (datasetServiceString != null) {
-            try {
-                datasetServiceUri = new VRI(datasetServiceString);
-            } catch (URISyntaxException ex) {
-                throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
-            }
-        }
+        
         return this;
     }
 
@@ -103,48 +96,9 @@ public class WekaPredictor extends AbstractPredictor {
             Instances result = Instances.mergeInstances(compounds, predictions);
             Dataset ds = DatasetFactory.createFromArff(result);
 
-
-            Future<VRI> future = ds.publish(datasetServiceUri, token);
-            float counter = 1;
-            while (!future.isDone()) {
-                try {
-                    Thread.sleep(1000);
-                    float prc = 100f - (50.0f / (float) Math.sqrt(counter));
-                    getTask().setPercentageCompleted(prc);
-
-                    UpdateTask updateTask = new UpdateTask(getTask());
-                    updateTask.setUpdateMeta(true);
-                    updateTask.setUpdatePercentageCompleted(true);
-                    updateTask.update();
-                    updateTask.close();
-                    counter++;
-                } catch (InterruptedException ex) {
-                    logger.error("Interrupted", ex);
-                    throw new JaqpotException("UnknownCauseOfException", ex);
-                }
-            }
-            try {
-                VRI resultUri = future.get();
-                getTask().setHttpStatus(200).setPercentageCompleted(100.0f).
-                        setResultUri(resultUri).setStatus(Status.COMPLETED);
-
-                UpdateTask updateTask = new UpdateTask(getTask());
-                updateTask.setUpdateTaskStatus(true);
-                updateTask.setUpdateResultUri(true);
-                updateTask.update();
-                updateTask.close();
-
-            } catch (InterruptedException ex) {
-                logger.error("Task update was abnormally interrupted", ex);
-                throw new JaqpotException("UnknownCauseOfException", ex);
-            } catch (ExecutionException ex) {
-                logger.warn(null, ex);
-                throw new JaqpotException("UnknownCauseOfException", ex);
-            }
+            
 
             return ds;
-        } catch (ServiceInvocationException ex) {
-            throw new JaqpotException("Exception while performing prediction", ex);
         } catch (ToxOtisException ex) {
             logger.debug(null, ex);
             throw new JaqpotException("Exception while performing prediction", ex);

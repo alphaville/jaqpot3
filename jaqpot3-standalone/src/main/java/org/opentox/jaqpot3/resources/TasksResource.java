@@ -1,20 +1,13 @@
 package org.opentox.jaqpot3.resources;
 
-import java.net.URISyntaxException;
-import java.util.List;
 import org.opentox.jaqpot3.exception.JaqpotException;
-import org.opentox.jaqpot3.pool.ExecutionPool;
 import org.opentox.jaqpot3.resources.publish.DbListStreamPublisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.URITemplate;
-import org.opentox.toxotis.client.VRI;
-import org.opentox.toxotis.core.component.Task;
-import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.task.ListTasks;
 import org.opentox.toxotis.database.exception.DbException;
 import org.restlet.data.MediaType;
-import org.restlet.data.ReferenceList;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
@@ -65,6 +58,7 @@ public class TasksResource extends JaqpotResource {
         }
 
         DbListStreamPublisher publisher = new DbListStreamPublisher();
+        publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("task"));
         try {
             return publisher.process(list);

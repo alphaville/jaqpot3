@@ -51,7 +51,7 @@ public class DbListStreamPublisher {
                         try {
 
                             if (MediaType.TEXT_HTML.equals(media)) {
-                                writer.write("<ol>");
+                                writer.write("<p><ol>");
                             }
                             while (iterator.hasNext()) {
                                 StringBuilder nextUri = new StringBuilder();
@@ -72,7 +72,7 @@ public class DbListStreamPublisher {
                                 writer.write("\n");
                             }
                             if (MediaType.TEXT_HTML.equals(media)) {
-                                writer.write("</ol>");
+                                writer.write("</ol></p>");
                             }
                             iterator.close();
                         } catch (DbException ex) {

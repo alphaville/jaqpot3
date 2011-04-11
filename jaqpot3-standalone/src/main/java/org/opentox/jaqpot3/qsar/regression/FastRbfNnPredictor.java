@@ -117,45 +117,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
 
         try {
             Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
-            Future<VRI> future = output.publish(datasetServiceUri, token);
-            float counter = 1;
-            while (!future.isDone()) {
-                try {
-                    Thread.sleep(1000);
-                    float prc = 100f - (50.0f / (float) Math.sqrt(counter));
-                    getTask().setPercentageCompleted(prc);
-                    UpdateTask updateTask = new UpdateTask(getTask());
-                    updateTask.setUpdateMeta(true);
-                    updateTask.setUpdatePercentageCompleted(true);
-                    updateTask.update();
-                    updateTask.close();
-                    counter++;
-                } catch (InterruptedException ex) {
-                    logger.error("Interrupted Operation", ex);
-                    throw new JaqpotException("UnknownCauseOfException", ex);
-                }
-            }
-            try {
-                VRI resultUri = future.get();
-                getTask().setHttpStatus(200).setPercentageCompleted(100.0f).setResultUri(resultUri).setStatus(Status.COMPLETED);
-
-                UpdateTask updateTask = new UpdateTask(getTask());
-                updateTask.setUpdateTaskStatus(true);
-                updateTask.setUpdateResultUri(true);
-                updateTask.update();
-                updateTask.close();
-//                new RegisterTool().storeTask(getTask());
-                return output;
-            } catch (InterruptedException ex) {
-                logger.error(null, ex);
-                throw new JaqpotException(ex);
-            } catch (ExecutionException ex) {
-                logger.error(null, ex);
-                throw new JaqpotException(ex);
-            }
-        } catch (ServiceInvocationException ex) {
-            logger.error(null, ex);
-            throw new JaqpotException(ex);
+            return output;
         } catch (ToxOtisException ex) {
             logger.error(null, ex);
             throw new JaqpotException(ex);

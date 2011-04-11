@@ -108,6 +108,7 @@ public class BibTexAllResource extends JaqpotResource {
         try {
             iterator = lister.list();
             DbListStreamPublisher publisher = new DbListStreamPublisher();
+            publisher.setMedia(variant.getMediaType());
             publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
             return publisher.process(iterator);
         } catch (JaqpotException ex) {
