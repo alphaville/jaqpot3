@@ -13,8 +13,8 @@ import org.opentox.toxotis.client.VRI;
 public class ScalingModel implements Serializable {
 
     // NOTE: HashMap, VRI and Double are all Serializable!    
-    private transient HashMap<VRI, Double> minVals = new HashMap<VRI, Double>();
-    private transient HashMap<VRI, Double> maxVals = new HashMap<VRI, Double>();
+    private HashMap<VRI, Double> minVals = new HashMap<VRI, Double>();
+    private HashMap<VRI, Double> maxVals = new HashMap<VRI, Double>();
     private double min = 0;
     private double max = 1;
     private VRI datasetReference;

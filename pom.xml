@@ -45,5 +45,6 @@
     <modules>
         <module>jaqpot3-standalone</module>
     <module>jaqpot3-servlet</module>
+    <module>jaqpot3-vaadin</module>
   </modules>
 </project>

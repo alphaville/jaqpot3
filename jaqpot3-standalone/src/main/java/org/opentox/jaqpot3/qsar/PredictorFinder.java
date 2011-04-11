@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import org.opentox.jaqpot3.qsar.doa.LeveragesPredictor;
+import org.opentox.jaqpot3.qsar.filter.ScalingPredictor;
 import org.opentox.jaqpot3.qsar.regression.FastRbfNnPredictor;
 import org.opentox.jaqpot3.qsar.regression.WekaPredictor;
 
@@ -21,6 +22,7 @@ public class PredictorFinder {
         map.put("svm", WekaPredictor.class);
         map.put("leverages", LeveragesPredictor.class);
         map.put("fastRbfNn", FastRbfNnPredictor.class);
+        map.put("scaling", ScalingPredictor.class);
     }
 
     public static Map<String, Class<? extends IPredictor>> getMapping() {

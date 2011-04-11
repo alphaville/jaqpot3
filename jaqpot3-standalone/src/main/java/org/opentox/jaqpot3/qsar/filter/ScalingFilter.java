@@ -62,7 +62,7 @@ public class ScalingFilter extends AbstractTrainer {
                     scalingModel.addIndependentFeatures(new Feature(featureVri));
                     //TODO: Create in-house private methods to find min and max values
                     actualModel.getMinVals().put(featureVri, dataInst.kthSmallestValue(i, 1));
-                    actualModel.getMinVals().put(featureVri, dataInst.kthSmallestValue(i, dataInst.numInstances()));
+                    actualModel.getMaxVals().put(featureVri, dataInst.kthSmallestValue(i, dataInst.numInstances()));
                     Feature f = FeatureFactory.createAndPublishFeature("Scaled Feature " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
                             new ResourceValue(newModelUri, OTClasses.Model()), Services.ideaconsult().augment("feature"), token);
                     f.getMeta().setHasSources(new HashSet<ResourceValue>());// << workaround!
@@ -74,6 +74,7 @@ public class ScalingFilter extends AbstractTrainer {
                     UpdateTask taskUpdater = new UpdateTask(getTask());
                     //taskUpdater.setUpdatePercentageCompleted(true);
                     taskUpdater.setUpdateMeta(true);
+                    
                     try {
                         taskUpdater.update();
                     } catch (DbException ex) {

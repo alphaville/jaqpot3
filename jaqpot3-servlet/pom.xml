@@ -77,7 +77,7 @@
 
                 <!--Port on which the service starts
                 Default value is: 8080-->
-                <jaqpot_port>8080</jaqpot_port>
+                <jaqpot_port>4000</jaqpot_port>
                 <!--Domain name of the service
                 Default value: localhost-->
                 <jaqpot_domain>alphaville</jaqpot_domain>
@@ -201,6 +201,7 @@
                 <artifactId>tomcat-maven-plugin</artifactId>
                 <configuration>
                     <path>/</path>
+                    <port>${jaqpot_port}</port>
                 </configuration>
             </plugin>
         </plugins>

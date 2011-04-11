@@ -156,7 +156,8 @@ public class AlgorithmResource extends JaqpotResource {
         try {
             addUser.write();
         } catch (DbException ex) {
-            
+            // User is already registered! :-)
+            // Proceed...
         }finally{
             try {
                 addUser.close();

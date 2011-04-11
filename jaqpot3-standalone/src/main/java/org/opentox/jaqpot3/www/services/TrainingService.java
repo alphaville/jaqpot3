@@ -6,6 +6,7 @@ import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
+import org.opentox.jaqpot3.qsar.filter.ScalingModel;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
@@ -86,6 +87,9 @@ public class TrainingService extends RunnableTaskService {
             //TODO: Handle exceptions properly
             modelAdder.write();
             modelAdder.close();
+
+            System.out.println(resultModel.getActualModel());
+            System.out.println(  ((ScalingModel)resultModel.getActualModel()).getMinVals());
             
 
             /* UPDATE THE TASK :)*/
