@@ -68,7 +68,7 @@
 
                 <url.suffix></url.suffix>
 
-                <jaqpot.doAuthentication>true</jaqpot.doAuthentication>
+                <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
 
 
 

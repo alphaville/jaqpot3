@@ -123,11 +123,15 @@ public class OpenSSOAuthorizer extends Authorizer {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
         } else {
             // Now check the header of the request
-            acceptHeader = ((Form) request.getAttributes().get("org.restlet.http.headers")).getFirstValue("Accept").toString();
+            acceptHeader = ((Form) request.getAttributes().get("org.restlet.http.headers")).getFirstValue("Accept");
             if (acceptHeader == null) {
                 acceptedMedia = MediaType.TEXT_HTML;
             } else {
-                this.acceptedMedia = MediaType.valueOf(acceptHeader);
+                try {
+                    this.acceptedMedia = MediaType.valueOf(acceptHeader);
+                } catch (IllegalArgumentException iae) {
+                    acceptedMedia = MediaType.TEXT_HTML;
+                }
             }
         }
         doAuthentication = doAuthentication();
