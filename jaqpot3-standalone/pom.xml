@@ -68,26 +68,8 @@
 
                 <url.suffix></url.suffix>
 
-                <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
+                <jaqpot.doAuthentication>true</jaqpot.doAuthentication>
 
-                <!-- ***** DATABASE ***** -->
-
-                <!--Database name
-                Default value: toxotisdb-->
-                <jaqpot.database.name>toxotisdb</jaqpot.database.name>
-
-                <!--MySQL server port
-                Default value: 3306-->
-                <jaqpot.database.mysqlport>3306</jaqpot.database.mysqlport>
-
-                <!--Database user
-                Which user is used to access the database
-                Default value: root-->
-                <jaqpot.database.user>root</jaqpot.database.user>
-
-                <!--Password for accessing your MySQL database server
-                Default value: opensess@me [CHANGE IT!!!]-->
-                <jaqpot.database.password>opensess@me</jaqpot.database.password>
 
 
                 <!--***** EXECUTION POOL ***** -->

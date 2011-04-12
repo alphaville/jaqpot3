@@ -76,10 +76,9 @@ public abstract class JaqpotResource extends WadlServerResource {
         return RDF_RELATED_MEDIATYPES.contains(mediaType);
     }
 
-
-    protected User getUser(){
+    protected User getUser() {
         AuthenticationToken token = this.getUserToken();
-        if (token==null){
+        if (token == null) {
             return null;
         }
         try {
@@ -92,11 +91,11 @@ public abstract class JaqpotResource extends WadlServerResource {
         return null;
     }
 
-    protected int getUserQuota(String className){
+    protected int getUserQuota(String className) {
         return 0;
     }
 
-    protected int getActiveTasks(){
+    protected int getActiveTasks() {
         return 0;
     }
 
@@ -104,7 +103,7 @@ public abstract class JaqpotResource extends WadlServerResource {
         try {
             return new VRI(getReference().toString());
         } catch (URISyntaxException ex) {
-            logger.error("Illegal URI",ex);
+            logger.error("Illegal URI", ex);
             throw new RuntimeException("", ex);
         }
     }
@@ -130,11 +129,23 @@ public abstract class JaqpotResource extends WadlServerResource {
     }
 
     protected void updatePrimaryId(URITemplate template) {
-        primaryId = Reference.decode(getRequest().getAttributes().get(template.getPrimaryKey()).toString()).trim();
+        String primaryKeyTemplate = template.getPrimaryKey();
+        if (primaryKeyTemplate != null) {
+            Object atts = getRequest().getAttributes().get(primaryKeyTemplate);
+            if (atts != null) {
+                primaryId = Reference.decode(atts.toString()).trim();
+            }
+        }
     }
 
     protected void updateSecondaryId(URITemplate template) {
-        secondaryId = Reference.decode(getRequest().getAttributes().get(template.getMetaKey()).toString()).trim();
+        String metaKeyTemplate = template.getMetaKey();
+        if (metaKeyTemplate != null) {
+            Object atts = getRequest().getAttributes().get(metaKeyTemplate);
+            if (atts != null) {
+                primaryId = Reference.decode(atts.toString()).trim();
+            }
+        }
     }
 
     public void initialize(Collection<MediaType> supportedMedia) {

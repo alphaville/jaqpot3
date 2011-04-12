@@ -136,7 +136,7 @@ final public class WebApplecation extends JaqpotWebApplication {
 
         new WebApplecation();
         SSLConfiguration.initializeSSLConnection();
-        Thread shutDownHook = new Thread("shut-down-hook-yaqp") {
+        Thread shutDownHook = new Thread("shut-down-hook-jaqpot") {
 
             @Override
             public void run() {

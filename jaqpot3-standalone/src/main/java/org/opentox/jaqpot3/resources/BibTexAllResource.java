@@ -26,6 +26,7 @@ import org.opentox.toxotis.database.DbReader;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.bibtex.AddBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.ListBibTeX;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
 import org.opentox.toxotis.util.aa.policy.GroupSubject;
@@ -103,7 +104,7 @@ public class BibTexAllResource extends JaqpotResource {
                         variant.getMediaType(), false);
             }
         }
-        
+
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
@@ -114,7 +115,7 @@ public class BibTexAllResource extends JaqpotResource {
                     variant.getMediaType(), false);
         }
 
-        
+
 
 
     }
@@ -230,12 +231,7 @@ public class BibTexAllResource extends JaqpotResource {
             bib = spider.parse();
             bib.setCreatedBy(creator);
             bib.setUri(Configuration.getBaseUri().augment("bibtex", uuid.toString()));
-
-            AddBibTeX adder = new AddBibTeX(bib);
-            adder.write();
-            adder.close();
-
-        } catch (ToxOtisException ex) {
+        } catch (ServiceInvocationException ex) {
             toggleServerError();
             logger.debug("BibTex parsing failed", ex);
             return errorReport(ex, primaryId, page, acceptHeader, true);
@@ -243,6 +239,23 @@ public class BibTexAllResource extends JaqpotResource {
             toggleServerError();
             logger.debug("BibTex parsing failed", ex);
             return errorReport(ex, primaryId, page, acceptHeader, true);
+        }
+
+        AddBibTeX adder = new AddBibTeX(bib);
+        try {
+            adder.write();
+        } catch (DbException ex) {
+            String msg = "Cannot add bibtex entry to the database";
+            logger.error(msg, ex);
+            return errorReport(ex, "Uncloseable", msg, acceptHeader, false);
+        } finally {
+            try {
+                adder.close();
+            } catch (DbException ex) {
+                String msg = "BibTeX Registerer is uncloseable!";
+                logger.error(msg, ex);
+                return errorReport(ex, "Uncloseable", msg, acceptHeader, false);
+            }
         }
 
         Publisher pub = new Publisher(acceptHeader);
@@ -256,7 +269,7 @@ public class BibTexAllResource extends JaqpotResource {
         }
     }
 
-    private void createPolicy(BibTeX bibTeX) {
+    private void createPolicy() {
         Policy p = new Policy();
         p.setPolicyName("bibtex_" + uuid);
         PolicyRule rule = new PolicyRule("rule1");
@@ -269,7 +282,6 @@ public class BibTexAllResource extends JaqpotResource {
         p.addSubject(SingleSubject.Admin2);
         p.addSubject(GroupSubject.DEVELOPMENT);
         p.addSubject(GroupSubject.PARTNER);
-
         PolicyCreationPool.POOL.run(p, null);
     }
 
@@ -368,7 +380,7 @@ public class BibTexAllResource extends JaqpotResource {
 
 
             Publisher pub = new Publisher(acceptHeader);
-            createPolicy(bibTex);
+            createPolicy();
             return pub.createRepresentation(bibTex, true);
         } catch (final JaqpotException ex) {
             logger.error("Exception while trying to create a representation "

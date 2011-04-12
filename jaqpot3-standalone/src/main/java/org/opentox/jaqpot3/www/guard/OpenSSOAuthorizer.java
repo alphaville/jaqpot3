@@ -1,10 +1,12 @@
 package org.opentox.jaqpot3.www.guard;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.logging.Level;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.ErrorReport;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
@@ -120,7 +122,13 @@ public class OpenSSOAuthorizer extends Authorizer {
         if (acceptHeader != null) {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
         } else {
-            acceptedMedia = MediaType.TEXT_HTML;
+            // Now check the header of the request
+            acceptHeader = ((Form) request.getAttributes().get("org.restlet.http.headers")).getFirstValue("Accept").toString();
+            if (acceptHeader == null) {
+                acceptedMedia = MediaType.TEXT_HTML;
+            } else {
+                this.acceptedMedia = MediaType.valueOf(acceptHeader);
+            }
         }
         doAuthentication = doAuthentication();
         if (!doAuthentication) {
@@ -130,6 +138,14 @@ public class OpenSSOAuthorizer extends Authorizer {
         String clientRequest = request.getMethod().getName();
         String actionUri = request.getResourceRef().toString();
         AuthenticationToken userToken = getToken(request, response);
+        try {
+            VRI actionVri = new VRI(actionUri);
+            actionVri.getUrlParams().clear();
+            actionUri = actionVri.toString();
+        } catch (URISyntaxException ex) {
+            java.util.logging.Logger.getLogger(OpenSSOAuthorizer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         if (userToken == null) {
             throwError(response, "(Client) " + clientAddress, "Anonymous", "Anonymous use of this service is not allowed. "
                     + "Please provide your authentication token using the HTTP Header 'subjectid' as "

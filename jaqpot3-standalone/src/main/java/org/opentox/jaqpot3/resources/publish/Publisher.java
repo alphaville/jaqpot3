@@ -1,6 +1,8 @@
 package org.opentox.jaqpot3.resources.publish;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.toxotis.core.IHTMLSupport;
@@ -33,7 +35,9 @@ public class Publisher {
             p.setMediaType(m_mediaType);
             return p;
         } else if (MediaType.TEXT_URI_LIST.equals(m_mediaType)) {
-            return new ComponentListPublishable(data, m_mediaType);
+            List singleElementList = new ArrayList();
+            singleElementList.add(data.getUri());
+            return new UriListPublishable(singleElementList, m_mediaType);
         } else if (MediaType.TEXT_HTML.equals(m_mediaType)) {
             if (data instanceof IHTMLSupport) {
                 p = new HTMLPublishable(((IHTMLSupport) data).inHtml(), MediaType.TEXT_HTML);

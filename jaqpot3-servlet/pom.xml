@@ -102,24 +102,20 @@
 
                 <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
 
-                <!-- ***** DATABASE ***** -->
 
-                <!--Database name
-                Default value: toxotisdb-->
-                <jaqpot.database.name>toxotisdb</jaqpot.database.name>
+                <!--***** EXECUTION POOL ***** -->
 
-                <!--MySQL server port
-                Default value: 3306-->
-                <jaqpot.database.mysqlport>3306</jaqpot.database.mysqlport>
+                <!--Blocking Queue Size
+                Default Value: 100-->
+                <taskpool.blockingQueueSize>100</taskpool.blockingQueueSize>
 
-                <!--Database user
-                Which user is used to access the database
-                Default value: root-->
-                <jaqpot.database.user>root</jaqpot.database.user>
+                <!--Maximum size of the execution pool
+                Default value: 4-->
+                <taskpool.maxSize>4</taskpool.maxSize>
 
-                <!--Password for accessing your MySQL database server
-                Default value: opensess@me [CHANGE IT!!!]-->
-                <jaqpot.database.password>opensess@me</jaqpot.database.password>
+                <!--Core size of the execution pool
+                Default value: 4-->
+                <taskpool.coreSize>4</taskpool.coreSize>
             </properties>
         </profile>
     </profiles>
