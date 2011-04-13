@@ -123,7 +123,7 @@ public class AlgorithmResource extends JaqpotResource {
             toggleInsufficientStorage();
             return errorReport("UserQuotaExceeded",
                     "User Quota Exceeded! Cannot create another Model",
-                    "Dear " + creator.getName() + ", " + "you have exceeded your quota on this server (" + maxModels + "). "
+                    "Dear " + creator.getName() + ", " + "you have exceeded your quota on this server (" + numModels + ">=" + maxModels + "). "
                     + "Due to technical limitations you are not allowed to create more "
                     + "models [Insufficient storage]. You are advised to delete some of your models and try again. Check your quota at "
                     + Configuration.BASE_URI + "/user/" + creator.getUid() + "/quota . Maximum number of models for you is : "

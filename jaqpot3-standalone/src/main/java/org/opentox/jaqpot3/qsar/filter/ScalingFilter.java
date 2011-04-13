@@ -40,6 +40,7 @@ public class ScalingFilter extends AbstractTrainer {
     double min = 0;
     double max = 1;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
+    private VRI featureService;
 
     private Model processAbsoluteScaling(Dataset data) throws JaqpotException {
         Instances dataInst = data.getInstances();
@@ -64,17 +65,17 @@ public class ScalingFilter extends AbstractTrainer {
                     actualModel.getMinVals().put(featureVri, dataInst.kthSmallestValue(i, 1));
                     actualModel.getMaxVals().put(featureVri, dataInst.kthSmallestValue(i, dataInst.numInstances()));
                     Feature f = FeatureFactory.createAndPublishFeature("Scaled Feature " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
-                            new ResourceValue(newModelUri, OTClasses.Model()), Services.ideaconsult().augment("feature"), token);
+                            new ResourceValue(newModelUri, OTClasses.Model()), featureService, token);
                     f.getMeta().setHasSources(new HashSet<ResourceValue>());// << workaround!
                     scalingModel.addPredictedFeatures(f);
-//                    System.out.println("Scaled feature for " + featureVri.toString() + " has been created at " + f.getUri().toString());
                     //getTask().getMeta().setComments(new HashSet<LiteralValue>());
-                    getTask().getMeta().addComment("Scaled feature for " + featureVri.toString() + " has been created at " + f.getUri().toString());
+                    getTask().getMeta().addComment("Scaled feature for " + featureVri.toString()
+                            + " has been created at " + f.getUri().toString());
 
                     UpdateTask taskUpdater = new UpdateTask(getTask());
                     //taskUpdater.setUpdatePercentageCompleted(true);
                     taskUpdater.setUpdateMeta(true);
-                    
+
                     try {
                         taskUpdater.update();
                     } catch (DbException ex) {
@@ -120,10 +121,8 @@ public class ScalingFilter extends AbstractTrainer {
 
     @Override
     public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
-        boolean scaling_bounds_provided = false;
         String minString = clientParameters.getFirstValue("min");
         if (minString != null) {
-            scaling_bounds_provided = true;
             try {
                 min = Double.parseDouble(minString);
             } catch (NumberFormatException nfe) {
@@ -132,7 +131,6 @@ public class ScalingFilter extends AbstractTrainer {
         }
         String maxString = clientParameters.getFirstValue("max");
         if (maxString != null) {
-            scaling_bounds_provided = true;
             try {
                 max = Double.parseDouble(maxString);
             } catch (NumberFormatException nfe) {
@@ -142,6 +140,16 @@ public class ScalingFilter extends AbstractTrainer {
         if (max <= min) {
             throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
                     + "you spcified are inconsistent. min=" + min + " while max=" + max + ". It should be min &lt; max.");
+        }
+        String featureServiceString = clientParameters.getFirstValue("feature_service");
+        if (featureServiceString != null) {
+            try {
+                featureService = new VRI(featureServiceString);
+            } catch (URISyntaxException ex) {
+                throw new BadParameterException("The parameter 'feature_service' you provided is not a valid URI.", ex);
+            }
+        } else {
+            featureService = Services.ideaconsult().augment("feature");
         }
         return this;
     }

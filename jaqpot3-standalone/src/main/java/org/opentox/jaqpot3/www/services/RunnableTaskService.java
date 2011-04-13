@@ -39,14 +39,7 @@ public abstract class RunnableTaskService implements Runnable {
         }
         ErrorReport er = new ErrorReport(httpStatus, actor, explanation + additionalMessage, details, code);
         task.setErrorReport(er);
-
-         System.out.println(er.getActor());
-         System.out.println(er.getDetails());
-         System.out.println(er.getErrorCause());
-         System.out.println(er.getErrorCode());
-         System.out.println(er.getHttpStatus());
-         System.out.println(er.getMessage());
-         System.out.println(er.getUri());
+         
         AddErrorReport addError = new AddErrorReport(task.getErrorReport());
         try {
             addError.write();

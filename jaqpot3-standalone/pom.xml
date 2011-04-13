@@ -48,12 +48,12 @@
                 <jaqpot_port>8080</jaqpot_port>
                 <!--Domain name of the service
                 Default value: localhost-->
-                <jaqpot_domain>alphaville</jaqpot_domain>
+                <jaqpot_domain>147.102.82.215</jaqpot_domain>
                 <!--Maximum number of allowed models per user
                 Service providers might specify per-user
                 limits accessing the database (table User)
                 Default value: 2000-->
-                <jaqpot.max_models_per_user>2000</jaqpot.max_models_per_user>
+                <jaqpot.max_models_per_user>15000</jaqpot.max_models_per_user>
                 <!--Maximum number of allowed bibtex entries per user
                 Service providers might specify per-user
                 limits accessing the database (table User)

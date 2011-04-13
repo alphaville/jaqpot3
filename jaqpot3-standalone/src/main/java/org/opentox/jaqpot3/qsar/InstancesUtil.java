@@ -69,6 +69,12 @@ public class InstancesUtil {
             String feature = features.get(i);
             Attribute attribute = data.attribute(feature);
             if (attribute == null) {
+                System.out.println("Debugging information...");
+                for (String s : features){
+                    System.out.println(s);
+                }
+                System.out.println(data);
+                System.out.println(compoundURIposition);
                 throw new JaqpotException("The Dataset you provided does not contain feature:" + feature);
             }
             vector.addElement(attribute.copy());
