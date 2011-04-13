@@ -38,6 +38,7 @@ import org.restlet.resource.ResourceException;
 public class AlgorithmResource extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("algorithm", "algorithm_id", null);
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AlgorithmResource.class);
     private UUID uuid = UUID.randomUUID();
 
     @Override
@@ -158,11 +159,13 @@ public class AlgorithmResource extends JaqpotResource {
         } catch (DbException ex) {
             // User is already registered! :-)
             // Proceed...
-        }finally{
+        } finally {
             try {
                 addUser.close();
             } catch (DbException ex) {
-                Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+                String msg = "User DB writer is uncloseable";
+                logger.error(msg, ex);
+                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
         /*
@@ -173,12 +176,16 @@ public class AlgorithmResource extends JaqpotResource {
         try {
             taskAdder.write();
         } catch (DbException ex) {
-            Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            String msg = "Task cannot be added in the database due to connectivity reasons";
+            logger.error(msg, ex);
+            return errorReport(ex, "DBWriterFailed", msg, variant.getMediaType(), false);
         } finally {
             try {
                 taskAdder.close();
             } catch (DbException ex) {
-                Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+                String msg = "Task DB writer is uncloseable";
+                logger.error(msg, ex);
+                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
 

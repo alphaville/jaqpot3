@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
@@ -29,6 +28,7 @@ import org.restlet.resource.ResourceException;
 public class BibTexResource extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("bibtex", "bibtex_id", null);
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BibTexResource.class);
 
     public BibTexResource() {
     }
@@ -57,8 +57,7 @@ public class BibTexResource extends JaqpotResource {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
 
-        FindBibTeX fb = new FindBibTeX(Configuration.getBaseUri().augment("bibtex"));
-        System.out.println("Searching for... " + primaryId);
+        FindBibTeX fb = new FindBibTeX(Configuration.getBaseUri().augment("bibtex"));        
         fb.setSearchById(primaryId);
         IDbIterator<BibTeX> bibtexFound = null;
         BibTeX bibtex = null;
@@ -73,12 +72,12 @@ public class BibTexResource extends JaqpotResource {
             try {
                 bibtexFound.close();
             } catch (DbException ex) {
-                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("DbIterator is uncloseable",ex);
             }
             try {
                 fb.close();
             } catch (DbException ex) {
-                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("DB reader is uncloseable",ex);
             }
         }
 

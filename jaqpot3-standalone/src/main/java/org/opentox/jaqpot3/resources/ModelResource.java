@@ -111,14 +111,18 @@ public class ModelResource extends JaqpotResource {
                 try {
                     modelsFound.close();
                 } catch (DbException ex) {
-                    Logger.getLogger(ModelResource.class.getName()).log(Level.SEVERE, null, ex);
+                    String msg = "DB iterator is uncloseable";
+                    logger.error(msg, ex);
+                    return errorReport(ex, "DBIteratorUncloseable", msg, variant.getMediaType(), false);
                 }
             }
             if (finder != null) {
                 try {
                     finder.close();
                 } catch (DbException ex) {
-                    Logger.getLogger(ModelResource.class.getName()).log(Level.SEVERE, null, ex);
+                    String msg = "Model Finder (DB reader) is uncloseable";
+                    logger.error(msg, ex);
+                    return errorReport(ex, "DBReaderUncloseable", msg, variant.getMediaType(), false);
                 }
             }
         }
@@ -136,7 +140,9 @@ public class ModelResource extends JaqpotResource {
             try {
                 disabler.close();
             } catch (DbException ex) {
-                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                String msg = "DB updater is uncloseable";
+                logger.error(msg, ex);
+                return errorReport(ex, "DBUpdaterUncloseable", msg, variant.getMediaType(), false);
             }
         }
         return null;
@@ -186,7 +192,9 @@ public class ModelResource extends JaqpotResource {
             try {
                 taskAdder.close();
             } catch (DbException ex) {
-                Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+                String msg = "Task registerer (DB writer) is uncloseable";
+                logger.error(msg, ex);
+                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
 
@@ -200,19 +208,25 @@ public class ModelResource extends JaqpotResource {
                 model = modelsFound.next();
             }
         } catch (DbException ex) {
-            Logger.getLogger(ModelResource.class.getName()).log(Level.SEVERE, null, ex);
+            String msg = "Model cannot be found due to DB connection problems";
+            logger.error(msg, ex);
+            return errorReport(ex, "DBConnectionException", msg, variant.getMediaType(), false);
         } finally {
             if (modelsFound != null) {
                 try {
                     modelsFound.close();
                 } catch (DbException ex) {
-                    Logger.getLogger(ModelResource.class.getName()).log(Level.SEVERE, null, ex);
+                    String msg = "Model Iterator (DB iterator) is uncloseable";
+                    logger.error(msg, ex);
+                    return errorReport(ex, "DBIteratorUncloseable", msg, variant.getMediaType(), false);
                 }
             }
             try {
                 modelFinder.close();
             } catch (DbException ex) {
-                Logger.getLogger(ModelResource.class.getName()).log(Level.SEVERE, null, ex);
+                String msg = "Model Finder (DB reader) is uncloseable";
+                logger.error(msg, ex);
+                return errorReport(ex, "DBReaderUncloseable", msg, variant.getMediaType(), false);
             }
         }
 

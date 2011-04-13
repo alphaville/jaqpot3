@@ -1,4 +1,4 @@
-package  org.opentox.jaqpot3.resources;
+package org.opentox.jaqpot3.resources;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import org.opentox.jaqpot3.pool.ExecutionPool;
@@ -13,6 +13,7 @@ import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.task.FindTask;
+import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.ontology.MetaInfo;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
@@ -52,23 +53,46 @@ public class TaskResource extends JaqpotResource {
     }
 
     @Override
-    protected Representation get(Variant variant) throws ResourceException {        
+    protected Representation get(Variant variant) throws ResourceException {
         try {
             if (acceptString != null) {
                 variant.setMediaType(MediaType.valueOf(acceptString));
             }
             Task task = null;
-            FindTask taskFinder = new  FindTask(Configuration.getBaseUri(), true, true);
-            taskFinder.setSearchById(primaryId);
-            IDbIterator<Task> tasksFound = taskFinder.list();
-            if (tasksFound.hasNext()){
-                task = tasksFound.next();
+            FindTask taskFinder = new FindTask(Configuration.getBaseUri(), true, true);
+            IDbIterator<Task> tasksFound = null;
+
+            try {
+                taskFinder.setSearchById(primaryId);
+                tasksFound = taskFinder.list();
+                if (tasksFound.hasNext()) {
+                    task = tasksFound.next();
+                }
+            } catch (DbException ex) {
+                logger.error("DB exception while searchin in the DB for the Task with primary ID '" + primaryId + "'");
+                throw ex;
+            } finally {
+                Exception e = null;
+                try {
+                    if (tasksFound!=null) tasksFound.close();
+                } catch (DbException ex) {
+                    logger.error("DB iterator is uncloseable");
+                    e = ex;
+                }
+                try {
+                    if (taskFinder!=null) taskFinder.close();
+                } catch (DbException ex) {
+                    logger.error("DB reader is uncloseable");
+                    e = ex;
+                }
+                if (e != null) {
+                    throw e;
+                }
             }
-            tasksFound.close();
-            taskFinder.close();
-            
+
+
             if (task == null) {
-                toggleNotFound();            
+                toggleNotFound();
                 return errorReport("TaskNotFound", "The task you requested was not found in our database",
                         "The task with id " + primaryId + " was not found in the database",
                         variant.getMediaType(), false);
@@ -89,7 +113,7 @@ public class TaskResource extends JaqpotResource {
         } catch (final Exception ex) {
             logger.error("Exception thrown from task : " + getReference(), ex);
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
-        } 
+        }
 
     }
 
@@ -154,6 +178,6 @@ public class TaskResource extends JaqpotResource {
 //        toggleSuccess();
 //        closeSession();
 //        return new StringRepresentation("Task " + taskUri + " cancelled" + NEWLINE);
-        
+
     }
 }
