@@ -38,29 +38,20 @@ public class ScalingPredictor extends AbstractPredictor {
         getTask().setPercentageCompleted(3);
         
 
-        ScalingModel actualModel = (ScalingModel) model.getActualModel();
-
-
-        for (Feature f : model.getPredictedFeatures()) {
-            System.out.println(">>> " + f.getUri());
-        }
+        ScalingModel actualModel = (ScalingModel) model.getActualModel();        
 
         Instances inputData = input.getInstances();
         int Nattr = inputData.numAttributes();
         int Ninst = inputData.numInstances();
 
-        System.out.println(3);
         double[] mins = new double[Nattr - 1];
         double[] maxs = new double[Nattr - 1];
 
-        System.out.println(4);
         Attribute currentAttr = null;
         VRI attributeAsVRI = null;
 
         for (int jAttr = 1; jAttr < Nattr; jAttr++) {
-            System.out.println(5);
             currentAttr = inputData.attribute(jAttr);
-            System.out.println(6);
             try {
                 attributeAsVRI = new VRI(currentAttr.name());
             } catch (URISyntaxException ex) {
@@ -68,22 +59,17 @@ public class ScalingPredictor extends AbstractPredictor {
                 continue;
             }
 
-            System.out.println(7);
             mins[jAttr - 1] = 0;
             maxs[jAttr - 1] = 0;
             if (currentAttr.isNumeric()) {
-                System.out.println(8);
                 mins[jAttr - 1] = actualModel.getMinVals().get(attributeAsVRI);
-                System.out.println(9);
                 maxs[jAttr - 1] = actualModel.getMaxVals().get(attributeAsVRI);
-                System.out.println(10);
             }
         }
 
         /* Rename attributes */
         for (int j = 1; j < Nattr; j++) {
             VRI scaledFeatureVri = correspondingScaledVri(inputData.attribute(j).name(), model);
-            System.out.println("renaming " + inputData.attribute(j).name() + " into " + scaledFeatureVri);
             if (scaledFeatureVri != null) {
                 inputData.renameAttribute(j, scaledFeatureVri.toString());
             }
@@ -99,7 +85,6 @@ public class ScalingPredictor extends AbstractPredictor {
                 if (currentAttribute.isNumeric() && !currentInstance.isMissing(j)) {
                     double scaledValue = (currentInstance.value(j) - mins[j - 1]) / (maxs[j - 1] - mins[j - 1]);
                     currentInstance.setValue(j, scaledValue);
-                    System.out.println(scaledValue);
                 }
             }
         }
@@ -108,7 +93,6 @@ public class ScalingPredictor extends AbstractPredictor {
         try {
             return DatasetFactory.createFromArff(inputData);
         } catch (ToxOtisException ex) {
-            System.out.println("FAILURE");
             return null;
         }
 
@@ -117,10 +101,7 @@ public class ScalingPredictor extends AbstractPredictor {
     private VRI correspondingScaledVri(String independentVri, Model scalingModel) {
         int index = -1;
         for (int i = 0; i < scalingModel.getIndependentFeatures().size(); i++) {
-            System.out.println(scalingModel.getIndependentFeatures().get(i).getUri().toString() + " $$$$");
-            System.out.println(independentVri.toString() + " @@@@");
             if (scalingModel.getIndependentFeatures().get(i).getUri().toString().equals(independentVri)) {
-                System.out.println("******");
                 index = i;
                 break;
             }

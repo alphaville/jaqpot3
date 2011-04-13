@@ -154,7 +154,6 @@ public class ModelResource extends JaqpotResource {
         User creator = null;
         /* CHECK USER QUOTA */
 
-        System.out.println(":)))");
         creator = getUser();
         if (creator == null) {
             toggleUnauthorized();

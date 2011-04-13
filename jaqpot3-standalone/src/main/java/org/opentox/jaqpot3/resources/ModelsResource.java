@@ -140,7 +140,6 @@ public class ModelsResource extends JaqpotResource {
         delete.setProtectedResource(true);
 
         doc.addRestOperations(get, delete);
-        doc.writeRdf(System.out);
         return doc;
     }
 }
