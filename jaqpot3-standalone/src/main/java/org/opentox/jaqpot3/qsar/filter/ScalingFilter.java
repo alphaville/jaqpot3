@@ -2,7 +2,9 @@ package org.opentox.jaqpot3.qsar.filter;
 
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -41,15 +43,12 @@ public class ScalingFilter extends AbstractTrainer {
     double max = 1;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
     private VRI featureService;
+    Set<String> ignored = new HashSet<String>();
 
     private Model processAbsoluteScaling(Dataset data) throws JaqpotException {
+        System.out.println("ignored :");
+        System.out.println(ignored);
         Instances dataInst = data.getInstances();
-        try {
-            DatasetFactory.createFromArff(dataInst);
-        } catch (ToxOtisException ex) {
-            Logger.getLogger(ScalingFilter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
 
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model scalingModel = new Model(newModelUri);
@@ -57,7 +56,11 @@ public class ScalingFilter extends AbstractTrainer {
         int nAttr = dataInst.numAttributes();
         for (int i = 0; i < nAttr; i++) {
             Attribute attribute = dataInst.attribute(i);
-            if (attribute.isNumeric()) {
+            if (ignored.contains(attribute.name())) {
+                System.out.println("IGNORING : " + attribute.name());
+            }
+            if (attribute.isNumeric() && !ignored.contains(attribute.name())) {
+                System.out.println("**** " + attribute.name());
                 try {
                     VRI featureVri = new VRI(attribute.name());
                     scalingModel.addIndependentFeatures(new Feature(featureVri));
@@ -151,6 +154,15 @@ public class ScalingFilter extends AbstractTrainer {
         } else {
             featureService = Services.ideaconsult().augment("feature");
         }
+
+        String[] ignoredUris = clientParameters.getValuesArray("ignore_uri");
+
+        for (String s : ignoredUris) {
+            ignored.add(s);
+        }
+
+
+
         return this;
     }
 

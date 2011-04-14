@@ -48,7 +48,7 @@
                 <jaqpot_port>8080</jaqpot_port>
                 <!--Domain name of the service
                 Default value: localhost-->
-                <jaqpot_domain>147.102.82.215</jaqpot_domain>
+                <jaqpot_domain>alphaville</jaqpot_domain>
                 <!--Maximum number of allowed models per user
                 Service providers might specify per-user
                 limits accessing the database (table User)

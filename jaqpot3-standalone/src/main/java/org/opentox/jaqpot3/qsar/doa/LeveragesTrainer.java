@@ -3,13 +3,10 @@ package org.opentox.jaqpot3.qsar.doa;
 import Jama.Matrix;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -26,8 +23,8 @@ import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
-import org.opentox.toxotis.core.component.Task.Status;
-import org.opentox.toxotis.ontology.LiteralValue;
+import org.opentox.toxotis.database.engine.task.UpdateTask;
+import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
 import weka.core.Attribute;
@@ -110,7 +107,25 @@ public class LeveragesTrainer extends AbstractTrainer {
                 VRI resultUri = predictedFeatureUri.get();
                 predictedFeature.setUri(resultUri);
                 getTask().getMeta().addComment("Prediction Feature created: " + resultUri);
-//                new RegisterTool().storeTask(getTask());
+
+                UpdateTask updater = new UpdateTask(getTask());
+                updater.setUpdateMeta(true);
+                try {
+                    updater.update();
+                } catch (DbException ex) {
+                    String msg = "DB Update operation failed";
+                    logger.error(msg);
+                    throw new JaqpotException(msg, ex);
+                } finally {
+                    try {
+                        updater.close();
+                    } catch (DbException ex) {
+                        String msg = "DB Updater uncloseable";
+                        logger.error(msg);
+                        throw new JaqpotException(msg, ex);
+                    }
+                }
+
             } catch (ExecutionException ex) {
                 logger.error("Exceptional event occured while registering/updating task in DB", ex);
             }

@@ -78,6 +78,8 @@ public class TrainingService extends RunnableTaskService {
             /* STORE THE MODEL IN THE DATABASE :-)*/
             resultModel.getMeta().addCreator(token.getUser().getUid());
 
+            System.out.println(resultModel.getActualModel());
+
             AddModel modelAdder = new AddModel(resultModel);
 
             //TODO: Handle exceptions properly
@@ -85,7 +87,7 @@ public class TrainingService extends RunnableTaskService {
             modelAdder.close();
 
 
-            /* UPDATE THE TASK :)*/
+            /* UPDATE THE TASK - COMPLETED :)*/
             trainer.getTask().setDuration(System.currentTimeMillis() - startingTime);
             trainer.getTask().getMeta().
                     addComment("Training completed successfully! The model is now stored in the database.");

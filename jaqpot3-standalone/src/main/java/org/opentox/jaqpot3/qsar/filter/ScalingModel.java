@@ -2,7 +2,9 @@ package org.opentox.jaqpot3.qsar.filter;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.opentox.toxotis.client.VRI;
 
 /**
@@ -31,8 +33,38 @@ public class ScalingModel implements Serializable {
         return maxVals;
     }
 
+    public Map<String, Double> getMaxVals2() {
+        if (maxVals == null) {
+            return null;
+        }
+        Map<String, Double> simpleMap = new HashMap<String, Double>();
+        if (!maxVals.isEmpty()) {
+            Iterator<Entry<VRI, Double>> iterator = maxVals.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<VRI, Double> entry = iterator.next();
+                simpleMap.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        return simpleMap;
+    }
+
     public Map<VRI, Double> getMinVals() {
         return minVals;
+    }
+
+    public Map<String, Double> getMinVals2() {
+        if (minVals == null) {
+            return null;
+        }
+        Map<String, Double> simpleMap = new HashMap<String, Double>();
+        if (!minVals.isEmpty()) {
+            Iterator<Entry<VRI, Double>> iterator = minVals.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<VRI, Double> entry = iterator.next();
+                simpleMap.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        return simpleMap;
     }
 
     public double getMax() {
@@ -58,6 +90,4 @@ public class ScalingModel implements Serializable {
     public void setDatasetReference(VRI datasetReference) {
         this.datasetReference = datasetReference;
     }
-
-    
 }

@@ -34,15 +34,19 @@ public class OpenSSOAuthorizer extends Authorizer {
     private boolean doAuthentication = true;
     private String acceptHeader;
     private MediaType acceptedMedia = MediaType.TEXT_HTML;
+    private final boolean protectGet;
+    private final boolean protectPost;
 
     private static boolean doAuthentication() {
         boolean doAuth = Boolean.parseBoolean(Configuration.getStringProperty("jaqpot.doAuthentication").toLowerCase());
         return doAuth;
     }
 
-    public OpenSSOAuthorizer() {
+    public OpenSSOAuthorizer(boolean protectGet, boolean protectPost) {
         super();
         SSLConfiguration.initializeSSLConnection();
+        this.protectGet = protectGet;
+        this.protectPost = protectPost;
     }
 
     private synchronized void throwError(
@@ -118,6 +122,16 @@ public class OpenSSOAuthorizer extends Authorizer {
 
     @Override
     protected boolean authorize(Request request, Response response) {
+        String clientRequest = request.getMethod().getName();
+
+        if ("GET".equals(clientRequest) && !protectGet) {
+            return true;
+        }
+
+        if ("POST".equals(clientRequest) && !protectPost) {
+            return true;
+        }
+
         acceptHeader = request.getResourceRef().getQueryAsForm().getFirstValue("accept");
         if (acceptHeader != null) {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
@@ -139,7 +153,6 @@ public class OpenSSOAuthorizer extends Authorizer {
             return true;
         }
         String clientAddress = request.getClientInfo().getAddress();
-        String clientRequest = request.getMethod().getName();
         String actionUri = request.getResourceRef().toString();
         AuthenticationToken userToken = getToken(request, response);
         try {

@@ -78,8 +78,11 @@ public class PredictionService extends RunnableTaskService {
             predictor.parametrize(clientInput);
             VRI datasetURI = new VRI(datasetUri);
             Dataset ds = new Dataset(datasetURI).loadFromRemote(token);
+
+            /* GET THE PREDICTIONS FROM THE PREDICTOR */
             Dataset output = predictor.predict(ds);
 
+            /* */
             Future<VRI> future = output.publish(datasetServiceUri, token);
             float counter = 1;
             while (!future.isDone()) {

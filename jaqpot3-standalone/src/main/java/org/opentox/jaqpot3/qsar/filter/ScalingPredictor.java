@@ -2,7 +2,10 @@ package org.opentox.jaqpot3.qsar.filter;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,89 +30,93 @@ import weka.core.Instances;
  */
 public class ScalingPredictor extends AbstractPredictor {
 
+    /**
+     * Feature URI ---> Scaled Feature URI
+     */
+    private Map<String, String> featureToScaled = new HashMap<String, String>();
+
     @Override
     public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
         return this;
     }
 
+    private void updateFeatureMap(Model model) {
+        assert (model.getIndependentFeatures().size() == model.getDependentFeatures().size());
+        List<Feature> predictedFeatures = model.getPredictedFeatures();
+        Iterator<Feature> predictedIterator = predictedFeatures.iterator();
+        for (Feature f : model.getIndependentFeatures()) {
+            featureToScaled.put(f.getUri().toString(), predictedIterator.next().getUri().toString());
+        }
+    }
+
     @Override
     public Dataset predict(Dataset input) throws JaqpotException {
+        try{
+        ScalingModel actualModel = (ScalingModel) model.getActualModel();
+        System.out.println(actualModel);
+        System.out.println(actualModel.getMax());
+        System.out.println(actualModel.getMin());
         
-        getTask().setPercentageCompleted(3);
-        
+        Map<String, Double> mins = actualModel.getMinVals2();
+        Map<String, Double> maxs = actualModel.getMaxVals2();
 
-        ScalingModel actualModel = (ScalingModel) model.getActualModel();        
+        System.out.println("mins ...");
+        System.out.println(actualModel.getMinVals());
+        System.out.println("maxs ...");
+        System.out.println(actualModel.getMaxVals());
 
+        updateFeatureMap(model);
+
+        /** GET INSTANCES**/
         Instances inputData = input.getInstances();
-        int Nattr = inputData.numAttributes();
+
+
+        //int Nattr = inputData.numAttributes();
         int Ninst = inputData.numInstances();
 
-        double[] mins = new double[Nattr - 1];
-        double[] maxs = new double[Nattr - 1];
+        Iterator<String> features = featureToScaled.keySet().iterator();
 
-        Attribute currentAttr = null;
-        VRI attributeAsVRI = null;
-
-        for (int jAttr = 1; jAttr < Nattr; jAttr++) {
-            currentAttr = inputData.attribute(jAttr);
-            try {
-                attributeAsVRI = new VRI(currentAttr.name());
-            } catch (URISyntaxException ex) {
-                ex.printStackTrace(System.out);
-                continue;
-            }
-
-            mins[jAttr - 1] = 0;
-            maxs[jAttr - 1] = 0;
-            if (currentAttr.isNumeric()) {
-                mins[jAttr - 1] = actualModel.getMinVals().get(attributeAsVRI);
-                maxs[jAttr - 1] = actualModel.getMaxVals().get(attributeAsVRI);
-            }
-        }
-
-        /* Rename attributes */
-        for (int j = 1; j < Nattr; j++) {
-            VRI scaledFeatureVri = correspondingScaledVri(inputData.attribute(j).name(), model);
-            if (scaledFeatureVri != null) {
-                inputData.renameAttribute(j, scaledFeatureVri.toString());
-            }
-        }
-
-        /* Scale the data */
+        String nextFeature = null;
         Attribute currentAttribute = null;
-        Instance currentInstance = null;
-        for (int i = 0; i < Ninst; i++) {
-            currentInstance = inputData.instance(i);
-            for (int j = 1; j < Nattr; j++) {
-                currentAttribute = inputData.attribute(j);
-                if (currentAttribute.isNumeric() && !currentInstance.isMissing(j)) {
-                    double scaledValue = (currentInstance.value(j) - mins[j - 1]) / (maxs[j - 1] - mins[j - 1]);
-                    currentInstance.setValue(j, scaledValue);
-                }
+        double currentMin = 0;
+        double currentMax = 1;
+        double currentValue = 0;
+
+        while (features.hasNext()) {
+            nextFeature = features.next();
+            currentMin = mins.get(nextFeature);
+            currentMax = maxs.get(nextFeature);
+            currentAttribute = inputData.attribute(nextFeature);
+            for (int iInst = 0; iInst < Ninst; iInst++) {
+                currentValue = inputData.instance(iInst).value(currentAttribute);
+                currentValue = (currentValue - currentMin) / (currentMax - currentMin);
+                inputData.instance(iInst).setValue(currentAttribute, currentValue);
             }
         }
 
 
+        /** Rename Attributes in `inputData` **/
+        features = featureToScaled.keySet().iterator();
+        while (features.hasNext()) {
+            nextFeature = features.next();
+            currentAttribute = inputData.attribute(nextFeature);
+            if (currentAttribute == null) {
+                throw new JaqpotException("The dataset you provided does not contain the necessary "
+                        + "feature : " + nextFeature);
+            }
+            inputData.renameAttribute(currentAttribute, featureToScaled.get(nextFeature));
+        }
         try {
             return DatasetFactory.createFromArff(inputData);
         } catch (ToxOtisException ex) {
-            return null;
+            throw new JaqpotException(ex);
         }
 
-    }
 
-    private VRI correspondingScaledVri(String independentVri, Model scalingModel) {
-        int index = -1;
-        for (int i = 0; i < scalingModel.getIndependentFeatures().size(); i++) {
-            if (scalingModel.getIndependentFeatures().get(i).getUri().toString().equals(independentVri)) {
-                index = i;
-                break;
-            }
-        }
-        if (index != -1) {
-            return scalingModel.getPredictedFeatures().get(index).getUri();
+        } catch (Throwable thr){
+            thr.printStackTrace();
+
         }
         return null;
-
     }
 }

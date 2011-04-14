@@ -105,6 +105,8 @@ public class MlrRegression extends AbstractTrainer {
             Feature dependentFeature = new Feature(targetUri);
             m.addDependentFeatures(dependentFeature);
 
+            System.out.println(dependentFeature.getMeta().getTitles());
+
             /*
              * COMPILE THE LIST OF INDEPENDENT FEATURES with the exact order in which
              * these appear in the Instances object (training set).

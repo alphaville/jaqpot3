@@ -40,7 +40,6 @@ final public class WebApplecation extends JaqpotWebApplication {
     public static final String done = "[DONE]";
     public static final String fail = System.console() != null ? "\033[1;31m[FAIL]\033[0m" : "[FAIL]";
     private static Component component;
-    
 
     static {
 
@@ -52,7 +51,7 @@ final public class WebApplecation extends JaqpotWebApplication {
          * Configure Database
          */
         Properties props = new Properties();
-        InputStream propertiesIn = cl.getResourceAsStream("c3p0.properties");        
+        InputStream propertiesIn = cl.getResourceAsStream("c3p0.properties");
         try {
             props.load(propertiesIn);
         } catch (IOException ex) {
@@ -64,7 +63,7 @@ final public class WebApplecation extends JaqpotWebApplication {
             java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println("*** KEY : "+props.getProperty("key"));
+        System.out.println("*** KEY : " + props.getProperty("key"));
         org.opentox.toxotis.database.global.DbConfiguration.getInstance().setProperties(props);
 
         DataSourceFactory f = DataSourceFactory.getInstance();
@@ -99,7 +98,6 @@ final public class WebApplecation extends JaqpotWebApplication {
     public Restlet createInboundRoot() {
         Router router = new YaqpRouter(this.getContext().createChildContext());
         router.attachDefault(IndexResource.class);
-        protectResource(router, BibTexAllResource.class);
         router.attach(BibTexResource.template.toString(), BibTexResource.class);
         router.attach(AlgorithmsResource.template.toString(), AlgorithmsResource.class);
         router.attach(AlgorithmResource.template.toString(), AlgorithmResource.class);
@@ -111,19 +109,20 @@ final public class WebApplecation extends JaqpotWebApplication {
         router.attach(DbStatisticsResource.template.toString(), DbStatisticsResource.class);
         router.attach(RescueResource.template.toString(), RescueResource.class);
 
-        protectResource(router, ModelResource.class);
-        protectResource(router, ShutDownResource.class);
+        protectResource(router, BibTexAllResource.class, false, true);
+        protectResource(router, ModelResource.class, false, true);
+        protectResource(router, ShutDownResource.class, true, true);
 
         return router;
     }
 
-    private void protectResource(Router baseRouter, Class<? extends JaqpotResource> toBeAttached) {
+    private void protectResource(Router baseRouter, Class<? extends JaqpotResource> toBeAttached, boolean protectGet, boolean protectPost) {
         try {
             String templatedUri = toBeAttached.getField("template").get(null).toString();
             Router protectedRouter = new Router(getContext());
             protectedRouter.attachDefault(toBeAttached);
             protectedRouter.attach(templatedUri, toBeAttached);
-            Filter openssoAuthz = new OpenSSOAuthorizer();
+            Filter openssoAuthz = new OpenSSOAuthorizer(protectGet, protectPost);
             openssoAuthz.setNext(protectedRouter);
             baseRouter.attach(templatedUri, openssoAuthz);
         } catch (Exception ex) {

@@ -195,13 +195,14 @@ public class Algorithms {
                 max.getMeta().addDescription("Maximum value for the scaled data");
                 scaling.getParameters().add(max);
 
-                Parameter scaling_reference =
+                Parameter ignore_uri =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "scaling_referece"), "scaling_reference", new LiteralValue(null, XSDDatatype.XSDanyURI)).setScope(
+                        Configuration.getBaseUri().augment("prm", "ignore_uri"), "ignore_uri", new LiteralValue(null, XSDDatatype.XSDanyURI)).setScope(
                         Parameter.ParameterScope.OPTIONAL);
-                scaling_reference.getMeta().addDescription("If a dataset URI is provided, then the scaling is carried out with respect to the minimum and maximum "
-                        + "values of the features in that dataset. Used for applying a dataset on a model that requires scaled data.");
-                scaling.getParameters().add(scaling_reference);
+                ignore_uri.getMeta().addDescription("If a dataset URI is provided, then the scaling is carried out with respect to the minimum and maximum "
+                        + "values of the features in that dataset. Used for applying a dataset on a model that requires scaled data.").
+                        addComment("Not supported yet.");
+                scaling.getParameters().add(ignore_uri);
                 scaling.getMeta().addRights(_LICENSE);
                 scaling.setEnabled(true);
             } catch (ToxOtisException ex) {
