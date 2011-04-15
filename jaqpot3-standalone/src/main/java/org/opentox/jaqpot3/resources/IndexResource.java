@@ -52,8 +52,8 @@ public class IndexResource extends JaqpotResource {
         list.add(Configuration.getBaseUri().augment("bibtex").toString());
         list.add(Configuration.getBaseUri().augment("dbstats").toString());
         list.add(Configuration.getBaseUri().augment("user").toString());
-
-        Representation rep;
+        list.add(Configuration.getBaseUri().augment("login").toString());
+        
         if (MediaType.TEXT_HTML.equals(mediatype) || MediaType.TEXT_URI_LIST.equals(mediatype)) {
             try {
                 UriListPublishable listPublishable = new UriListPublishable(list);

@@ -71,8 +71,10 @@ public class ModelsResource extends JaqpotResource {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
 
-
         ListModel lister = new ListModel();
+        if (getSqlQuery() != null) {
+            lister.setWhere(getSqlQuery());
+        }
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("model"));
@@ -83,6 +85,25 @@ public class ModelsResource extends JaqpotResource {
                     variant.getMediaType(), false);
         }
 
+    }
+
+    private String getSqlQuery() {
+        StringBuilder query = new StringBuilder();
+        if (this.creator != null) {
+            query.append("createdBy LIKE '");
+            query.append(creator);
+            query.append("@opensso.in-silico.ch'");
+        }
+        if (this.algorithm != null) {
+            if (query.length() > 0) {
+                query.append(" AND ");
+            }
+            query.append("algorithm LIKE '%");
+            query.append(this.algorithm);
+            query.append("'");
+        }
+        String q = query.toString();
+        return q.isEmpty() ? null : q;
     }
 
     @Override

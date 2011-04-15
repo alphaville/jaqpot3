@@ -97,7 +97,6 @@
 
                 <url.suffix></url.suffix>
 
-                <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
 
 
                 <!--***** EXECUTION POOL ***** -->

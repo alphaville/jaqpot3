@@ -57,12 +57,6 @@ public class TasksResource extends JaqpotResource {
         } catch (DbException ex) {
         }
 
-        
-
-
-
-
-
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
         publisher.setBaseUri(Configuration.getBaseUri().augment("task"));
@@ -73,6 +67,6 @@ public class TasksResource extends JaqpotResource {
                     variant.getMediaType(), false);
         }
 
-        
+
     }
 }

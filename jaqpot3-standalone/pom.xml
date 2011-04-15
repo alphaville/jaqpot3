@@ -63,9 +63,7 @@
                 <jaqpot.max_tasks_per_user>10</jaqpot.max_tasks_per_user>
 
 
-                <url.suffix></url.suffix>
-
-                <jaqpot.doAuthentication>false</jaqpot.doAuthentication>
+                <url.suffix></url.suffix>                
 
 
 

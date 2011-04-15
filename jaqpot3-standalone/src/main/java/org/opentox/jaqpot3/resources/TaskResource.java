@@ -1,20 +1,21 @@
 package org.opentox.jaqpot3.resources;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opentox.jaqpot3.pool.ExecutionPool;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.URITemplate;
-import org.opentox.toxotis.core.IRestOperation;
-import org.opentox.toxotis.core.component.HttpMediatype;
 import org.opentox.toxotis.core.component.HttpStatus;
 import org.opentox.toxotis.core.component.RestOperation;
 import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.engine.DisableComponent;
 import org.opentox.toxotis.database.engine.task.FindTask;
+import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
-import org.opentox.toxotis.ontology.MetaInfo;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
@@ -74,13 +75,17 @@ public class TaskResource extends JaqpotResource {
             } finally {
                 Exception e = null;
                 try {
-                    if (tasksFound!=null) tasksFound.close();
+                    if (tasksFound != null) {
+                        tasksFound.close();
+                    }
                 } catch (DbException ex) {
                     logger.error("DB iterator is uncloseable");
                     e = ex;
                 }
                 try {
-                    if (taskFinder!=null) taskFinder.close();
+                    if (taskFinder != null) {
+                        taskFinder.close();
+                    }
                 } catch (DbException ex) {
                     logger.error("DB reader is uncloseable");
                     e = ex;
@@ -162,22 +167,88 @@ public class TaskResource extends JaqpotResource {
 
     @Override
     protected Representation delete(Variant variant) throws ResourceException {
-        return null;
-//        String taskUri = Configuration.getBaseUri().augment("task", primaryId).toString();
-//        Task task = (Task) getNewSession().createCriteria(Task.class).add(Restrictions.like("uri", "%/task/" + primaryId)).uniqueResult();
-//        if (task == null) {
-//            toggleNotFound();
-//            return errorReport("TaskNotFound", "The task you requested was not found in our database",
-//                    "The task with id " + primaryId + " was not found in the database",
-//                    variant.getMediaType(), false);
-//        }
-//        task.setStatus(Task.Status.CANCELLED);
-//        ExecutionPool.POOL.cancel(primaryId);
-//        task.setDuration(0L);
-//        new RegisterTool().storeTask(task);
-//        toggleSuccess();
-//        closeSession();
-//        return new StringRepresentation("Task " + taskUri + " cancelled" + NEWLINE);
+
+        Task task = null;
+        FindTask taskFinder = new FindTask(Configuration.getBaseUri(), true, true);
+        IDbIterator<Task> tasksFound = null;
+
+        try {
+            taskFinder.setSearchById(primaryId);
+            tasksFound = taskFinder.list();
+            if (tasksFound.hasNext()) {
+                task = tasksFound.next();
+            }
+        } catch (DbException ex) {
+            logger.error("DB exception while searchin in the DB for the Task with primary ID '" + primaryId + "'");
+            //TODO: Handle ex
+
+        } finally {
+            Exception e = null;
+            try {
+                if (tasksFound != null) {
+                    tasksFound.close();
+                }
+            } catch (DbException ex) {
+                logger.error("DB iterator is uncloseable");
+                e = ex;
+            }
+            try {
+                if (taskFinder != null) {
+                    taskFinder.close();
+                }
+            } catch (DbException ex) {
+                logger.error("DB reader is uncloseable");
+                e = ex;
+            }
+            if (e != null) {
+                //TODO: Handle ex
+            }
+        }
+
+
+        if (task == null) {
+            toggleNotFound();
+            return errorReport("TaskNotFound", "The task you requested was not found in our database",
+                    "The task with id " + primaryId + " was not found in the database",
+                    variant.getMediaType(), false);
+        }
+
+
+        if (Task.Status.COMPLETED.equals(task.getStatus())
+                || Task.Status.REJECTED.equals(task.getStatus())
+                || Task.Status.CANCELLED.equals(task.getStatus())) {
+            DisableComponent disabler = new DisableComponent(primaryId);
+            try {
+                disabler.disable();
+            } catch (DbException ex) {
+                Logger.getLogger(TaskResource.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    disabler.close();
+                } catch (DbException ex) {
+                    Logger.getLogger(TaskResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            task.setStatus(Task.Status.CANCELLED);
+            ExecutionPool.POOL.cancel(primaryId);
+            UpdateTask updater = new UpdateTask(task);
+            updater.setUpdateTaskStatus(true);
+            try {
+                updater.update();
+            } catch (DbException ex) {
+                Logger.getLogger(TaskResource.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    updater.close();
+                } catch (DbException ex) {
+                    Logger.getLogger(TaskResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+
+        return new StringRepresentation("Task cancelled" + NEWLINE);
 
     }
 }
