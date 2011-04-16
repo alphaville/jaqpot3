@@ -38,4 +38,9 @@ public abstract class AbstractTrainer implements ITrainer {
     protected UUID getUuid() {
         return this.uuid;
     }
+
+    @Override
+    public boolean needsDataset(){
+        return true;
+    }
 }

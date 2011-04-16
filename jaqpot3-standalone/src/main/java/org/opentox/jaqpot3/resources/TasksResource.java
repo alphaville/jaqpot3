@@ -24,6 +24,7 @@ public class TasksResource extends JaqpotResource {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TasksResource.class);
     public static final URITemplate template = new URITemplate("task", null, null);
     private String status = null;
+    private String creator;
 
     @Override
     protected void doInit() throws ResourceException {
@@ -39,7 +40,27 @@ public class TasksResource extends JaqpotResource {
                 MediaType.TEXT_RDF_N3,
                 MediaType.TEXT_RDF_NTRIPLES);
         parseStandardParameters();
-        status = getRequest().getResourceRef().getQueryAsForm().getFirstValue("status");
+        creator = parseParameter("creator");
+        status = parseParameter("status");
+    }
+
+    private String getSqlQuery() {
+        StringBuilder query = new StringBuilder();
+        if (this.creator != null) {
+            query.append("createdBy LIKE '");
+            query.append(creator);
+            query.append("@opensso.in-silico.ch'");
+        }
+        if (this.status != null) {
+            if (query.length() > 0) {
+                query.append(" AND ");
+            }
+            query.append("status='");
+            query.append(this.status.toUpperCase());
+            query.append("'");
+        }
+        String q = query.toString();
+        return q.isEmpty() ? null : q;
     }
 
     @Override
@@ -49,13 +70,11 @@ public class TasksResource extends JaqpotResource {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
 
-
         ListTasks lister = new ListTasks();
-        IDbIterator<String> list = null;
-        try {
-            list = lister.list();
-        } catch (DbException ex) {
-        }
+
+        if (getSqlQuery() != null) {
+            lister.setWhere(getSqlQuery());
+        }        
 
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());

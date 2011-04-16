@@ -81,6 +81,7 @@ public class OpenSSOAuthorizer extends Authorizer {
              */
             String tokenStringUrlEncoded = request.getResourceRef().getQueryAsForm().getFirstValue("subjectid");
             if (tokenStringUrlEncoded != null) {
+                System.out.println("HERE WE ARE");
                 String tokenString = null;
                 try {
                     tokenString = URLDecoder.decode(tokenStringUrlEncoded, "UTF-8");

@@ -104,6 +104,7 @@ public class ModelResource extends JaqpotResource {
             Publisher p = new Publisher(variant.getMediaType());
             return p.createRepresentation(mdl, true);
         } catch (Exception ex) {
+            ex.printStackTrace();
             logger.error(null, ex);
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
         } finally {
@@ -178,7 +179,7 @@ public class ModelResource extends JaqpotResource {
         task.getMeta().
                 addDescription("Asynchronous Task for Prediction").
                 addComment("Asynchronous task created for a background job initiated by the model: " + primaryId).
-                addHasSource(new ResourceValue(getCurrentVRI(), OTClasses.Model()));
+                addHasSource(new ResourceValue(getCurrentVRI().removeUrlParameter("subjectid"), OTClasses.Model()));
 
 
 

@@ -171,7 +171,7 @@ public class MlrRegression extends AbstractTrainer {
     public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
         String targetString = clientParameters.getFirstValue("prediction_feature");
         if (targetString == null) {
-            throw new BadParameterException("The parameter 'prediction_feaure' is mandatory for this algorithm.");
+            throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
         }
         try {
             targetUri = new VRI(targetString);

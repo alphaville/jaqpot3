@@ -67,7 +67,7 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append("</form><br/>");
 
         formBuilder.append("<p>Click <a href=\"..\">here</a> to go back to the main page</p>");
-        formBuilder.append("</body>");
+        formBuilder.append("</body></html>");
         return formBuilder.toString();
     }
 

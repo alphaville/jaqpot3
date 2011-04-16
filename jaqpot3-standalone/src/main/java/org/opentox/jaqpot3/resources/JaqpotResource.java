@@ -2,7 +2,9 @@ package org.opentox.jaqpot3.resources;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -167,7 +169,18 @@ public abstract class JaqpotResource extends WadlServerResource {
         Form headerParams = (Form) getRequest().getAttributes().get("org.restlet.http.headers");
         String token = headerParams.getFirstValue("subjectid");
         if (token == null) {
-            return null;
+            token = getCookies().getValues("subjectid");
+            if (token == null) {
+                try {
+                    token = URLDecoder.decode(getReference().getQueryAsForm().getFirstValue("subjectid"), "UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    java.util.logging.Logger.getLogger(JaqpotResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println(token);
+                if (token == null) {
+                    return null;
+                }
+            }
         }
         AuthenticationToken userToken = new AuthenticationToken(token);
         return userToken;

@@ -63,22 +63,16 @@ public class ErrorsResource extends JaqpotResource{
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
 
-
         ListError errorLister = new ListError();
-        IDbIterator<String> list = null;
+        
+        DbListStreamPublisher publisher = new DbListStreamPublisher();
+        publisher.setMedia(variant.getMediaType());
+        publisher.setBaseUri(Configuration.getBaseUri().augment("error"));
         try {
-            list = errorLister.list();
-        } catch (DbException ex) {
+            return publisher.process(errorLister);
+        } catch (JaqpotException ex) {
             Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-//        DbListStreamPublisher publisher = new DbListStreamPublisher();
-//        publisher.setBaseUri(Configuration.getBaseUri().augment("error"));
-//        try {
-//            return publisher.process(list);
-//        } catch (JaqpotException ex) {
-//            Logger.getLogger(ModelsResource.class.getName()).log(Level.SEVERE, null, ex);
-//        }
 
         return new StringRepresentation("Under Construction");
     }

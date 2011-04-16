@@ -14,4 +14,6 @@ public interface ITrainer extends IParametrizableAlgorithm {
     Dataset preprocessDataset(Dataset dataset);
 
     Model train(Dataset data) throws JaqpotException;
+
+    boolean needsDataset();
 }

@@ -68,7 +68,14 @@ public class TrainingService extends RunnableTaskService {
         try {
             trainer.parametrize(clientInput); // #NODE_01
             VRI datasetURI = new VRI(datasetUri);// #NODE_02
-            Dataset ds = new Dataset(datasetURI).loadFromRemote(token);// #NODE_03_a
+
+
+            Dataset ds = null;
+            ds = new Dataset(datasetURI);// #NODE_03_a
+            if (trainer.needsDataset()) {
+                ds.loadFromRemote(token);// #NODE_03_a
+            }
+
             Model resultModel = trainer.train(ds);// #NODE_03_b
 
             /* Create a policy for the model (on behalf of the user) */
@@ -77,8 +84,6 @@ public class TrainingService extends RunnableTaskService {
 
             /* STORE THE MODEL IN THE DATABASE :-)*/
             resultModel.getMeta().addCreator(token.getUser().getUid());
-
-            System.out.println(resultModel.getActualModel());
 
             AddModel modelAdder = new AddModel(resultModel);
 

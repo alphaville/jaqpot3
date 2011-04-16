@@ -160,9 +160,6 @@ public class ScalingFilter extends AbstractTrainer {
         for (String s : ignoredUris) {
             ignored.add(s);
         }
-
-
-
         return this;
     }
 
@@ -175,4 +172,5 @@ public class ScalingFilter extends AbstractTrainer {
     public Dataset preprocessDataset(Dataset dataset) {
         return dataset;
     }
+    
 }

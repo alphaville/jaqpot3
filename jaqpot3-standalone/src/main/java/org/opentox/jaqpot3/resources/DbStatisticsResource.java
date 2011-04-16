@@ -66,6 +66,7 @@ public class DbStatisticsResource extends JaqpotResource {
             updateForAlgorithm(document, modelsPerAlgorithm, models, "svm");
             updateForAlgorithm(document, modelsPerAlgorithm, models, "fastRbfNn");
             updateForAlgorithm(document, modelsPerAlgorithm, models, "scaling");
+            updateForAlgorithm(document, modelsPerAlgorithm, models, "leverages");
 
             root.appendChild(models);
 
