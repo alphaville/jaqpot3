@@ -4,6 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.restlet.data.MediaType;
@@ -38,7 +39,7 @@ public class ShutDownResource extends JaqpotResource {
         formBuilder.append("</head>");
         formBuilder.append("<body>");
         formBuilder.append("<h1>Shutdown the server</h1>");
-        formBuilder.append("<form method=\"POST\" action=\"http://alphaville:8080/shutdown\">");
+        formBuilder.append("<form method=\"POST\" action=\""+Configuration.getBaseUri().augment("shutdown")+"\">");
         formBuilder.append("<table>");
         formBuilder.append("<tr>");
         formBuilder.append("<td>Passphrase</td><td><input type=\"password\" value=\"pass\" name=\"pass\"></td>");
