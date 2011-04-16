@@ -3,7 +3,10 @@ package org.opentox.jaqpot3.qsar.regression;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -23,6 +26,7 @@ import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.factory.FeatureFactory;
+import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
 import weka.core.Attribute;
@@ -104,8 +108,23 @@ public class MlrRegression extends AbstractTrainer {
             m.setDataset(datasetUri);
             Feature dependentFeature = new Feature(targetUri);
             m.addDependentFeatures(dependentFeature);
+            try {
+                dependentFeature.loadFromRemote();
+            } catch (ServiceInvocationException ex) {
+                Logger.getLogger(MlrRegression.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            System.out.println(dependentFeature.getMeta().getTitles());
+            HashSet<LiteralValue> depFeatTitles = dependentFeature.getMeta().getTitles();
+
+            String depFeatTitle = dependentFeature.getUri().toString();
+            if (!depFeatTitles.isEmpty()) {
+                depFeatTitle = depFeatTitles.iterator().next().getValueAsString();
+                m.getMeta().addTitle("MLR model for " + depFeatTitle).
+                        addDescription("MLR model for the prediction of " + depFeatTitle + " (uri: " + dependentFeature.getUri() + " ).");
+            } else {
+                m.getMeta().addTitle("MLR model for the prediction of the feature with URI " + depFeatTitle).
+                        addComment("No name was found for the feature " + depFeatTitle);
+            }
 
             /*
              * COMPILE THE LIST OF INDEPENDENT FEATURES with the exact order in which
@@ -129,7 +148,7 @@ public class MlrRegression extends AbstractTrainer {
             /* CREATE PREDICTED FEATURE AND POST IT TO REMOTE SERVER */
             try {
                 Feature predictedFeature = FeatureFactory.createAndPublishFeature(
-                        "Feature created as prediction feature for the MLR model " + m.getUri(), "",
+                        "Predicted " + depFeatTitle + " by MLR model", dependentFeature.getUnits(),
                         new ResourceValue(m.getUri(), OTClasses.Model()), featureService, token);
                 m.addPredictedFeatures(predictedFeature);
             } catch (ServiceInvocationException ex) {

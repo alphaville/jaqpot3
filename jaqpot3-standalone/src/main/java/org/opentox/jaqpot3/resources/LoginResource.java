@@ -26,6 +26,7 @@ public class LoginResource extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("login", null, null);
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoginResource.class);
+    private String redirect = null;
 
     @Override
     protected void doInit() throws ResourceException {
@@ -33,6 +34,7 @@ public class LoginResource extends JaqpotResource {
         setAutoCommitting(false);
         initialize(
                 MediaType.TEXT_HTML);
+        redirect = parseParameter("redirect");
     }
 
     private String getLoginForm(String userName, String pass, String token) {
@@ -117,6 +119,9 @@ public class LoginResource extends JaqpotResource {
         }
         if (tok == null) {
             tok = "Invalid Credentials - Unauthorized";
+        }
+        if (redirect!=null){
+            toggleSeeOther(redirect);
         }
         return new StringRepresentation(getLoginForm(un, "1x2x3x4x5x", tok), MediaType.TEXT_HTML);
     }

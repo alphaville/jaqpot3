@@ -171,12 +171,15 @@ public abstract class JaqpotResource extends WadlServerResource {
         if (token == null) {
             token = getCookies().getValues("subjectid");
             if (token == null) {
-                try {
-                    token = URLDecoder.decode(getReference().getQueryAsForm().getFirstValue("subjectid"), "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    java.util.logging.Logger.getLogger(JaqpotResource.class.getName()).log(Level.SEVERE, null, ex);
+
+                String userTokenInUrl = getReference().getQueryAsForm().getFirstValue("subjectid");
+                if (userTokenInUrl != null) {
+                    try {
+                        token = URLDecoder.decode(userTokenInUrl, "UTF-8");
+                    } catch (final UnsupportedEncodingException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
-                System.out.println(token);
                 if (token == null) {
                     return null;
                 }

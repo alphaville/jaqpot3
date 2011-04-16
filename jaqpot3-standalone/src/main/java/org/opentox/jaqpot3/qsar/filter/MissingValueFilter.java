@@ -18,7 +18,6 @@ import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
-import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.ontology.LiteralValue;
 
 /**

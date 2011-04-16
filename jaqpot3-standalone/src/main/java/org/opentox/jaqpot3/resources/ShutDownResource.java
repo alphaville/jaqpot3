@@ -75,7 +75,6 @@ public class ShutDownResource extends JaqpotResource {
             }
         };
         Executors.newFixedThreadPool(1).submit(t);
-
         return new StringRepresentation("bye!\n");
     }
 }

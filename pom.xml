@@ -4,7 +4,7 @@
     <groupId>org.opentox</groupId>
     <artifactId>jaqpot3</artifactId>
     <packaging>pom</packaging>
-    <version>3.0</version>
+    <version>3.1</version>
     <name>jaqpot3</name>
     <url>http://maven.apache.org</url>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.2.7.6</version>
+            <version>0.2.8</version>
         </dependency>
         <dependency>
             <groupId>Jama</groupId>

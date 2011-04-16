@@ -112,6 +112,7 @@ final public class WebApplecation extends JaqpotWebApplication {
         router.attach(UsersResource.template.toString(), UsersResource.class);
         router.attach(UserResource.template.toString(), UserResource.class);
         router.attach(ParametersResource.template.toString(), ParametersResource.class);
+        router.attach(ParameterResource.template.toString(), ParameterResource.class);
         router.attach("/train/mlr", TrainMlr.class);
         router.attach("/train/generic", TrainGeneric.class);
         router.attach(Trainers.template.toString(), Trainers.class);

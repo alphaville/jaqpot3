@@ -13,6 +13,7 @@ import org.opentox.toxotis.client.IPostClient;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Media;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -81,6 +82,10 @@ public class TrainGeneric extends JaqpotResource {
 
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
+        AuthenticationToken userToken = getUserToken();
+        if (getUserToken() == null) {
+            toggleSeeOther("/login?redirect=" + getCurrentVRI());
+        }
         IClientInput input = new ClientInput(entity);
         String ds = input.getFirstValue("dataset_uri");
         String pf = input.getFirstValue("prediction_feature");
@@ -110,6 +115,6 @@ public class TrainGeneric extends JaqpotResource {
             client.close();
         } catch (IOException ex) {
         }
-        return new StringRepresentation("<a href=\""+nextUri+">Task Created</a>", MediaType.TEXT_HTML);
+        return new StringRepresentation("<a href=\"" + nextUri + ">Task Created</a>", MediaType.TEXT_HTML);
     }
 }
