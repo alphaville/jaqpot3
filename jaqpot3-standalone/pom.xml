@@ -5,12 +5,12 @@
     <parent>
         <artifactId>jaqpot3</artifactId>
         <groupId>org.opentox</groupId>
-        <version>3.1</version>
+        <version>3.3</version>
         <relativePath>../</relativePath>
     </parent>
     <groupId>org.opentox</groupId>
     <artifactId>jaqpot3-standalone</artifactId>
-    <version>3.0.1</version>
+    <version>3.3.2</version>
     <name>jaqpot3-standalone</name>
     <url>http://maven.apache.org</url>
 

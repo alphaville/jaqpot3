@@ -1,16 +1,21 @@
 package org.opentox.jaqpot3.resources;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
+import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.BibTeX;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.DisableComponent;
+import org.opentox.toxotis.database.engine.bibtex.AssociateBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.FindBibTeX;
 import org.opentox.toxotis.database.exception.DbException;
 import org.restlet.data.MediaType;
@@ -57,7 +62,7 @@ public class BibTexResource extends JaqpotResource {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
 
-        FindBibTeX fb = new FindBibTeX(Configuration.getBaseUri().augment("bibtex"));        
+        FindBibTeX fb = new FindBibTeX(Configuration.getBaseUri().augment("bibtex"));
         fb.setSearchById(primaryId);
         IDbIterator<BibTeX> bibtexFound = null;
         BibTeX bibtex = null;
@@ -68,16 +73,16 @@ public class BibTexResource extends JaqpotResource {
             }
         } catch (DbException ex) {
             Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             try {
                 bibtexFound.close();
             } catch (DbException ex) {
-                logger.error("DbIterator is uncloseable",ex);
+                logger.error("DbIterator is uncloseable", ex);
             }
             try {
                 fb.close();
             } catch (DbException ex) {
-                logger.error("DB reader is uncloseable",ex);
+                logger.error("DB reader is uncloseable", ex);
             }
         }
 
@@ -96,7 +101,33 @@ public class BibTexResource extends JaqpotResource {
             toggleServerError();
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
         }
+    }
 
+    @Override
+    protected Representation post(Representation entity, Variant variant) throws ResourceException {
+
+        IClientInput clientInput = new ClientInput(entity);
+        String modelUri = clientInput.getFirstValue("resource");
+        VRI modelVri = null;
+        try {
+            modelVri = new VRI(modelUri);
+        } catch (URISyntaxException ex) {
+        }
+        String modelId = modelVri.getId();
+        AssociateBibTeX associator = new AssociateBibTeX(modelId, primaryId);
+        try {
+            associator.write();
+        } catch (DbException ex) {
+            Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                associator.close();
+            } catch (DbException ex) {
+                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return new StringRepresentation("...\n");
     }
 
     @Override
@@ -104,10 +135,10 @@ public class BibTexResource extends JaqpotResource {
         DisableComponent disabler = new DisableComponent(primaryId);
         try {
             int count = disabler.disable();
-            return new StringRepresentation(count+" components where disabled.\n", MediaType.TEXT_PLAIN);
+            return new StringRepresentation(count + " components where disabled.\n", MediaType.TEXT_PLAIN);
         } catch (DbException ex) {
             Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             try {
                 disabler.close();
             } catch (DbException ex) {

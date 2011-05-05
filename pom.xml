@@ -4,7 +4,7 @@
     <groupId>org.opentox</groupId>
     <artifactId>jaqpot3</artifactId>
     <packaging>pom</packaging>
-    <version>3.1</version>
+    <version>3.3</version>
     <name>jaqpot3</name>
     <url>http://maven.apache.org</url>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.2.8</version>
+            <version>0.2.9</version>
         </dependency>
         <dependency>
             <groupId>Jama</groupId>
@@ -27,7 +27,20 @@
         </dependency>
     </dependencies>
 
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ambit-plovdiv-snapshots</id>
+            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ambit-plovdiv-thirdparty</id>
+            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
+        </repository>
+        <site>
+            <id>website_ambit</id>
+            <url>scp://shell.sourceforge.net/home/groups/a/am/ambit/htdocs/AMBIT2-LIBS</url>
+        </site>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -76,7 +89,7 @@
         </repository>
     </repositories>
 
-    
+
 
     <build>
         <pluginManagement>
@@ -96,6 +109,5 @@
     <modules>
         <module>jaqpot3-standalone</module>
         <module>jaqpot3-servlet</module>
-        <module>jaqpot3-vaadin</module>
     </modules>
 </project>

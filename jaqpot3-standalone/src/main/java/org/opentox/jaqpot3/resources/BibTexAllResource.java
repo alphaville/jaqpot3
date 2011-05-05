@@ -24,6 +24,7 @@ import org.opentox.toxotis.ontology.impl.SimpleOntModelImpl;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.DbReader;
 import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.bibtex.AddBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.ListBibTeX;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
@@ -136,7 +137,14 @@ public class BibTexAllResource extends JaqpotResource {
         try {
             creator = getUser();
             if (creator != null) {
-                long entriesForUser = getUserQuota("BibTeX");
+                long entriesForUser = 0;
+//                try {
+                    entriesForUser = 0;//;new AccountManager(creator).countBibTeX();
+//                } catch (DbException ex) {
+//                    toggleServerError();
+//                    return errorReport(ex, "DbError", "Cannot get the number of running tasks from "
+//                            + "the database - Read Error", variant.getMediaType(), false);
+//                }
                 int maxEntries = Configuration.getIntegerProperty("jaqpot.max_bibtex_per_user");
                 if (entriesForUser >= maxEntries) { // max obtained or exceeded!
                     toggleForbidden();

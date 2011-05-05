@@ -81,13 +81,32 @@ public class DbStatisticsResource extends JaqpotResource {
             }
             tasks.setAttribute("count", countTasks + "");
             root.appendChild(tasks);
-
-
+           
+            updateForTask(document, tasks, "queued");
+            updateForTask(document, tasks, "running");
+            updateForTask(document, tasks, "completed");
+            updateForTask(document, tasks, "error");
+            updateForTask(document, tasks, "rejected");
 
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(DbStatisticsResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return document;
+    }
+
+    private void updateForTask(Document document, Element rootElement, String status) throws DbException {
+        CountTasks taskCounter = new CountTasks();
+        taskCounter.setWhere(String.format("status='%s'", status.toUpperCase()));
+        int countTasks = -1;
+        try {
+            countTasks = taskCounter.count();
+        } finally {
+            taskCounter.close();
+        }
+        Element taskSubElement = (Element) document.createElement("Task");
+        taskSubElement.setAttribute("status", status);
+        taskSubElement.setTextContent(countTasks + "");
+        rootElement.appendChild(taskSubElement);
     }
 
     private void updateForAlgorithm(Document document, Element modelsPerAlgorithm, Element models, String algorithmId) throws DbException {

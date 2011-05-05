@@ -60,7 +60,7 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append("<td>Password</td> <td><input type=\"password\" size=\"15\" maxlength=\"40\" name=\"password\"></td>");
         formBuilder.append("</tr><tr>");
         formBuilder.append("<td>Token</td> <td>");
-        formBuilder.append(token);
+        formBuilder.append(token != null ? token : "");
         formBuilder.append("</td>");
         formBuilder.append("</tr>");
         formBuilder.append("</table>");
@@ -119,10 +119,10 @@ public class LoginResource extends JaqpotResource {
         }
         if (tok == null) {
             tok = "Invalid Credentials - Unauthorized";
-        }
-        if (redirect!=null){
+            return new StringRepresentation(getLoginForm(un, "1x2x3x4x5x", tok), MediaType.TEXT_HTML);
+        } else {
             toggleSeeOther(redirect);
+            return new StringRepresentation(getLoginForm(un, "1x2x3x4x5x", tok), MediaType.TEXT_HTML);
         }
-        return new StringRepresentation(getLoginForm(un, "1x2x3x4x5x", tok), MediaType.TEXT_HTML);
     }
 }

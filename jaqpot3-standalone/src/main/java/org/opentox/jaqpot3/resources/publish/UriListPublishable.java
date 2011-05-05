@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.html.GoogleAnalytics;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
@@ -22,9 +23,19 @@ public class UriListPublishable extends AbstractPublishable {
 
     private Logger logger = LoggerFactory.getLogger(UriListPublishable.class);
     private List m_list;
+    private VRI baseUri;
+    private String heading;
 
     private UriListPublishable() {
         m_list = new ArrayList();
+    }
+
+    public void setHeading(String heading) {
+        this.heading = heading;
+    }
+
+    public void setBaseUri(VRI baseUri) {
+        this.baseUri = baseUri;
     }
 
     public UriListPublishable(List list) {
@@ -50,7 +61,13 @@ public class UriListPublishable extends AbstractPublishable {
         writer.write(GoogleAnalytics.getGAjs());
         writer.write("</head>\n"
                 + "<body>");
-        writer.write("<h1>List of URIs</h1>\n");
+        if (heading == null) {
+            writer.write("<h1>List of URIs</h1>\n");
+        } else {
+            writer.write("<h1>");
+            writer.write(heading);
+            writer.write("</h1>\n");
+        }
         writer.write("<p>");
 
         Iterator<Reference> iterator = refList.iterator();
@@ -58,7 +75,11 @@ public class UriListPublishable extends AbstractPublishable {
         while (iterator.hasNext()) {
             currentUri = iterator.next().toString();
             writer.write("<a href=\"");
-            writer.write(currentUri);
+            if (baseUri != null) {
+                writer.write(new VRI(baseUri).augment(currentUri).toString());
+            } else {
+                writer.write(currentUri);
+            }
             writer.write("\">");
             writer.write(currentUri);
             writer.write("</a></br>\n");

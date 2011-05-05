@@ -8,11 +8,13 @@ import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.ErrorReport;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.model.AddModel;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.aa.policy.IPolicyWrapper;
@@ -119,7 +121,11 @@ public class TrainingService extends RunnableTaskService {
             logger.info(null, ex);
             ex.printStackTrace();
             updateFailedTask(trainer.getTask(), ex, "", 500, Configuration.BASE_URI);
-        } catch (Throwable throwable) {
+        } catch (ServiceInvocationException ex){
+            ErrorReport er = ex.asErrorReport();
+            er.setErrorCode(ex.getClass().getSimpleName());
+            updateFailedTask(trainer.getTask(), er);
+        }catch (Throwable throwable) {
             throwable.printStackTrace();
             logger.error(null, throwable);
             updateFailedTask(trainer.getTask(), throwable, "", 500, Configuration.BASE_URI);

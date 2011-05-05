@@ -22,7 +22,6 @@ import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.ontology.collection.OTClasses;
-import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Digest;
 import org.restlet.data.Form;
@@ -92,15 +91,7 @@ public abstract class JaqpotResource extends WadlServerResource {
         }
         return null;
     }
-
-    protected int getUserQuota(String className) {
-        return 0;
-    }
-
-    protected int getActiveTasks() {
-        return 0;
-    }
-
+    
     protected VRI getCurrentVRI() {
         try {
             return new VRI(getReference().toString());
@@ -145,7 +136,7 @@ public abstract class JaqpotResource extends WadlServerResource {
         if (metaKeyTemplate != null) {
             Object atts = getRequest().getAttributes().get(metaKeyTemplate);
             if (atts != null) {
-                primaryId = Reference.decode(atts.toString()).trim();
+                secondaryId = Reference.decode(atts.toString()).trim();
             }
         }
     }
@@ -355,7 +346,16 @@ public abstract class JaqpotResource extends WadlServerResource {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
+
+        Throwable currentThrowable = ex.getCause();
+        while (currentThrowable!=null){
+            pw.append("\nPrevious Stack Trace...\n");
+            currentThrowable.printStackTrace(pw);
+            currentThrowable = currentThrowable.getCause();
+        }
+
         String details = sw.toString();
+
         if (doAutoLogging) {
             logger.warn(message != null ? (message + details != null ? NEWLINE : "") : "" + details != null ? details : "");
         }
@@ -372,7 +372,6 @@ public abstract class JaqpotResource extends WadlServerResource {
             throw new RuntimeException(unknownException);
         }
         return rep;
-
     }
 
     protected Representation errorReport(String errorCode, String message, String details, MediaType media, boolean doAutoLogging) {

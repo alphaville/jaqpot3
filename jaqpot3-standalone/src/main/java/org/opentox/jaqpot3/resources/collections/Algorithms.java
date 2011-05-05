@@ -64,7 +64,7 @@ public class Algorithms {
             "\n\n" +
             "You should have received a copy of the GNU General Public License " +
             "along with this program.  If not, see http://www.gnu.org/licenses/ .\n\n" +
-            "The Jaqpot source code is found online at https://github.com/alphaville/jaqpot";
+            "The Jaqpot source code is found online at https://github.com/alphaville/jaqpot3";
 
     public static void main(String... args){
         System.out.println(HTMLUtils.normalizeTextForHtml(HTMLUtils.linkUrlsInText(_LICENSE)));
@@ -335,36 +335,6 @@ public class Algorithms {
         return plsFilter;
     }
 
-    public static Algorithm svmFilter() {
-        if (svmFilter == null) {
-            try {
-                svmFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "svmFilter"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("svmFilter", "SVM Filter").
-                        addComment("You can also use this algorithm from withing the proxy service at " + Configuration.BASE_URI + "/algorithm/multifilter").
-                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Filter", "Data Preprocessing", "PLS", "Data Preparation", "Weka").
-                        addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-                        addDescription("Applies the SVM algorithm on the data and removes some features from the dataset. PLS is a standard, widely used "
-                        + "supervised algorithm for dimension reduction on datasets.").
-                        addPublisher(Configuration.BASE_URI).
-                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(svmFilter.getUri().toString());
-                svmFilter.setParameters(new HashSet<Parameter>());
-
-
-
-                svmFilter.setMeta(algorithmMeta);
-                svmFilter.setOntologies(new HashSet<OntologicalClass>());
-                svmFilter.getOntologies().add(OTAlgorithmTypes.Preprocessing());
-                svmFilter.getOntologies().add(OTAlgorithmTypes.Supervised());
-                svmFilter.setEnabled(true);
-                svmFilter.getMeta().addRights(_LICENSE);
-            } catch (ToxOtisException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return svmFilter;
-    }
 
     public static Algorithm cleanup() {
         if (cleanup == null) {

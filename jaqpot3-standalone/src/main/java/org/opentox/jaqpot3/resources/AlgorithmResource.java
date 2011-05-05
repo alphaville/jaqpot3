@@ -21,9 +21,11 @@ import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.core.component.User;
+import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.task.AddTask;
 import org.opentox.toxotis.database.engine.user.AddUser;
+import org.opentox.toxotis.database.engine.user.FindUser;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
@@ -100,12 +102,50 @@ public class AlgorithmResource extends JaqpotResource {
                     "You have to authenticate yourself using the 'Authorization' Header according to the OpenTox API "
                     + "specifications", variant.getMediaType(), false);
         }
+        FindUser finder = new FindUser();
+        finder.setWhere("uid='"+creator.getUid()+"'");
+        try {
+            IDbIterator<User> iterator = finder.list();
+            if (iterator.hasNext()){
+                creator = iterator.next();
+            }
+        } catch (DbException ex) {
+            Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            try {
+                finder.close();
+            } catch (DbException ex) {
+                Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        /*
+         * Register the user in the database (in case, not alredy there)
+         */
+        AddUser addUser = new AddUser(creator);
+        try {
+            addUser.write();
+        } catch (DbException ex) {
+            // User is already registered! :-)
+            // Proceed...
+        } finally {
+            try {
+                addUser.close();
+            } catch (DbException ex) {
+                String msg = "User DB writer is uncloseable";
+                logger.error(msg, ex);
+                toggleServerError();
+                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
+            }
+        }
 
         long numModels = 0;
         try {
             numModels = new AccountManager(creator).countModels();
         } catch (DbException ex) {
-            Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            toggleServerError();
+            return errorReport(ex, "DbError", "Cannot get the number of models from " +
+                    "the database - Read Error", variant.getMediaType(), false);
         }
 
 
@@ -113,12 +153,14 @@ public class AlgorithmResource extends JaqpotResource {
         try {
             numTasksActive = new AccountManager(creator).countActiveTasks();
         } catch (DbException ex) {
-            Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            toggleServerError();
+            return errorReport(ex, "DbError", "Cannot get the number of running tasks from " +
+                    "the database - Read Error", variant.getMediaType(), false);
         }
 
         //TODO: This should become user-specific
-        int maxModels = Configuration.getIntegerProperty("jaqpot.max_models_per_user");
-        int maxTasks = Configuration.getIntegerProperty("jaqpot.max_tasks_per_user", 5);
+        int maxModels = creator.getMaxModels();
+        int maxTasks = creator.getMaxParallelTasks();
         if (numModels >= maxModels) {
             toggleInsufficientStorage();
             return errorReport("UserQuotaExceeded",
@@ -151,23 +193,7 @@ public class AlgorithmResource extends JaqpotResource {
                 addComment("Asynchronous task created for a background job initiated by the algorithm: " + primaryId);
         task.setStatus(Task.Status.QUEUED);
 
-
-
-        AddUser addUser = new AddUser(creator);
-        try {
-            addUser.write();
-        } catch (DbException ex) {
-            // User is already registered! :-)
-            // Proceed...
-        } finally {
-            try {
-                addUser.close();
-            } catch (DbException ex) {
-                String msg = "User DB writer is uncloseable";
-                logger.error(msg, ex);
-                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
-            }
-        }
+        
         /*
          * Task should be added in the database as QUEUED
          */
@@ -178,6 +204,7 @@ public class AlgorithmResource extends JaqpotResource {
         } catch (DbException ex) {
             String msg = "Task cannot be added in the database due to connectivity reasons";
             logger.error(msg, ex);
+            toggleServerError();
             return errorReport(ex, "DBWriterFailed", msg, variant.getMediaType(), false);
         } finally {
             try {
@@ -185,6 +212,7 @@ public class AlgorithmResource extends JaqpotResource {
             } catch (DbException ex) {
                 String msg = "Task DB writer is uncloseable";
                 logger.error(msg, ex);
+                toggleServerError();
                 return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
@@ -210,6 +238,7 @@ public class AlgorithmResource extends JaqpotResource {
             getResponse().setStatus(Status.valueOf((int) task.getHttpStatus()));
             return publisher.createRepresentation(task, true);
         } catch (JaqpotException ex) {
+            toggleServerError();
             return fatalException("PublicationError", ex, null);
         }
     }

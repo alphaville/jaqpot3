@@ -8,7 +8,6 @@ import org.opentox.jaqpot3.resources.publish.UriListPublishable;
 import org.opentox.jaqpot3.resources.publish.Representer;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.JaqpotWebApplication;
-import org.opentox.jaqpot3.www.URITemplate;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.ext.wadl.WadlRepresentation;
@@ -25,19 +24,16 @@ public class IndexResource extends JaqpotResource {
     
 
     private static final List LIST = new ArrayList() {
-
         {
             add(Configuration.getBaseUri().augment("train").toString());
             add(Configuration.getBaseUri().augment("algorithm").toString());
             add(Configuration.getBaseUri().augment("model").toString());
             add(Configuration.getBaseUri().augment("task").toString());
             add(Configuration.getBaseUri().augment("bibtex").toString());
-            add(Configuration.getBaseUri().augment("dbstats").toString());
-            add(Configuration.getBaseUri().augment("user").toString());
             add(Configuration.getBaseUri().augment("login").toString());
-            add(Configuration.getBaseUri().augment("error").toString());
-            add(Configuration.getBaseUri().augment("monitoring").toString());
-            add(Configuration.getBaseUri().augment("shutdown").toString());
+            add(Configuration.getBaseUri().augment("user").toString());
+            add(Configuration.getBaseUri().augment("policy").toString());            
+            add(Configuration.getBaseUri().augment("monitoring").toString());            
         }
     };
 
@@ -53,9 +49,7 @@ public class IndexResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
-
         final MediaType mediatype = variant.getMediaType();
-
 
         if (MediaType.TEXT_HTML.equals(mediatype) || MediaType.TEXT_URI_LIST.equals(mediatype)) {
             try {

@@ -13,8 +13,6 @@ import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
-import org.opentox.toxotis.ontology.collection.KnoufBibTex;
-import org.opentox.toxotis.ontology.collection.OTClasses;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 
 /**
@@ -37,7 +35,7 @@ public class PredictionService extends RunnableTaskService {
     }
 
     private void parametrize(IClientInput clientParameters) throws BadParameterException {
-        String datasetServiceString = clientParameters.getFirstValue("dataset_uri");
+        String datasetServiceString = clientParameters.getFirstValue("dataset_service");
         if (datasetServiceString != null) {
             try {
                 datasetServiceUri = new VRI(datasetServiceString);
@@ -90,7 +88,6 @@ public class PredictionService extends RunnableTaskService {
                     Thread.sleep(1000);
                     float prc = 100f - (50.0f / (float) Math.sqrt(counter));
                     predictor.getTask().setPercentageCompleted(prc);
-
                     UpdateTask updateTask = new UpdateTask(predictor.getTask());
                     updateTask.setUpdateMeta(true);
                     updateTask.setUpdatePercentageCompleted(true);
@@ -117,7 +114,6 @@ public class PredictionService extends RunnableTaskService {
                 logger.error("Task update was abnormally interrupted", ex);
                 throw new JaqpotException("UnknownCauseOfException", ex);
             }
-
 
         } catch (URISyntaxException ex) {
             logger.trace(null, ex);

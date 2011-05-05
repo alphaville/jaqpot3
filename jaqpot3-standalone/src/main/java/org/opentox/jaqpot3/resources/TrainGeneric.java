@@ -83,7 +83,7 @@ public class TrainGeneric extends JaqpotResource {
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
         AuthenticationToken userToken = getUserToken();
-        if (getUserToken() == null) {
+        if (userToken == null) {
             toggleSeeOther("/login?redirect=" + getCurrentVRI());
         }
         IClientInput input = new ClientInput(entity);
@@ -101,7 +101,7 @@ public class TrainGeneric extends JaqpotResource {
         System.out.println(pf);
         client.addPostParameter("dataset_uri", ds);
         client.addPostParameter("prediction_feature", pf);
-        client.authorize(getUserToken());
+        client.authorize(userToken);
         try {
             client.post();
         } catch (ServiceInvocationException ex) {
@@ -110,11 +110,12 @@ public class TrainGeneric extends JaqpotResource {
         try {
             nextUri = client.getResponseUriList().iterator().next().toString();
         } catch (ServiceInvocationException ex) {
+            //return ex.asErrorReport().;
         }
         try {
             client.close();
         } catch (IOException ex) {
         }
-        return new StringRepresentation("<a href=\"" + nextUri + ">Task Created</a>", MediaType.TEXT_HTML);
+        return new StringRepresentation("<html><body><a href=\"" + nextUri + ">Task Created</a></body></html>", MediaType.TEXT_HTML);
     }
 }

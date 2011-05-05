@@ -25,6 +25,7 @@ import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.DisableComponent;
 import org.opentox.toxotis.database.engine.model.FindModel;
 import org.opentox.toxotis.database.engine.task.AddTask;
@@ -162,7 +163,14 @@ public class ModelResource extends JaqpotResource {
                     "You have to authenticate yourself using the 'subjectid' Header according to the OpenTox API "
                     + "specifications", variant.getMediaType(), false);
         }
-        long numTasksActive = getActiveTasks();
+        long numTasksActive = 0;
+        try {
+            numTasksActive = new AccountManager(creator).countActiveTasks();
+        } catch (DbException ex) {
+            toggleServerError();
+            return errorReport(ex, "DbError", "Cannot get the number of running tasks from "
+                    + "the database - Read Error", variant.getMediaType(), false);
+        }
         int maxTasks = Configuration.getIntegerProperty("jaqpot.max_tasks_per_user", 5);
         if (numTasksActive >= maxTasks) {
             toggleServerOverloaded(2);

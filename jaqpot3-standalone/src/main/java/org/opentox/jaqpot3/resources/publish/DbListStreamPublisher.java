@@ -42,7 +42,7 @@ public class DbListStreamPublisher {
     }
 
     public Representation process(final DbReader<String> reader) throws JaqpotException {
-        
+
         Representation representation = new OutputRepresentation(media) {
 
             @Override
@@ -59,8 +59,10 @@ public class DbListStreamPublisher {
                             while (iterator.hasNext()) {
                                 StringBuilder nextUri = new StringBuilder();
                                 String id = iterator.next();
-                                nextUri.append(getBaseUri().toString());
-                                nextUri.append("/");
+                                if (getBaseUri() != null) {
+                                    nextUri.append(getBaseUri().toString());
+                                    nextUri.append("/");
+                                }                                
                                 nextUri.append(id);
 
                                 if (MediaType.TEXT_HTML.equals(media)) {

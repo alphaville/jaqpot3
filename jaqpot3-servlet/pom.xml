@@ -6,11 +6,11 @@
     <parent>
         <artifactId>jaqpot3</artifactId>
         <groupId>org.opentox</groupId>
-        <version>3.1</version>
+        <version>3.3</version>
     </parent>
     <groupId>org.opentox</groupId>
     <artifactId>jaqpot3-servlet</artifactId>
-    <version>1.0</version>
+    <version>3.3.2</version>
     <name>jaqpot3-servlet</name>
     <url>http://maven.apache.org</url>
     <dependencies>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.opentox</groupId>
             <artifactId>jaqpot3-standalone</artifactId>
-            <version>3.0.1</version>
+            <version>3.3.2</version>
         </dependency>
 
         <dependency>

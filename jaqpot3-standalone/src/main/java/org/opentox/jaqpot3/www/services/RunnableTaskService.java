@@ -1,5 +1,7 @@
 package org.opentox.jaqpot3.www.services;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.toxotis.core.component.ErrorReport;
@@ -39,7 +41,7 @@ public abstract class RunnableTaskService implements Runnable {
         }
         ErrorReport er = new ErrorReport(httpStatus, actor, explanation + additionalMessage, details, code);
         task.setErrorReport(er);
-         
+
         AddErrorReport addError = new AddErrorReport(task.getErrorReport());
         try {
             addError.write();
@@ -52,8 +54,36 @@ public abstract class RunnableTaskService implements Runnable {
                 Logger.getLogger(RunnableTaskService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        UpdateTask updater = new UpdateTask(task);
+        updater.setUpdateErrorReport(true);
+        updater.setUpdateTaskStatus(true);
+        updater.setUpdateMeta(true);
+        try {
+            updater.update();
+            updater.close();
+        } catch (DbException ex) {
+            Logger.getLogger(RunnableTaskService.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+    }
 
+    protected static void updateFailedTask(Task task, ErrorReport er) {
+        task.getMeta().addDescription("Failed task. " + er.getMessage());
+        task.setHttpStatus(er.getHttpStatus());
+        task.setStatus(Status.ERROR);
+        task.setErrorReport(er);
+        AddErrorReport addError = new AddErrorReport(task.getErrorReport());
+        try {
+            addError.write();
+        } catch (DbException ex) {
+            Logger.getLogger(RunnableTaskService.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                addError.close();
+            } catch (DbException ex) {
+                Logger.getLogger(RunnableTaskService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         UpdateTask updater = new UpdateTask(task);
         updater.setUpdateErrorReport(true);
         updater.setUpdateTaskStatus(true);
@@ -68,13 +98,17 @@ public abstract class RunnableTaskService implements Runnable {
     }
 
     protected static String exceptionDetails(Throwable ex) {
-        StringBuilder sb = new StringBuilder();
-        StackTraceElement[] elements = ex.getStackTrace();
-        final String newLine = "\n";
-        for (StackTraceElement element : elements) {
-            sb.append(element);
-            sb.append(newLine);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+
+        Throwable currentThrowable = ex.getCause();
+        while (currentThrowable != null) {
+            pw.append("\nPrevious Stack Trace...\n");
+            currentThrowable.printStackTrace(pw);
+            currentThrowable = currentThrowable.getCause();
         }
-        return sb.toString();
+
+        return sw.toString();
     }
 }
