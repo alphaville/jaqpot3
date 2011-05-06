@@ -200,8 +200,7 @@ public class Algorithms {
                         Configuration.getBaseUri().augment("prm", "ignore_uri"), "ignore_uri", new LiteralValue(null, XSDDatatype.XSDanyURI)).setScope(
                         Parameter.ParameterScope.OPTIONAL);
                 ignore_uri.getMeta().addDescription("If a dataset URI is provided, then the scaling is carried out with respect to the minimum and maximum "
-                        + "values of the features in that dataset. Used for applying a dataset on a model that requires scaled data.").
-                        addComment("Not supported yet.");
+                        + "values of the features in that dataset. Used for applying a dataset on a model that requires scaled data.");
                 scaling.getParameters().add(ignore_uri);
                 scaling.getMeta().addRights(_LICENSE);
                 scaling.setEnabled(true);
