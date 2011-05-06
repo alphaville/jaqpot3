@@ -53,17 +53,9 @@ public class ScalingPredictor extends AbstractPredictor {
     public Dataset predict(Dataset input) throws JaqpotException {
         try{
         ScalingModel actualModel = (ScalingModel) model.getActualModel();
-        System.out.println(actualModel);
-        System.out.println(actualModel.getMax());
-        System.out.println(actualModel.getMin());
         
         Map<String, Double> mins = actualModel.getMinVals2();
         Map<String, Double> maxs = actualModel.getMaxVals2();
-
-        System.out.println("mins ...");
-        System.out.println(actualModel.getMinVals());
-        System.out.println("maxs ...");
-        System.out.println(actualModel.getMaxVals());
 
         updateFeatureMap(model);
 

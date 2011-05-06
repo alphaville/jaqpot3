@@ -27,7 +27,6 @@ public class PLSTrainer extends AbstractTrainer{
     @Override
     public Model train(Dataset data) throws JaqpotException {
         
-        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

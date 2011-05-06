@@ -3,6 +3,7 @@ package org.opentox.jaqpot3.resources.collections;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -167,11 +168,10 @@ public class Algorithms {
                 MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("scaling").
                         addSubject("Filter", "Data Preprocessing", "Scaling", "Data Preparation").
                         addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-                        addDescription("There are two ways in which this algorithm can be used. First, clients providing the parameters "
-                        + "min and max (which are optional) can the values of a dataset so that every feature accepts values in the interval "
-                        + "[min, max]. Alternatively users may provide a 'scaling reference' that is some dataset whose minimum and maximum "
-                        + "values per feature are used as guidelines for the scaling. The latter is useful for scaling a dataset for applying it "
-                        + "to a model for prediction.").
+                        addDescription("This web service is intended to scale the numeric values of an OpenTox dataset within a specified range." +
+                        "If not otherwise specified by the client, this range is assumed to be [-1,1]. Scaling is necessary for algorithms " +
+                        "like SVM and Neural Networks as it substantially improves the accuracy of the trained models. In other cases such as " +
+                        "MLR it can numerically stabilize the training procedure and is one of the mode fundamental preprocessing steps").
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
                         addIdentifier(scaling.getUri().toString());
@@ -258,12 +258,13 @@ public class Algorithms {
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
                         addIdentifier(mvh.getUri().toString());
-                Parameter ignoreClass =
+                Parameter ignoreUriParam =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "ignoreClass"), "ignoreClass", new LiteralValue<Boolean>(false, XSDDatatype.XSDboolean)).setScope(
+                        Configuration.getBaseUri().augment("prm", "ignore_uri"), "ignoreUri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
                         Parameter.ParameterScope.OPTIONAL);
+                ignoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
                 mvh.setParameters(new HashSet<Parameter>());
-                mvh.getParameters().add(ignoreClass);
+                mvh.getParameters().add(ignoreUriParam);
 
                 mvh.setMeta(algorithmMeta);
                 mvh.setOntologies(new HashSet<OntologicalClass>());
@@ -452,33 +453,33 @@ public class Algorithms {
         return svm;
     }
 
-    public static Algorithm svc() {
-        if (svc == null) {
-            try {
-                svc = new Algorithm(Configuration.getBaseUri().augment("algorithm", "svc"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("svc").
-                        addTitle("Support Vector Machine Classification Training Algorithm").
-                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Regression", "Linear", "Training", "Multiple Linear Regression", "Machine Learning", "Single Target", "Eager Learning", "Weka").
-                        addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-                        addDescription("Algorithm for training classification models using the Support Vector Machine Learning Algorithm. "
-                        + "A comprehensive introductory text is provided by John Shawe-Taylor and Nello Cristianin in the book 'Support Vector Machines' "
-                        + "Cambridge University Press, 2000").
-                        addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
-                svc.setParameters(svm().getParameters());
-                svc.setMeta(algorithmMeta);
-                svc.setOntologies(new HashSet<OntologicalClass>());
-                svc.getOntologies().add(OTAlgorithmTypes.Regression());
-                svc.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                svc.getOntologies().add(OTAlgorithmTypes.EagerLearning());
-                svc.getMeta().addRights(_LICENSE);
-                svc.setEnabled(true);
-            } catch (ToxOtisException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return svc;
-    }
+//    public static Algorithm svc() {
+//        if (svc == null) {
+//            try {
+//                svc = new Algorithm(Configuration.getBaseUri().augment("algorithm", "svc"));
+//                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("svc").
+//                        addTitle("Support Vector Machine Classification Training Algorithm").
+//                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
+//                        addSubject("Regression", "Linear", "Training", "Multiple Linear Regression", "Machine Learning", "Single Target", "Eager Learning", "Weka").
+//                        addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
+//                        addDescription("Algorithm for training classification models using the Support Vector Machine Learning Algorithm. "
+//                        + "A comprehensive introductory text is provided by John Shawe-Taylor and Nello Cristianin in the book 'Support Vector Machines' "
+//                        + "Cambridge University Press, 2000").
+//                        addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
+//                svc.setParameters(svm().getParameters());
+//                svc.setMeta(algorithmMeta);
+//                svc.setOntologies(new HashSet<OntologicalClass>());
+//                svc.getOntologies().add(OTAlgorithmTypes.Regression());
+//                svc.getOntologies().add(OTAlgorithmTypes.SingleTarget());
+//                svc.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+//                svc.getMeta().addRights(_LICENSE);
+//                svc.setEnabled(true);
+//            } catch (ToxOtisException ex) {
+//                throw new RuntimeException(ex);
+//            }
+//        }
+//        return svc;
+//    }
 
     public static Algorithm leverages() {
         if (leverages == null) {

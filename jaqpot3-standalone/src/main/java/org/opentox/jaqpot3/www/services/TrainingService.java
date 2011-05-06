@@ -69,13 +69,16 @@ public class TrainingService extends RunnableTaskService {
 
         try {
             trainer.parametrize(clientInput); // #NODE_01
-            VRI datasetURI = new VRI(datasetUri);// #NODE_02
+            VRI datasetURI = datasetUri != null ? new VRI(datasetUri) : null;// #NODE_02
 
 
             Dataset ds = null;
-            ds = new Dataset(datasetURI);// #NODE_03_a
-            if (trainer.needsDataset()) {
-                ds.loadFromRemote(token);// #NODE_03_a
+
+            if (datasetURI != null) {
+                ds = new Dataset(datasetURI);// #NODE_03_a
+                if (trainer.needsDataset()) {
+                    ds.loadFromRemote(token);// #NODE_03_a
+                }
             }
 
             Model resultModel = trainer.train(ds);// #NODE_03_b
@@ -121,11 +124,11 @@ public class TrainingService extends RunnableTaskService {
             logger.info(null, ex);
             ex.printStackTrace();
             updateFailedTask(trainer.getTask(), ex, "", 500, Configuration.BASE_URI);
-        } catch (ServiceInvocationException ex){
+        } catch (ServiceInvocationException ex) {
             ErrorReport er = ex.asErrorReport();
             er.setErrorCode(ex.getClass().getSimpleName());
             updateFailedTask(trainer.getTask(), er);
-        }catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
             logger.error(null, throwable);
             updateFailedTask(trainer.getTask(), throwable, "", 500, Configuration.BASE_URI);

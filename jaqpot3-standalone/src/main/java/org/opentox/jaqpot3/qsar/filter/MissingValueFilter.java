@@ -41,8 +41,13 @@ public class MissingValueFilter extends AbstractTrainer {
         try {
             mvh.setActualModel(ignored);
         } catch (NotSerializableException ex) {
-            Logger.getLogger(MissingValueFilter.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
+        /*
+         * TODO: Create NEW Features!!!
+         * For every feature of the old dataset, create a new one
+         */
+        
         if (ignored != null && !ignored.isEmpty()) {
             mvh.setParameters(new HashSet<Parameter>());
             for (String ign : ignored) {
@@ -53,8 +58,11 @@ public class MissingValueFilter extends AbstractTrainer {
             }
         }
         mvh.setCreatedBy(getTask().getCreatedBy());
-        mvh.setDataset(data.getUri());
+        mvh.setDataset(data != null ? data.getUri() : null);
         mvh.setAlgorithm(getAlgorithm());
+        mvh.getMeta().addTitle("Missing Value Handling Model").addDescription("This model is used to replace missing values in a " +
+                "dataset using the Means & Modes algorithm").addComment("MVH models, unlike predictive QSAR models, do not have predicted features. " +
+                "Additionally they were not trained using some dataset for they are not models in the QSAR sense, but better to say \"Model-like web services\"");
         return mvh;
     }
 
