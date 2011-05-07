@@ -69,6 +69,18 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append("</form><br/>");
 
         formBuilder.append("<p>Click <a href=\"..\">here</a> to go back to the main page</p>");
+        if (token != null) {
+            AuthenticationToken at = new AuthenticationToken(token);
+            try {
+                User u = at.getUser();
+                String userid = u.getUid();
+                formBuilder.append("<p>Check your profile <a href=\"/user/" + userid + "\">here</a></p>");
+            } catch (ServiceInvocationException ex) {
+                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ToxOtisException ex) {
+                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         formBuilder.append("</body></html>");
         return formBuilder.toString();
     }
