@@ -24,6 +24,7 @@ import org.restlet.resource.ResourceException;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
+@Deprecated
 public class TrainMlr extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("train", "mlr", null);

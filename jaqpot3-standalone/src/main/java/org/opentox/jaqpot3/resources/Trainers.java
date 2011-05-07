@@ -21,12 +21,12 @@ import org.restlet.resource.ResourceException;
  */
 public class Trainers extends JaqpotResource {
 
-    public static final URITemplate template = new URITemplate("train", null, null);
+    public static final URITemplate template = new URITemplate("iface", null, null);
     private static final List LIST = new ArrayList() {
 
         {
-            add(Configuration.getBaseUri().augment("train", "generic").toString());
-            add(Configuration.getBaseUri().augment("train", "mlr").toString());            
+            add(Configuration.getBaseUri().augment("iface", "generic").toString());
+            add(Configuration.getBaseUri().augment("iface", "policy").toString());
         }
     };
 

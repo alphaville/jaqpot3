@@ -70,6 +70,11 @@ public class TrainGeneric extends JaqpotResource {
                 + "value=\"http://apps.ideaconsult.net:8080/ambit2/feature\" name=\"feature_service\"></td>");
         formBuilder.append("</tr>");
 
+        formBuilder.append("<tr>");
+        formBuilder.append("<td>Parameters</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+                + "value=\"\" name=\"feature_service\"></td>");
+        formBuilder.append("</tr>");
+
         formBuilder.append("</table>");
         formBuilder.append("<input type=\"submit\" value=\"Train\">");
 
