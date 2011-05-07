@@ -26,6 +26,9 @@ import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.task.AddTask;
 import org.opentox.toxotis.database.engine.user.AddUser;
 import org.opentox.toxotis.database.engine.user.FindUser;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
+import org.opentox.toxotis.util.aa.policy.PolicyManager;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
@@ -91,11 +94,17 @@ public class AlgorithmResource extends JaqpotResource {
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
 
+        /*
+         * The user that triggered the training procedure
+         */
         User creator = null;
+        /*
+         * Whether the user uses the service for the first time
+         */
+        boolean newUser = false;
+
         /* CHECK USER QUOTA */
-
-
-        creator = getUser();
+        creator = getUser(); // The user as retrieved by its token (Null if no token is provided)
         if (creator == null) {
             toggleUnauthorized();
             return errorReport("Anonymous", "Anonymous predictions are now allowed",
@@ -103,15 +112,17 @@ public class AlgorithmResource extends JaqpotResource {
                     + "specifications", variant.getMediaType(), false);
         }
         FindUser finder = new FindUser();
-        finder.setWhere("uid='"+creator.getUid()+"'");
+        finder.setWhere("uid='" + creator.getUid() + "'");
         try {
             IDbIterator<User> iterator = finder.list();
-            if (iterator.hasNext()){
+            if (iterator.hasNext()) {
                 creator = iterator.next();
+            } else {
+                newUser = true;
             }
         } catch (DbException ex) {
             Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             try {
                 finder.close();
             } catch (DbException ex) {
@@ -122,30 +133,44 @@ public class AlgorithmResource extends JaqpotResource {
         /*
          * Register the user in the database (in case, not alredy there)
          */
-        AddUser addUser = new AddUser(creator);
-        try {
-            addUser.write();
-        } catch (DbException ex) {
-            // User is already registered! :-)
-            // Proceed...
-        } finally {
+        if (newUser) {
             try {
-                addUser.close();
-            } catch (DbException ex) {
-                String msg = "User DB writer is uncloseable";
-                logger.error(msg, ex);
+                PolicyManager.defaultSignleUserPolicy("user_" + creator.getUid(), Configuration.getBaseUri().augment("user",creator.getUid()), getUserToken()).
+                        publish(null, getUserToken());
+            } catch (ToxOtisException ex) {
                 toggleServerError();
-                return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
+                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+            } catch (ServiceInvocationException ex) {
+                toggleRemoteError();
+                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+            }
+            creator.setMaxModels(2000);
+            creator.setMaxBibTeX(2000);
+            creator.setMaxParallelTasks(5);
+            AddUser addUser = new AddUser(creator);
+            try {
+                addUser.write();
+            } catch (DbException ex) {
+                // User is already registered! :-)
+                // Proceed...
+            } finally {
+                try {
+                    addUser.close();
+                } catch (DbException ex) {
+                    String msg = "User DB writer is uncloseable";
+                    logger.error(msg, ex);
+                    toggleServerError();
+                    return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
+                }
             }
         }
-
         long numModels = 0;
         try {
             numModels = new AccountManager(creator).countModels();
         } catch (DbException ex) {
             toggleServerError();
-            return errorReport(ex, "DbError", "Cannot get the number of models from " +
-                    "the database - Read Error", variant.getMediaType(), false);
+            return errorReport(ex, "DbError", "Cannot get the number of models from "
+                    + "the database - Read Error", variant.getMediaType(), false);
         }
 
 
@@ -154,8 +179,8 @@ public class AlgorithmResource extends JaqpotResource {
             numTasksActive = new AccountManager(creator).countActiveTasks();
         } catch (DbException ex) {
             toggleServerError();
-            return errorReport(ex, "DbError", "Cannot get the number of running tasks from " +
-                    "the database - Read Error", variant.getMediaType(), false);
+            return errorReport(ex, "DbError", "Cannot get the number of running tasks from "
+                    + "the database - Read Error", variant.getMediaType(), false);
         }
 
         //TODO: This should become user-specific
@@ -193,7 +218,7 @@ public class AlgorithmResource extends JaqpotResource {
                 addComment("Asynchronous task created for a background job initiated by the algorithm: " + primaryId);
         task.setStatus(Task.Status.QUEUED);
 
-        
+
         /*
          * Task should be added in the database as QUEUED
          */

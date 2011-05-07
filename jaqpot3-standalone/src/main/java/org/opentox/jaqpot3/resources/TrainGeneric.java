@@ -115,7 +115,19 @@ public class TrainGeneric extends JaqpotResource {
         try {
             client.close();
         } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        return new StringRepresentation("<html><body><a href=\"" + nextUri + ">Task Created</a></body></html>", MediaType.TEXT_HTML);
+        String htmlResponse = "<html>" +
+                "<head>" +
+                "  <title>Task Created</title>" +
+                "</head>" +
+                "<body>" +
+                "<p>Message : </p>\n" +
+                "<p><a href=\""+nextUri+"\">Task Created</a></p>" +
+                "</body>" +
+                "</html>";
+        System.out.println(htmlResponse);
+        toggleSuccess();
+        return new StringRepresentation(htmlResponse, MediaType.TEXT_HTML);
     }
 }

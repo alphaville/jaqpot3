@@ -29,6 +29,7 @@ import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
 public class Algorithms {
 
     private static Algorithm mlr;
+    private static Algorithm consensus;
     private static Algorithm svm;
     private static Algorithm svc;
     private static Algorithm leverages;
@@ -241,6 +242,32 @@ public class Algorithms {
         }
         return mlr;
     }
+    public static Algorithm consensus() {
+        if (consensus == null) {
+            try {
+                consensus = new Algorithm(Configuration.getBaseUri().augment("algorithm", "consensus"));
+                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("consensus", "Multiple Linear Regression Training Algorithm").
+                        addComment("Multiple Linear Regression Algorithm").
+                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
+                        addSubject("Regression", "Classification", "Training", "Consensus modeling","Machine Learning", "Single Target", "Eager Learning").
+                        addContributor("Pantelis Sopasakis").
+                        addDescription("Training algorithm for Consensus Models").
+                        addPublisher(Configuration.BASE_URI).
+                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
+                        addIdentifier(mlr.getUri().toString());
+                consensus.setMeta(algorithmMeta);
+                consensus.setOntologies(new HashSet<OntologicalClass>());
+                consensus.getOntologies().add(OTAlgorithmTypes.Regression());
+                consensus.getOntologies().add(OTAlgorithmTypes.SingleTarget());
+                consensus.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                consensus.getMeta().addRights(_LICENSE);
+                consensus.setEnabled(true);
+            } catch (ToxOtisException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return consensus;
+    }
 
     public static Algorithm mvh() {
         if (mvh == null) {
@@ -343,7 +370,7 @@ public class Algorithms {
                 MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("cleanup", "Attribute Cleanup Procedure").
                         addComment("You can also use this algorithm from withing the proxy service at " + Configuration.BASE_URI + "/algorithm/multifilter").
                         addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Filter", "Data Preprocessing", "Missing Values", "MVH", "Data Preparation").
+                        addSubject("Filter", "Data Preprocessing", "Data Preparation").
                         addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
                         addDescription("Removes from the dataset all attributes of certain types. This is useful in many cases, when for example one "
                         + "needs to train a model but have a clean dataset that doesn't include string values").
@@ -358,7 +385,7 @@ public class Algorithms {
                 attribute_type.getMeta().addDescription("An array list of attributes that need to be removed from the dataset. "
                         + "Admissible values are 'string', 'nominal' and 'numeric'").
                         addComment("Though HTTP you provide this parameter using brackets. For example, to remove string"
-                        + "and numeric attributes the POSTed query would be 'attribute_type&#91;&#93;=string&amp;attribute_type&#91;&#93;=numeric'.");
+                        + "and numeric attributes the POSTed query would be 'attribute_type[]=string&attribute_type[]=numeric'.");
                 cleanup.setParameters(new HashSet<Parameter>());
                 cleanup.getParameters().add(attribute_type);
                 cleanup.setMeta(algorithmMeta);
@@ -494,7 +521,7 @@ public class Algorithms {
                         addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
                 leverages.setMeta(algorithmMeta);
                 leverages.setOntologies(new HashSet<OntologicalClass>());
-                leverages.getOntologies().add(OTAlgorithmTypes.Regression());
+                leverages.getOntologies().add(OTAlgorithmTypes.ApplicabilityDomain());
                 leverages.getOntologies().add(OTAlgorithmTypes.SingleTarget());
                 leverages.getOntologies().add(OTAlgorithmTypes.EagerLearning());
                 leverages.getMeta().addRights(_LICENSE);

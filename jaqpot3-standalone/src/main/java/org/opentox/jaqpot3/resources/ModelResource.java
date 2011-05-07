@@ -78,6 +78,7 @@ public class ModelResource extends JaqpotResource {
             if (acceptString != null) {
                 variant.setMediaType(MediaType.valueOf(acceptString));
             }
+            System.out.println("Mediatype is : "+variant.getMediaType());
             finder = new FindModel(Configuration.getBaseUri());
             finder.setSearchById(primaryId);
             finder.setResolveUsers(true);
