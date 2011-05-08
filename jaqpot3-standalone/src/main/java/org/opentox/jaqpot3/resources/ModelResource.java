@@ -18,6 +18,7 @@ import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.PredictionService;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.IRestOperation;
+import org.opentox.toxotis.core.component.BibTeX;
 import org.opentox.toxotis.core.component.DummyComponent;
 import org.opentox.toxotis.core.component.HttpMediatype;
 import org.opentox.toxotis.core.component.HttpStatus;
@@ -75,26 +76,50 @@ public class ModelResource extends JaqpotResource {
     }
 
     @Override
-    public Representation handle() {
+    public Representation doConditionalHandle() {
         Method requestMethod = getMethod();
         if ("PATCH".equals(requestMethod.getName())) {
             IClientInput clientInput = new ClientInput(getRequestEntity());
             String[] bibtexUris = clientInput.getValuesArray("bibtex");
+
+            VRI[] bibteXs = new VRI[bibtexUris.length];
+            VRI temp = null;
+            int index = 0;
+            for (String bib : bibtexUris) {
+                try {
+                    temp = new VRI(bib);
+                    if (!BibTeX.class.equals(temp.getOpenToxType())) {
+                        toggleBadRequest();
+                        return errorReport("BadParametrization", "The parameter '" + bib + "' is not a valid BibTeX URI", "",
+                                MediaType.APPLICATION_RDF_XML, false);
+                    }
+                    bibteXs[index] = temp;
+                } catch (URISyntaxException ex) {
+                    toggleBadRequest();
+                    return errorReport(ex, "BadParametrization", "The parameter '" + bib + "' is not a valid BibTeX URI",
+                            MediaType.APPLICATION_RDF_XML, false);
+                }
+                index++;
+            }
             AssociateBibTeX associator = new AssociateBibTeX(primaryId, bibtexUris);
             try {
                 associator.write();
             } catch (DbException ex) {
-                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                toggleBadRequest();
+                return errorReport(ex, "DatabaseException", "Cannot associate this model with the submitted list of BibTeX URIs ",
+                        MediaType.APPLICATION_RDF_XML, false);
             } finally {
                 try {
                     associator.close();
                 } catch (DbException ex) {
-                    Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                    toggleServerError();
+                    return errorReport(ex, "DatabaseException", "Cannot close a database connection", MediaType.APPLICATION_RDF_XML, false);
                 }
             }
+            toggleSuccess();
             return new StringRepresentation(getCurrentVRINoQuery().toString(), MediaType.TEXT_URI_LIST);
         }
-        return super.handle();
+        return super.doConditionalHandle();
     }
 
     @Override
