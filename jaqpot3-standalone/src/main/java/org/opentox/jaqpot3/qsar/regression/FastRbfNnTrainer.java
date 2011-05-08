@@ -82,6 +82,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
                 sum += Math.exp(-a * squaredNormDifference(currectInstance, in.instance(j)));
             }
             potential[i] = sum;
+            System.out.println(">>> "+sum);
         }
         return potential;
     }

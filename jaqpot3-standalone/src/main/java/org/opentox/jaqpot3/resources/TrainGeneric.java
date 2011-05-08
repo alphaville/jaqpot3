@@ -2,9 +2,14 @@ package org.opentox.jaqpot3.resources;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
@@ -12,6 +17,7 @@ import org.opentox.toxotis.client.ClientFactory;
 import org.opentox.toxotis.client.IPostClient;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Media;
+import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.restlet.data.MediaType;
@@ -51,18 +57,26 @@ public class TrainGeneric extends JaqpotResource {
         formBuilder.append("<table>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Algorithm URI</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
-                + "value=\"" + Configuration.getBaseUri().augment("algorithm", "mlr") + "\" name=\"algorithm_uri\"></td>");
+        formBuilder.append("<td>Algorithm URI</td><td><select name=\"algorithm_uri\" style=\"width:505\" width=\"505\">");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","mlr")+"\">Multiple Linear Regression</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","svm")+"\">Support Vector Machines</option>");        
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","fastRbfNn")+"\">RBF Neural Networks (Fast Impl)</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","leverages")+"\">Leverage Domain of Applicability</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","consensus")+"\">Consensus Modeling</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","scaling")+"\">Preprocessing: Scaling</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","mvh")+"\">Preprocessing: MVH</option>");
+        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","cleanup")+"\">Preprocessing: Data Cleanup</option>");
+        formBuilder.append("</select></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
         formBuilder.append("<td>Dataset URI</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
-                + "value=\"http://apps.ideaconsult.net:8080/ambit2/dataset/54\" name=\"dataset_uri\"></td>");
+                + "value=\"http://apps.ideaconsult.net:8080/ambit2/dataset/R545\" name=\"dataset_uri\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
         formBuilder.append("<td>Prediction Feature</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
-                + "value=\"http://apps.ideaconsult.net:8080/ambit2/feature/22202\" name=\"prediction_feature\"></td>");
+                + "value=\"http://apps.ideaconsult.net:8080/ambit2/feature/22200\" name=\"prediction_feature\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
@@ -72,7 +86,7 @@ public class TrainGeneric extends JaqpotResource {
 
         formBuilder.append("<tr>");
         formBuilder.append("<td>Parameters</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
-                + "value=\"\" name=\"feature_service\"></td>");
+                + "value=\"\" name=\"params\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("</table>");
@@ -95,6 +109,19 @@ public class TrainGeneric extends JaqpotResource {
         String ds = input.getFirstValue("dataset_uri");
         String pf = input.getFirstValue("prediction_feature");
         String alg = input.getFirstValue("algorithm_uri");
+        String params = input.getFirstValue("params");
+        System.out.println();
+
+        Map<String, String> map = new HashMap<String, String>();
+        if (params != null && !params.isEmpty()) {
+            String paramTokens[] = params.split(" ");
+            for (String nvp : paramTokens) {
+                String[] parts = nvp.split("=");
+                System.out.println("Setting" + parts[0] + " = " + parts[1]);
+                map.put(parts[0], parts[1]);
+            }
+        }
+
         IPostClient client = null;
         try {
             client = ClientFactory.createPostClient(new VRI(alg));
@@ -106,6 +133,13 @@ public class TrainGeneric extends JaqpotResource {
         System.out.println(pf);
         client.addPostParameter("dataset_uri", ds);
         client.addPostParameter("prediction_feature", pf);
+        if (!map.isEmpty()) {
+            Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<String, String> entry = iterator.next();
+                client.addPostParameter(entry.getKey(), entry.getValue());
+            }
+        }
         client.authorize(userToken);
         try {
             client.post();
@@ -122,15 +156,15 @@ public class TrainGeneric extends JaqpotResource {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        String htmlResponse = "<html>" +
-                "<head>" +
-                "  <title>Task Created</title>" +
-                "</head>" +
-                "<body>" +
-                "<p>Message : </p>\n" +
-                "<p><a href=\""+nextUri+"\">Task Created</a></p>" +
-                "</body>" +
-                "</html>";
+        String htmlResponse = "<html>"
+                + "<head>"
+                + "  <title>Task Created</title>"
+                + "</head>"
+                + "<body>"
+                + "<p>Message : </p>\n"
+                + "<p><a href=\"" + nextUri + "\">Task Created</a></p>"
+                + "</body>"
+                + "</html>";
         System.out.println(htmlResponse);
         toggleSuccess();
         return new StringRepresentation(htmlResponse, MediaType.TEXT_HTML);
