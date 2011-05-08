@@ -74,6 +74,7 @@ public class ModelResource extends JaqpotResource {
         parseStandardParameters();
         updatePrimaryId(template);
     }
+    
 
     @Override
     public Representation doConditionalHandle() {

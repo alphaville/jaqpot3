@@ -45,10 +45,29 @@ public class ScalingFilter extends AbstractTrainer {
     private VRI featureService;
     Set<String> ignored = new HashSet<String>();
 
+    private double minValue(Instances dataInst, int attributeIndex) {
+        return dataInst.kthSmallestValue(attributeIndex, 1);
+    }
+
+    private double maxValue(Instances dataInst, int attributeIndex) {
+        double maxVal = Double.MIN_VALUE;
+        double currentValue = maxVal;
+        int nInst = dataInst.numInstances();
+        for (int i = 0; i < nInst; i++) {
+            currentValue = dataInst.instance(i).value(attributeIndex);
+            if (currentValue > maxVal) {
+                maxVal = currentValue;
+            }
+        }
+        return maxVal;
+    }
+
     private Model processAbsoluteScaling(Dataset data) throws JaqpotException {
         System.out.println("ignored :");
         System.out.println(ignored);
         Instances dataInst = data.getInstances();
+
+        System.out.println(dataInst);
 
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model scalingModel = new Model(newModelUri);
@@ -65,8 +84,8 @@ public class ScalingFilter extends AbstractTrainer {
                     VRI featureVri = new VRI(attribute.name());
                     scalingModel.addIndependentFeatures(new Feature(featureVri));
                     //TODO: Create in-house private methods to find min and max values
-                    actualModel.getMinVals().put(featureVri, dataInst.kthSmallestValue(i, 1));
-                    actualModel.getMaxVals().put(featureVri, dataInst.kthSmallestValue(i, dataInst.numInstances()));
+                    actualModel.getMinVals().put(featureVri, minValue(dataInst, i));
+                    actualModel.getMaxVals().put(featureVri, maxValue(dataInst, i));
                     Feature f = FeatureFactory.createAndPublishFeature("Scaled Feature " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
                             new ResourceValue(newModelUri, OTClasses.Model()), featureService, token);
                     f.getMeta().setHasSources(new HashSet<ResourceValue>());// << workaround!
@@ -172,5 +191,4 @@ public class ScalingFilter extends AbstractTrainer {
     public Dataset preprocessDataset(Dataset dataset) {
         return dataset;
     }
-    
 }

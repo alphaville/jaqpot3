@@ -131,6 +131,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     @Override
     public Model train(Dataset data) throws JaqpotException {
         Instances training = data.getInstances();
+        
         if (!training.attribute(targetUri.toString()).isNumeric()){
             throw new JaqpotException("The prediction feature you specified is not a numeric feature");
         }
@@ -173,6 +174,11 @@ public class FastRbfNnTrainer extends AbstractTrainer {
             rbfNnNodes.add(cleanedTraining.instance(i_star));
             potential = updatePotential(potential, i_star, cleanedTraining);
             i_star = locationOfMax(potential);
+            double diff = potential[i_star] - e * potential_star_1;
+            if (Double.isNaN(diff)){
+                throw new JaqpotException("Not converging");
+            }
+            System.out.println(diff);
             if (potential[i_star] <= e * potential_star_1) {
                 break;
             } else {
