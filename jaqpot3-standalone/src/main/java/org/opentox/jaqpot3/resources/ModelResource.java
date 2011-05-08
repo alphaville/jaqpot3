@@ -79,7 +79,7 @@ public class ModelResource extends JaqpotResource {
         Method requestMethod = getMethod();
         if ("PATCH".equals(requestMethod.getName())) {
             IClientInput clientInput = new ClientInput(getRequestEntity());
-            String[] bibtexUris = clientInput.getValuesArray("bibtex");            
+            String[] bibtexUris = clientInput.getValuesArray("bibtex");
             AssociateBibTeX associator = new AssociateBibTeX(primaryId, bibtexUris);
             try {
                 associator.write();
@@ -92,6 +92,7 @@ public class ModelResource extends JaqpotResource {
                     Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            return new StringRepresentation(getCurrentVRINoQuery().toString(), MediaType.TEXT_URI_LIST);
         }
         return super.handle();
     }
