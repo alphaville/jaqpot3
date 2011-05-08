@@ -172,7 +172,7 @@ public class OpenSSOAuthorizer extends Authorizer {
             return false;
         }
         try {
-            boolean allowed = userToken.authorize(clientRequest, actionUri);// to be changed in order to work on the remote!
+            boolean allowed = userToken.authorize("PATCH".equals(clientRequest) ? "POST" : clientRequest, actionUri);
             try {
                 logger.info("Authorizing " + userToken.getUser().getName() + " on " + actionUri + " : " + allowed);
             } catch (ServiceInvocationException ex) {

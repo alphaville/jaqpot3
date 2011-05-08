@@ -16,6 +16,7 @@ import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
 import org.opentox.toxotis.ontology.LiteralValue;
@@ -47,6 +48,7 @@ public class MissingValueFilter extends AbstractTrainer {
          * TODO: Create NEW Features!!!
          * For every feature of the old dataset, create a new one
          */
+        
         
         if (ignored != null && !ignored.isEmpty()) {
             mvh.setParameters(new HashSet<Parameter>());

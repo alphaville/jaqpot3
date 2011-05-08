@@ -1,5 +1,6 @@
 package org.opentox.jaqpot3.resources;
 
+import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import org.opentox.jaqpot3.util.TaskFactory;
 import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.PredictionService;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.IRestOperation;
 import org.opentox.toxotis.core.component.DummyComponent;
 import org.opentox.toxotis.core.component.HttpMediatype;
@@ -27,6 +29,7 @@ import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.DisableComponent;
+import org.opentox.toxotis.database.engine.bibtex.AssociateBibTeX;
 import org.opentox.toxotis.database.engine.model.FindModel;
 import org.opentox.toxotis.database.engine.task.AddTask;
 import org.opentox.toxotis.database.exception.DbException;
@@ -35,6 +38,7 @@ import org.opentox.toxotis.ontology.collection.OTClasses;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -71,6 +75,28 @@ public class ModelResource extends JaqpotResource {
     }
 
     @Override
+    public Representation handle() {
+        Method requestMethod = getMethod();
+        if ("PATCH".equals(requestMethod.getName())) {
+            IClientInput clientInput = new ClientInput(getRequestEntity());
+            String[] bibtexUris = clientInput.getValuesArray("bibtex");            
+            AssociateBibTeX associator = new AssociateBibTeX(primaryId, bibtexUris);
+            try {
+                associator.write();
+            } catch (DbException ex) {
+                Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    associator.close();
+                } catch (DbException ex) {
+                    Logger.getLogger(BibTexResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return super.handle();
+    }
+
+    @Override
     protected Representation get(Variant variant) throws ResourceException {
         FindModel finder = null;
         IDbIterator<Model> modelsFound = null;
@@ -78,7 +104,7 @@ public class ModelResource extends JaqpotResource {
             if (acceptString != null) {
                 variant.setMediaType(MediaType.valueOf(acceptString));
             }
-            System.out.println("Mediatype is : "+variant.getMediaType());
+            System.out.println("Mediatype is : " + variant.getMediaType());
             finder = new FindModel(Configuration.getBaseUri());
             finder.setSearchById(primaryId);
             finder.setResolveUsers(true);

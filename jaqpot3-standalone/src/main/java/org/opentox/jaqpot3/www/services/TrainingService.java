@@ -65,24 +65,18 @@ public class TrainingService extends RunnableTaskService {
         }
 
         String datasetUri = clientInput.getFirstValue("dataset_uri");
-
-
         try {
             trainer.parametrize(clientInput); // #NODE_01
             VRI datasetURI = datasetUri != null ? new VRI(datasetUri) : null;// #NODE_02
-
-
             Dataset ds = null;
-
             if (datasetURI != null) {
                 ds = new Dataset(datasetURI);// #NODE_03_a
                 if (trainer.needsDataset()) {
                     ds.loadFromRemote(token);// #NODE_03_a
                 }
             }
-
             Model resultModel = trainer.train(ds);// #NODE_03_b
-
+            
             /* Create a policy for the model (on behalf of the user) */
             IPolicyWrapper pw = PolicyManager.defaultSignleUserPolicy("model_" + resultModel.getUri().getId(), resultModel.getUri(), token);
             pw.publish(null, token);
@@ -95,7 +89,6 @@ public class TrainingService extends RunnableTaskService {
             //TODO: Handle exceptions properly
             modelAdder.write();
             modelAdder.close();
-
 
             /* UPDATE THE TASK - COMPLETED :)*/
             trainer.getTask().setDuration(System.currentTimeMillis() - startingTime);

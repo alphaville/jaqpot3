@@ -73,6 +73,8 @@ public class BibTexAllResource extends JaqpotResource {
                 MediaType.TEXT_RDF_NTRIPLES);
         parseStandardParameters();
     }
+    
+
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {

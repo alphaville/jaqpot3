@@ -2,23 +2,16 @@ package org.opentox.jaqpot3.resources;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.www.ClientInput;
-import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.client.ClientFactory;
-import org.opentox.toxotis.client.IClient;
 import org.opentox.toxotis.client.IPostClient;
 import org.opentox.toxotis.client.collection.Media;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
-import org.opentox.toxotis.util.aa.policy.PolicyManager;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.representation.Representation;
@@ -87,20 +80,35 @@ public class PolicyCreatorResource extends JaqpotResource {
         scp.authorize(getUserToken());
         try {
             scp.post();
-            System.out.println(scp.getResponseText() + "<<<<<<");
+            int responseCode = scp.getResponseCode();
+            if (responseCode == 400) {
+                toggleBadRequest();
+                return errorReport("PolicyCreationException", "The policy could not be created as the remote service at "
+                        + scp.getUri() + " returned a status code 400. Please check the syntax of your xml and try again.",
+                        "The remote service returned the following message : " + scp.getResponseText(), variant.getMediaType(), false);
+            } else if (responseCode != 200) {
+                toggleRemoteError();
+                return errorReport("PolicyCreationException", "The policy could not be created as the remote service at "
+                        + scp.getUri() + " returned a status code " + responseCode,
+                        "The remote service returned the following message : " + scp.getResponseText(), variant.getMediaType(), false);
+            }
         } catch (ServiceInvocationException ex) {
-            Logger.getLogger(PolicyResource.class.getName()).log(Level.SEVERE, null, ex);
+            toggleRemoteError();
+            return errorReport(ex, ex.getClass().getSimpleName(), "Fatal exception while invoking the remote SSO service at " + scp.getUri(),
+                    variant.getMediaType(), false);
         } finally {
             try {
                 scp.close();
             } catch (IOException ex) {
-                Logger.getLogger(PolicyResource.class.getName()).log(Level.SEVERE, null, ex);
+                toggleServerError();
+                return errorReport(ex, ex.getClass().getSimpleName(), "Fatal exception while closing an HTTP connection",
+                    variant.getMediaType(), false);
             }
         }
         toggleSuccess();
         return new StringRepresentation("<html><body>"
-                + "<h3>Policy Successfully Created</h3>" +
-                "<p>Get a list of your policies <a href=\"/policy\"here</a>.</p>"
+                + "<h3>Policy Successfully Created</h3>"
+                + "<p>Get a list of your policies <a href=\"/policy\"here</a>.</p>"
                 + "</body></html>",
                 MediaType.TEXT_HTML);
     }
