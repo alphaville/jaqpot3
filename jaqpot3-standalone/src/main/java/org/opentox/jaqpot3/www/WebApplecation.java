@@ -118,7 +118,7 @@ final public class WebApplecation extends JaqpotWebApplication {
         router.attach("/iface/mlr", TrainMlr.class);
         router.attach("/iface/generic", TrainGeneric.class);
         router.attach("/iface/bibtex", BibTeXInterface.class);
-        router.attach(Trainers.template.toString(), Trainers.class);
+        router.attach(ListInterfaces.template.toString(), ListInterfaces.class);
         router.attach(PolicyListResource.template.toString(), PolicyListResource.class);
         router.attach(PolicyResource.template.toString(), PolicyResource.class);
 

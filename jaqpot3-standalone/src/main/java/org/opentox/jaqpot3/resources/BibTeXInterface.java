@@ -112,103 +112,108 @@ public class BibTeXInterface extends JaqpotResource {
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Title</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Title</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"title\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Author(s)</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Author(s)</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"author\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Address</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Address</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"address\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Annotation</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Journal</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
+                + "value=\"\" name=\"journal\"></td>");
+        formBuilder.append("</tr>");
+
+        formBuilder.append("<tr>");
+        formBuilder.append("<td>Annotation</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"annotation\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Booktitle</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Booktitle</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"booktitle\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Chapter</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Chapter</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"chapter\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Copyright</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Copyright</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"copyright\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Edition</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Edition</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"edition\"></td>");
         formBuilder.append("</tr>");
 
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Editor</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Editor</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"editor\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Crossreference</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Crossreference</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"crossref\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Year</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Year</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"year\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Pages</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Pages</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"pages\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Volume</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Volume</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"volume\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Number</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Number</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"number\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>ISBN</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>ISBN</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"isbn\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>ISSN</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>ISSN</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"issn\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Keywords</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Keywords</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"keywords\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Key</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Key</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"key\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Series</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Series</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"series\"></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Web Address (URL)</td><td><input type=\"text\"  size=\"60\" maxlength=\"80\"  "
+        formBuilder.append("<td>Web Address (URL)</td><td><input type=\"text\"  size=\"60\" maxlength=\"255\"  "
                 + "value=\"\" name=\"url\"></td>");
         formBuilder.append("</tr>");
 

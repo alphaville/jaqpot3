@@ -19,7 +19,7 @@ import org.restlet.resource.ResourceException;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class Trainers extends JaqpotResource {
+public class ListInterfaces extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("iface", null, null);
     private static final List LIST = new ArrayList() {
@@ -27,6 +27,7 @@ public class Trainers extends JaqpotResource {
         {
             add(Configuration.getBaseUri().augment("iface", "generic").toString());
             add(Configuration.getBaseUri().augment("iface", "policy").toString());
+            add(Configuration.getBaseUri().augment("iface", "bibtex").toString());
         }
     };
 
