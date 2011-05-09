@@ -29,7 +29,6 @@ import org.restlet.resource.ResourceException;
 /**
  *
  * @author Pantelis Sopasakis
- * @author Charalampos Chomenides
  */
 public class TrainGeneric extends JaqpotResource {
 
@@ -46,7 +45,7 @@ public class TrainGeneric extends JaqpotResource {
     @Override
     protected Representation get(Variant variant) throws ResourceException {
         StringBuilder formBuilder = new StringBuilder();
-        formBuilder.append("<html><head><title>Jaqpot Login Page</title>");
+        formBuilder.append("<html><head><title>Train a Model</title>");
         //formBuilder.append(GoogleAnalytics.getGAjs());
         formBuilder.append("</head>");
         formBuilder.append("<body>");
