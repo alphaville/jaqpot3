@@ -218,7 +218,7 @@ public class BibTeXInterface extends JaqpotResource {
         formBuilder.append("</tr>");
 
         formBuilder.append("<tr>");
-        formBuilder.append("<td>Abstract</td><td><textarea rows=\"5\" cols=\"60\"></textarea></td>");
+        formBuilder.append("<td>Abstract</td><td><textarea name=\"abstract\" rows=\"5\" cols=\"60\"></textarea></td>");
         formBuilder.append("</tr>");
 
         formBuilder.append("</table>");
