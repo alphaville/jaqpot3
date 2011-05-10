@@ -1,10 +1,16 @@
 package org.opentox.jaqpot3.resources;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.resources.publish.Publisher;
+import org.opentox.jaqpot3.resources.publish.Representer;
+import org.opentox.jaqpot3.resources.publish.UriListPublishable;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.core.IRestOperation;
 import org.opentox.toxotis.core.OTComponent;
@@ -35,6 +41,19 @@ import org.restlet.resource.ResourceException;
 public class AlgorithmsResource extends JaqpotResource {
 
     public static final URITemplate template = new URITemplate("algorithm", null, null);
+    private static List<String> algorithmUris = null;
+
+    private List<String> getAlgorithmUris() {
+        if (algorithmUris == null) {
+            algorithmUris = new ArrayList<String>();
+            Set<Algorithm> all = Algorithms.getAll();
+            System.out.println(all);
+            for (Object algorithm : all) {
+                algorithmUris.add(((OTComponent) algorithm).getUri().toString());
+            }
+        }
+        return algorithmUris;
+    }
 
     @Override
     protected void doInit() throws ResourceException {
@@ -55,19 +74,15 @@ public class AlgorithmsResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
-        Set<Algorithm> all = Algorithms.getAll();
         MediaType media = variant.getMediaType();
-        ReferenceList uris = new ReferenceList();
-        for (Object algorithm : all) {
-            uris.add(((OTComponent) algorithm).getUri().toString());
+        UriListPublishable publishable = new UriListPublishable(getAlgorithmUris(), media);
+        Representer representer = new Representer(true);
+        try {
+            return representer.process(publishable);
+        } catch (JaqpotException ex) {
+            return errorReport(ex, "PublicationException", "Cannot create representation - unexpected condition", media, true);
         }
-        if (MediaType.TEXT_HTML.equals(media)) {
-            return uris.getWebRepresentation();
-        } else {
-            Representation rep = uris.getTextRepresentation();
-            rep.setMediaType(variant.getMediaType());
-            return rep;
-        }
+
     }
 
     @Override
@@ -95,8 +110,7 @@ public class AlgorithmsResource extends JaqpotResource {
                 new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_turtle()),
                 new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_n3()),
                 new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_html()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_uri_list())
-                );
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_uri_list()));
 
         ServiceRestDocumentation doc = new ServiceRestDocumentation(new DummyComponent(getCurrentVRINoQuery()));
         doc.addRestOperations(restOperation);
