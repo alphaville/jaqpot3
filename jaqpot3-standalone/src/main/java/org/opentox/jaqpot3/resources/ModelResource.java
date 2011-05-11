@@ -33,11 +33,16 @@ import org.opentox.toxotis.database.engine.DisableComponent;
 import org.opentox.toxotis.database.engine.bibtex.AssociateBibTeX;
 import org.opentox.toxotis.database.engine.model.FindModel;
 import org.opentox.toxotis.database.engine.task.AddTask;
+import org.opentox.toxotis.database.engine.user.AddUser;
+import org.opentox.toxotis.database.engine.user.FindUser;
 import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
+import org.opentox.toxotis.util.aa.policy.PolicyManager;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
@@ -207,16 +212,83 @@ public class ModelResource extends JaqpotResource {
 
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
+        /*
+         * The user that triggered the prediction procedure
+         */
         User creator = null;
-        /* CHECK USER QUOTA */
 
-        creator = getUser();
+        /*
+         * Whether the user uses the service for the first time
+         */
+        boolean newUser = false;
+
+        /* CHECK USER QUOTA */
+        creator = getUser();  // The user as retrieved by its token (Null if no token is provided)
         if (creator == null) {
             toggleUnauthorized();
             return errorReport("AuthenticationFailed", "Anonymous predictions are now allowed",
                     "You have to authenticate yourself using the 'subjectid' Header according to the OpenTox API "
                     + "specifications", variant.getMediaType(), false);
         }
+
+        /**
+         * Is that user in the database already or not???
+         */
+        FindUser finder = new FindUser();
+        finder.setWhere("uid='" + creator.getUid() + "'");
+        try {
+            IDbIterator<User> iterator = finder.list();
+            if (iterator.hasNext()) {
+                creator = iterator.next();
+            } else {
+                newUser = true;
+            }
+        } catch (DbException ex) {
+            Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                finder.close();
+            } catch (DbException ex) {
+                Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        /*
+         * Register the user in the database (in case, not alredy there)
+         */
+        if (newUser) {
+            try {
+                PolicyManager.defaultSignleUserPolicy(Configuration.getBaseUri().getHost()+"user_" + creator.getUid(), Configuration.getBaseUri().augment("user",creator.getUid()), getUserToken()).
+                        publish(null, getUserToken());
+            } catch (ToxOtisException ex) {
+                toggleServerError();
+                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+            } catch (ServiceInvocationException ex) {
+                toggleRemoteError();
+                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+            }
+            creator.setMaxModels(2000);
+            creator.setMaxBibTeX(2000);
+            creator.setMaxParallelTasks(5);
+            AddUser addUser = new AddUser(creator);
+            try {
+                addUser.write();
+            } catch (DbException ex) {
+                // User is already registered! :-)
+                // Proceed...
+            } finally {
+                try {
+                    addUser.close();
+                } catch (DbException ex) {
+                    String msg = "User DB writer is uncloseable";
+                    logger.error(msg, ex);
+                    toggleServerError();
+                    return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
+                }
+            }
+        }
+
+
         long numTasksActive = 0;
         try {
             numTasksActive = new AccountManager(creator).countActiveTasks();

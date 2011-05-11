@@ -1,4 +1,4 @@
-package org.opentox3.jaqpot.www.guard;
+package org.opentox.jaqpot3.www.guard;
 
 /**
  *
