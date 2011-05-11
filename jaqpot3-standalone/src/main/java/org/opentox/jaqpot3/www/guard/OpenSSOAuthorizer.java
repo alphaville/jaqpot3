@@ -133,8 +133,7 @@ public class OpenSSOAuthorizer extends Authorizer {
             return true;
         }
 
-        acceptHeader = request.getResourceRef().getQueryAsForm().getFirstValue("Accept");
-        acceptHeader = acceptHeader.toLowerCase();
+        acceptHeader = request.getResourceRef().getQueryAsForm().getFirstValue("accept");
         if (acceptHeader != null) {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
         } else {
@@ -149,6 +148,9 @@ public class OpenSSOAuthorizer extends Authorizer {
                     acceptedMedia = MediaType.TEXT_HTML;
                 }
             }
+        }
+        if (MediaType.ALL.equals(acceptedMedia)){
+            acceptedMedia = MediaType.TEXT_HTML; // preferred mediatype
         }
         doAuthentication = doAuthentication();
         if (!doAuthentication) {
