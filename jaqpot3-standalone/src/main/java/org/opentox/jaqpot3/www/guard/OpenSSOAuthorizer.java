@@ -81,7 +81,6 @@ public class OpenSSOAuthorizer extends Authorizer {
              */
             String tokenStringUrlEncoded = request.getResourceRef().getQueryAsForm().getFirstValue("subjectid");
             if (tokenStringUrlEncoded != null) {
-                System.out.println("HERE WE ARE");
                 String tokenString = null;
                 try {
                     tokenString = URLDecoder.decode(tokenStringUrlEncoded, "UTF-8");
@@ -123,6 +122,7 @@ public class OpenSSOAuthorizer extends Authorizer {
 
     @Override
     protected boolean authorize(Request request, Response response) {
+
         String clientRequest = request.getMethod().getName();
 
         if ("GET".equals(clientRequest) && !protectGet) {
@@ -133,7 +133,8 @@ public class OpenSSOAuthorizer extends Authorizer {
             return true;
         }
 
-        acceptHeader = request.getResourceRef().getQueryAsForm().getFirstValue("accept");
+        acceptHeader = request.getResourceRef().getQueryAsForm().getFirstValue("Accept");
+        acceptHeader = acceptHeader.toLowerCase();
         if (acceptHeader != null) {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
         } else {
