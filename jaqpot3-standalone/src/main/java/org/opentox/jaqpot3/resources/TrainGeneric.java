@@ -1,3 +1,36 @@
+/*
+ *
+ * Jaqpot - version 3
+ *
+ * The JAQPOT-3 web services are OpenTox API-1.2 compliant web services. Jaqpot
+ * is a web application that supports model training and data preprocessing algorithms
+ * such as multiple linear regression, support vector machines, neural networks
+ * (an in-house implementation based on an efficient algorithm), an implementation
+ * of the leverage algorithm for domain of applicability estimation and various
+ * data preprocessing algorithms like PLS and data cleanup.
+ *
+ * Copyright (C) 2009-2011 Pantelis Sopasakis & Charalampos Chomenides
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * Pantelis Sopasakis
+ * chvng@mail.ntua.gr
+ * Address: Iroon Politechniou St. 9, Zografou, Athens Greece
+ * tel. +30 210 7723236
+ *
+ */
 package org.opentox.jaqpot3.resources;
 
 import java.io.IOException;
@@ -44,6 +77,10 @@ public class TrainGeneric extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
+        AuthenticationToken userToken = getUserToken();
+        if (userToken == null) {
+            toggleSeeOther("/login?redirect=" + getCurrentVRI());
+        }
         StringBuilder formBuilder = new StringBuilder();
         formBuilder.append("<html><head><title>Train a Model</title>");
         //formBuilder.append(GoogleAnalytics.getGAjs());
@@ -57,14 +94,14 @@ public class TrainGeneric extends JaqpotResource {
 
         formBuilder.append("<tr>");
         formBuilder.append("<td>Algorithm URI</td><td><select name=\"algorithm_uri\" style=\"width:505\" width=\"505\">");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","mlr")+"\">Multiple Linear Regression</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","svm")+"\">Support Vector Machines</option>");        
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","fastRbfNn")+"\">RBF Neural Networks (Fast Impl)</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","leverages")+"\">Leverage Domain of Applicability</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","consensus")+"\">Consensus Modeling</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","scaling")+"\">Preprocessing: Scaling</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","mvh")+"\">Preprocessing: MVH</option>");
-        formBuilder.append("<option value=\""+Configuration.getBaseUri().augment("algorithm","cleanup")+"\">Preprocessing: Data Cleanup</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "mlr") + "\">Multiple Linear Regression</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "svm") + "\">Support Vector Machines</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "fastRbfNn") + "\">RBF Neural Networks (Fast Impl)</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "leverages") + "\">Leverage Domain of Applicability</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "consensus") + "\">Consensus Modeling</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "scaling") + "\">Preprocessing: Scaling</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "mvh") + "\">Preprocessing: MVH</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "cleanup") + "\">Preprocessing: Data Cleanup</option>");
         formBuilder.append("</select></td>");
         formBuilder.append("</tr>");
 
@@ -103,20 +140,19 @@ public class TrainGeneric extends JaqpotResource {
         AuthenticationToken userToken = getUserToken();
         if (userToken == null) {
             toggleSeeOther("/login?redirect=" + getCurrentVRI());
+            return new StringRepresentation("You must login first!!!");
         }
         IClientInput input = new ClientInput(entity);
         String ds = input.getFirstValue("dataset_uri");
         String pf = input.getFirstValue("prediction_feature");
         String alg = input.getFirstValue("algorithm_uri");
         String params = input.getFirstValue("params");
-        System.out.println();
 
         Map<String, String> map = new HashMap<String, String>();
         if (params != null && !params.isEmpty()) {
             String paramTokens[] = params.split(" ");
             for (String nvp : paramTokens) {
                 String[] parts = nvp.split("=");
-                System.out.println("Setting" + parts[0] + " = " + parts[1]);
                 map.put(parts[0], parts[1]);
             }
         }
@@ -128,8 +164,6 @@ public class TrainGeneric extends JaqpotResource {
             Logger.getLogger(TrainGeneric.class.getName()).log(Level.SEVERE, null, ex);
         }
         client.setMediaType(Media.TEXT_URI_LIST);
-        System.out.println(ds);
-        System.out.println(pf);
         client.addPostParameter("dataset_uri", ds);
         client.addPostParameter("prediction_feature", pf);
         if (!map.isEmpty()) {
@@ -164,7 +198,6 @@ public class TrainGeneric extends JaqpotResource {
                 + "<p><a href=\"" + nextUri + "\">Task Created</a></p>"
                 + "</body>"
                 + "</html>";
-        System.out.println(htmlResponse);
         toggleSuccess();
         return new StringRepresentation(htmlResponse, MediaType.TEXT_HTML);
     }

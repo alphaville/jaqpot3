@@ -155,10 +155,7 @@ public class OpenSSOAuthorizer extends Authorizer {
 
     @Override
     protected boolean authorize(Request request, Response response) {
-        System.out.println("AUTHORIZING!!!");
-
         String clientRequest = request.getMethod().getName();
-
         if ("GET".equals(clientRequest) && !protectGet) {
             return true;
         }
@@ -172,20 +169,16 @@ public class OpenSSOAuthorizer extends Authorizer {
             this.acceptedMedia = MediaType.valueOf(acceptHeader);
         } else {
             // Now check the header of the request
-            System.out.println(
-                    ((Form) request.getAttributes().get("org.restlet.http.headers")));
             acceptHeader = ((Form) request.getAttributes().get("org.restlet.http.headers")).getFirstValue("Accept");
             if (acceptHeader == null) {
                 acceptHeader = ((Form) request.getAttributes().get("org.restlet.http.headers")).getFirstValue("accept");
             }
-            System.out.println("Received accept header is : " + acceptHeader);
             if (acceptHeader == null) {
                 acceptedMedia = MediaType.TEXT_HTML;
             } else {
                 try {
                     this.acceptedMedia = MediaType.valueOf(acceptHeader);
                 } catch (IllegalArgumentException iae) {
-                    System.out.println("AA543");
                     acceptedMedia = MediaType.TEXT_HTML;
                 }
             }

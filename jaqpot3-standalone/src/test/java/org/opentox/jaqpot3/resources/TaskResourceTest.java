@@ -31,6 +31,8 @@
  * tel. +30 210 7723236
  *
  */
+
+
 package org.opentox.jaqpot3.resources;
 
 import java.io.IOException;
@@ -115,7 +117,6 @@ public class TaskResourceTest {
 
         assertNotNull(result);
         assertNotNull(modelUri);
-        System.out.println(modelUri);
 
         /*
          * Do prediction
@@ -127,7 +128,6 @@ public class TaskResourceTest {
         post.post();
         status = post.getResponseCode();
         if (status != 202) {
-            System.out.println(post.getResponseText());
             fail("Status is "+status);
         }
         task = post.getResponseText();
@@ -144,7 +144,6 @@ public class TaskResourceTest {
         result = future.get();
         VRI datasetUri = result.getResultUri();
         assertNotNull(datasetUri);
-        System.out.println(datasetUri);
 
     }
 }

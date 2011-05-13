@@ -63,23 +63,15 @@ public class ScalingFilter extends AbstractTrainer {
     }
 
     private Model processAbsoluteScaling(Dataset data) throws JaqpotException {
-        System.out.println("ignored :");
-        System.out.println(ignored);
         Instances dataInst = data.getInstances();
-
-        System.out.println(dataInst);
 
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model scalingModel = new Model(newModelUri);
         ScalingModel actualModel = new ScalingModel();
         int nAttr = dataInst.numAttributes();
         for (int i = 0; i < nAttr; i++) {
-            Attribute attribute = dataInst.attribute(i);
-            if (ignored.contains(attribute.name())) {
-                System.out.println("IGNORING : " + attribute.name());
-            }
+            Attribute attribute = dataInst.attribute(i);            
             if (attribute.isNumeric() && !ignored.contains(attribute.name())) {
-                System.out.println("**** " + attribute.name());
                 try {
                     VRI featureVri = new VRI(attribute.name());
                     scalingModel.addIndependentFeatures(new Feature(featureVri));

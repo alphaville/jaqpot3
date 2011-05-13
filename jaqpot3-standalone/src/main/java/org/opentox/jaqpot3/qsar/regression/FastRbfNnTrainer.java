@@ -82,7 +82,6 @@ public class FastRbfNnTrainer extends AbstractTrainer {
                 sum += Math.exp(-a * squaredNormDifference(currectInstance, in.instance(j)));
             }
             potential[i] = sum;
-            System.out.println(">>> "+sum);
         }
         return potential;
     }
@@ -179,7 +178,6 @@ public class FastRbfNnTrainer extends AbstractTrainer {
             if (Double.isNaN(diff)){
                 throw new JaqpotException("Not converging");
             }
-            System.out.println(diff);
             if (potential[i_star] <= e * potential_star_1) {
                 break;
             } else {

@@ -26,9 +26,7 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
 
     @Override
     public Dataset predict(Dataset input) throws JaqpotException {
-        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();
-        System.out.println(ignoredUris);
-        System.out.println(ignoredUris==null);
+        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();       
 
         weka.filters.unsupervised.attribute.ReplaceMissingValues replacer = new ReplaceMissingValues();
         

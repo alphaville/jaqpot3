@@ -73,7 +73,6 @@ public class PolicyCreatorResource extends JaqpotResource {
             e.printStackTrace();
         }
         policy = sb.toString();
-        System.out.println(policy);
         IPostClient scp = ClientFactory.createPostClient(Services.SingleSignOn.ssoPolicyOld());
         scp.setContentType(Media.APPLICATION_XML);
         scp.setPostable(policy.trim(), true);
