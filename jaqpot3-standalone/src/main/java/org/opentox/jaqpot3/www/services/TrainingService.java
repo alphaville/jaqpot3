@@ -1,6 +1,8 @@
 package org.opentox.jaqpot3.www.services;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.net.URISyntaxException;
+import java.util.Date;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.ITrainer;
@@ -15,10 +17,12 @@ import org.opentox.toxotis.database.engine.model.AddModel;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.aa.policy.IPolicyWrapper;
 import org.opentox.toxotis.util.aa.policy.PolicyManager;
+import org.opentox.toxotis.util.arff.RemoteArffRertiever;
 
 /**
  *
@@ -47,10 +51,12 @@ public class TrainingService extends RunnableTaskService {
          * The task has ALREADY been registered (see ModelResource)
          */
         trainer.getTask().setStatus(Status.RUNNING);
-        trainer.getTask().getMeta().addHasSource(new ResourceValue(trainer.getAlgorithm().getUri(), null));
+        trainer.getTask().getMeta().addHasSource(new ResourceValue(trainer.getAlgorithm().getUri(), null)).setDate(
+                new LiteralValue(new Date(System.currentTimeMillis()), XSDDatatype.XSDdate));
 
         UpdateTask updater = new UpdateTask(trainer.getTask());
         updater.setUpdateTaskStatus(true);
+        updater.setUpdateMeta(true);
         try {
             updater.update();// update the task
         } catch (DbException ex) {
@@ -69,14 +75,22 @@ public class TrainingService extends RunnableTaskService {
             trainer.parametrize(clientInput); // #NODE_01
             VRI datasetURI = datasetUri != null ? new VRI(datasetUri) : null;// #NODE_02
             Dataset ds = null;
-            if (datasetURI != null) {
-                ds = new Dataset(datasetURI);// #NODE_03_a
-                if (trainer.needsDataset()) {
-                    ds.loadFromRemote(token);// #NODE_03_a
-                }
-            }
-            Model resultModel = trainer.train(ds);// #NODE_03_b
             
+//            ## old version ##
+//            if (datasetURI != null) {
+//                ds = new Dataset(datasetURI);// #NODE_03_a
+//                if (trainer.needsDataset()) {
+//                    ds.loadFromRemote(token);// #NODE_03_a
+//                }
+//            }
+//            Model resultModel = trainer.train(ds);// #NODE_03_b
+//            ## old version -- ##
+
+
+//            ## new version  ##
+            Model resultModel = trainer.train(datasetURI);// #NODE_03_b
+//            ## new version -- ##
+
             /* Create a policy for the model (on behalf of the user) */
             IPolicyWrapper pw = PolicyManager.defaultSignleUserPolicy("model_" + resultModel.getUri().getId(), resultModel.getUri(), token);
             pw.publish(null, token);

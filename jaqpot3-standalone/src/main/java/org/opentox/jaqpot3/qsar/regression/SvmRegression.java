@@ -32,9 +32,11 @@ import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.classifiers.functions.SVMreg;
 import weka.classifiers.functions.supportVector.Kernel;
 import weka.classifiers.functions.supportVector.PolyKernel;
@@ -59,6 +61,28 @@ public class SvmRegression extends AbstractTrainer {
     @Override
     public Algorithm getAlgorithm() {
         return Algorithms.svm();
+    }
+
+    @Override
+    public Model train(Dataset data) throws JaqpotException {
+        return train(data.getInstances());
+    }
+
+    @Override
+    public Model train(VRI data) throws JaqpotException {
+        ArffDownloader downloader = new ArffDownloader(datasetUri);
+        Instances inst = downloader.getInstances();
+        if (inst != null) {
+            return train(inst);
+        } else {
+            try {
+                return train(new Dataset(datasetUri).loadFromRemote());
+            } catch (ToxOtisException ex) {
+                throw new JaqpotException(ex);
+            } catch (ServiceInvocationException ex) {
+                throw new JaqpotException(ex);
+            }
+        }
     }
 
     private enum SvmParameter {
@@ -87,10 +111,10 @@ public class SvmRegression extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Dataset data) throws JaqpotException {
-
+    public Model train(Instances data) throws JaqpotException {
+        data.renameAttribute(0, "compound_uri");
         try {
-            Instances trainingSet = preprocessInstances(data.getInstances());
+            Instances trainingSet = preprocessInstances(data);
             Attribute target = trainingSet.attribute(predictionFeatureUri.toString());
             if (target == null) {
                 throw new QSARException("The prediction feature you provided was not found in the dataset");
@@ -119,7 +143,6 @@ public class SvmRegression extends AbstractTrainer {
             orderedTrainingSet.setClass(orderedTrainingSet.attribute(predictionFeatureUri.toString()));
 
             getTask().getMeta().addComment("Dataset successfully retrieved and converted into a weka.core.Instances object");
-
             UpdateTask firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);
             firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
@@ -135,6 +158,7 @@ public class SvmRegression extends AbstractTrainer {
                 }
             }
 
+            System.out.println(6);
 
             // INITIALIZE THE REGRESSOR
             SVMreg regressor = new SVMreg();
@@ -265,13 +289,15 @@ public class SvmRegression extends AbstractTrainer {
             epsilonParam.setUri(Services.anonymous().augment("parameter", RANDOM.nextLong()));
             Parameter<Integer> degreeParam = new Parameter("degree", new LiteralValue<Integer>(degree)).setScope(Parameter.ParameterScope.OPTIONAL);
             degreeParam.setUri(Services.anonymous().augment("parameter", RANDOM.nextLong()));
+            Parameter<Double> toleranceParam = new Parameter("tolerance", new LiteralValue<Double>(tolerance)).setScope(Parameter.ParameterScope.OPTIONAL);
+            toleranceParam.setUri(Services.anonymous().augment("parameter", RANDOM.nextLong()));
 
             m.getParameters().add(kernelParam);
             m.getParameters().add(costParam);
             m.getParameters().add(gammaParam);
             m.getParameters().add(epsilonParam);
             m.getParameters().add(degreeParam);
-
+            m.getParameters().add(toleranceParam);
 
             return m;
         } catch (QSARException ex) {
@@ -437,9 +463,9 @@ public class SvmRegression extends AbstractTrainer {
                         }
                         p.getTypedValue().setValue(degreeString);
                         degree = Integer.parseInt(degreeString);
-                        if (degree<=0){
-                            throw new BadParameterException("The parameter degree should be a strictly " +
-                                    "POSITIVE integer (greater of equal to 1)");
+                        if (degree <= 0) {
+                            throw new BadParameterException("The parameter degree should be a strictly "
+                                    + "POSITIVE integer (greater of equal to 1)");
                         }
                         p.getTypedValue().setValue(degree);
                         break;

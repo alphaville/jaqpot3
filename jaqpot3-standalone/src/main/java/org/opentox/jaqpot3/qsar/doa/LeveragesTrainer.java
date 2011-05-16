@@ -199,4 +199,14 @@ public class LeveragesTrainer extends AbstractTrainer {
     public Algorithm getAlgorithm() {
         return Algorithms.leverages();
     }
+
+    @Override
+    public Model train(Instances data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Model train(VRI data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

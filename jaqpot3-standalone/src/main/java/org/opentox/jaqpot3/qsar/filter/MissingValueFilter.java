@@ -20,6 +20,7 @@ import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
 import org.opentox.toxotis.ontology.LiteralValue;
+import weka.core.Instances;
 
 /**
  *
@@ -85,5 +86,15 @@ public class MissingValueFilter extends AbstractTrainer {
     @Override
     public boolean needsDataset() {
         return false;
+    }
+
+    @Override
+    public Model train(Instances data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Model train(VRI data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

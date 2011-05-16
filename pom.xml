@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.2.20</version>
+            <version>0.2.24</version>
         </dependency>
         <dependency>
             <groupId>Jama</groupId>

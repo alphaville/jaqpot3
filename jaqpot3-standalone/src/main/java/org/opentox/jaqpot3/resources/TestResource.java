@@ -9,7 +9,7 @@
  * of the leverage algorithm for domain of applicability estimation and various
  * data preprocessing algorithms like PLS and data cleanup.
  *
- * Copyright (C) 2009-2011 Pantelis Sopasakis & Charalampos Chomenides
+ * Copyright (C) 2009-2012 Pantelis Sopasakis & Charalampos Chomenides
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

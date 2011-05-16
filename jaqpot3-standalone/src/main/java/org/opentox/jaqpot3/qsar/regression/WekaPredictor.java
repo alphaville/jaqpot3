@@ -51,6 +51,7 @@ public class WekaPredictor extends AbstractPredictor {
 
     @Override
     public Dataset predict(Dataset data) throws JaqpotException {
+        System.out.println("starting! :) GOOD LUCK!!!");
         Instances inputSet = data.getInstances();
         try {
             /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
@@ -77,6 +78,7 @@ public class WekaPredictor extends AbstractPredictor {
                 for (int i = 0; i < numInstances; i++) {
                     try {
                         double predictionValue = classifier.distributionForInstance(predictions.instance(i))[0];
+                        System.out.println(predictionValue);
                         predictions.instance(i).setClassValue(predictionValue);
                     } catch (Exception ex) {
                         logger.warn("Prediction failed :-(", ex);

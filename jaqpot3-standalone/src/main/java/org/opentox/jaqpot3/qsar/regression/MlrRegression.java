@@ -24,11 +24,15 @@ import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.database.engine.task.UpdateTask;
+import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.FeatureFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.classifiers.functions.LinearRegression;
@@ -69,10 +73,87 @@ public class MlrRegression extends AbstractTrainer {
 
     @Override
     public Model train(Dataset data) throws JaqpotException {
+        return train(data.getInstances());
+    }
 
+    @Override
+    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
+        String targetString = clientParameters.getFirstValue("prediction_feature");
+        if (targetString == null) {
+            throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
+        }
         try {
-            /* CONVERT TO INSTANCES & SET CLASS ATTRIBUTE */
-            Instances trainingSet = preprocessInstances(data.getInstances());
+            targetUri = new VRI(targetString);
+        } catch (URISyntaxException ex) {
+            throw new BadParameterException("The parameter 'prediction_feaure' you provided is not a valid URI.", ex);
+        }
+        String datasetUriString = clientParameters.getFirstValue("dataset_uri");
+        if (datasetUriString == null) {
+            throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");
+        }
+        try {
+            datasetUri = new VRI(datasetUriString);
+        } catch (URISyntaxException ex) {
+            throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
+        }
+        String featureServiceString = clientParameters.getFirstValue("feature_service");
+        if (featureServiceString != null) {
+            try {
+                featureService = new VRI(featureServiceString);
+            } catch (URISyntaxException ex) {
+                throw new BadParameterException("The parameter 'feature_service' you provided is not a valid URI.", ex);
+            }
+        } else {
+            featureService = Services.ideaconsult().augment("feature");
+        }
+        return this;
+    }
+
+    @Override
+    public Algorithm getAlgorithm() {
+        return Algorithms.mlr();
+    }
+
+    @Override
+    public Model train(Instances data) throws JaqpotException {
+        data.renameAttribute(0, "compound_uri");
+        try {
+
+            getTask().getMeta().addComment("Dataset successfully retrieved and converted into a weka.core.Instances object");
+            UpdateTask firstTaskUpdater = new UpdateTask(getTask());
+            firstTaskUpdater.setUpdateMeta(true);
+            firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
+            try {
+                firstTaskUpdater.update();
+            } catch (DbException ex) {
+                throw new JaqpotException(ex);
+            } finally {
+                try {
+                    firstTaskUpdater.close();
+                } catch (DbException ex) {
+                    throw new JaqpotException(ex);
+                }
+            }
+
+            Instances trainingSet = preprocessInstances(data);
+
+            getTask().getMeta().addComment("The downloaded dataset is now preprocessed");
+            firstTaskUpdater = new UpdateTask(getTask());
+            firstTaskUpdater.setUpdateMeta(true);
+            firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
+            try {
+                firstTaskUpdater.update();
+            } catch (DbException ex) {
+                throw new JaqpotException(ex);
+            } finally {
+                try {
+                    firstTaskUpdater.close();
+                } catch (DbException ex) {
+                    throw new JaqpotException(ex);
+                }
+            }
+
+            /* SET CLASS ATTRIBUTE */
             Attribute target = trainingSet.attribute(targetUri.toString());
             if (target == null) {
                 throw new BadParameterException("The prediction feature you provided was not found in the dataset");
@@ -146,14 +227,32 @@ public class MlrRegression extends AbstractTrainer {
 
 
             /* CREATE PREDICTED FEATURE AND POST IT TO REMOTE SERVER */
+            String predictionFeatureUri = null;
             try {
                 Feature predictedFeature = FeatureFactory.createAndPublishFeature(
                         "Predicted " + depFeatTitle + " by MLR model", dependentFeature.getUnits(),
                         new ResourceValue(m.getUri(), OTClasses.Model()), featureService, token);
                 m.addPredictedFeatures(predictedFeature);
+                predictionFeatureUri = predictedFeature.getUri().toString();
             } catch (ServiceInvocationException ex) {
                 logger.warn(null, ex);
                 throw new JaqpotException(ex);
+            }
+
+            getTask().getMeta().addComment("Prediction feature " + predictionFeatureUri + " was created.");
+            firstTaskUpdater = new UpdateTask(getTask());
+            firstTaskUpdater.setUpdateMeta(true);
+            firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
+            try {
+                firstTaskUpdater.update();
+            } catch (DbException ex) {
+                throw new JaqpotException(ex);
+            } finally {
+                try {
+                    firstTaskUpdater.close();
+                } catch (DbException ex) {
+                    throw new JaqpotException(ex);
+                }
             }
 
 
@@ -183,44 +282,22 @@ public class MlrRegression extends AbstractTrainer {
             logger.error(message, ex);
             throw new JaqpotException(message, ex);
         }
-
     }
 
     @Override
-    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
-        String targetString = clientParameters.getFirstValue("prediction_feature");
-        if (targetString == null) {
-            throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
-        }
-        try {
-            targetUri = new VRI(targetString);
-        } catch (URISyntaxException ex) {
-            throw new BadParameterException("The parameter 'prediction_feaure' you provided is not a valid URI.", ex);
-        }
-        String datasetUriString = clientParameters.getFirstValue("dataset_uri");
-        if (datasetUriString == null) {
-            throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");
-        }
-        try {
-            datasetUri = new VRI(datasetUriString);
-        } catch (URISyntaxException ex) {
-            throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
-        }
-        String featureServiceString = clientParameters.getFirstValue("feature_service");
-        if (featureServiceString != null) {
-            try {
-                featureService = new VRI(featureServiceString);
-            } catch (URISyntaxException ex) {
-                throw new BadParameterException("The parameter 'feature_service' you provided is not a valid URI.", ex);
-            }
+    public Model train(VRI data) throws JaqpotException {
+        ArffDownloader downloader = new ArffDownloader(datasetUri);
+        Instances inst = downloader.getInstances();
+        if (inst != null) {
+            return train(inst);
         } else {
-            featureService = Services.ideaconsult().augment("feature");
+            try {
+                return train(new Dataset(datasetUri).loadFromRemote());
+            } catch (ToxOtisException ex) {
+                throw new JaqpotException(ex);
+            } catch (ServiceInvocationException ex) {
+                throw new JaqpotException(ex);
+            }
         }
-        return this;
-    }
-
-    @Override
-    public Algorithm getAlgorithm() {
-        return Algorithms.mlr();
     }
 }

@@ -183,4 +183,14 @@ public class ScalingFilter extends AbstractTrainer {
     public Dataset preprocessDataset(Dataset dataset) {
         return dataset;
     }
+
+    @Override
+    public Model train(Instances data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Model train(VRI data) throws JaqpotException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

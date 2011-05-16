@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -15,6 +17,7 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import org.opentox.jaqpot3.qsar.filter.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.filter.SimpleMVHFilter;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -25,10 +28,12 @@ import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.FeatureFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -50,7 +55,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     private double e = 0.6;
     private int p = 5;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FastRbfNnModel.class);
-    private static final Random RANDOM= new Random(3*System.currentTimeMillis()+71);
+    private static final Random RANDOM = new Random(3 * System.currentTimeMillis() + 71);
 
     @Override
     public Dataset preprocessDataset(Dataset dataset) {
@@ -128,11 +133,32 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         return result;
     }
 
+    private Instances preprocessInstances(Instances in) throws QSARException {
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        try {
+            Instances filt1 = cleanup.filter(in);
+            SimpleMVHFilter mvh = new SimpleMVHFilter();
+            Instances fin = mvh.filter(filt1);
+            return fin;
+        } catch (JaqpotException ex) {
+            throw new QSARException(ex);
+        } catch (QSARException ex) {
+            throw new QSARException(ex);
+        }
+    }
+
     @Override
-    public Model train(Dataset data) throws JaqpotException {
-        Instances training = data.getInstances();
-        
-        if (!training.attribute(targetUri.toString()).isNumeric()){
+    public Model train(Instances training) throws JaqpotException {
+        training.renameAttribute(0, "compound_uri");
+        try {
+            training = preprocessInstances(training);
+            //        Instances training = data.getInstances();
+        } catch (QSARException ex) {
+            throw new JaqpotException(ex);
+        }
+//        Instances training = data.getInstances();
+
+        if (!training.attribute(targetUri.toString()).isNumeric()) {
             throw new JaqpotException("The prediction feature you specified is not a numeric feature");
         }
         /*
@@ -148,8 +174,8 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         }
         Attribute targetAttribute = cleanedTraining.attribute(targetUri.toString());
         if (targetAttribute == null) {
-            throw new JaqpotException("The prediction feature you provided was not found in the dataset. " +
-                    "Prediction Feature provided by the client: "+targetUri.toString());
+            throw new JaqpotException("The prediction feature you provided was not found in the dataset. "
+                    + "Prediction Feature provided by the client: " + targetUri.toString());
         } else {
             if (!targetAttribute.isNumeric()) {
                 throw new JaqpotException("The prediction feature you provided is not numeric.");
@@ -175,7 +201,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
             potential = updatePotential(potential, i_star, cleanedTraining);
             i_star = locationOfMax(potential);
             double diff = potential[i_star] - e * potential_star_1;
-            if (Double.isNaN(diff)){
+            if (Double.isNaN(diff)) {
                 throw new JaqpotException("Not converging");
             }
             if (potential[i_star] <= e * potential_star_1) {
@@ -236,7 +262,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.addDependentFeatures(dependentFeature);
         try {
             Feature predictedFeature = FeatureFactory.createAndPublishFeature(
-                    "Feature created as prediction feature for the RBF NN model " + m.getUri(),"",
+                    "Feature created as prediction feature for the RBF NN model " + m.getUri(), "",
                     new ResourceValue(m.getUri(), OTClasses.Model()), featureService, token);
             m.addPredictedFeatures(predictedFeature);
         } catch (ServiceInvocationException ex) {
@@ -340,5 +366,27 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     @Override
     public Algorithm getAlgorithm() {
         return Algorithms.fastRbfNn();
+    }
+
+    @Override
+    public Model train(Dataset data) throws JaqpotException {
+        return train(data.getInstances());
+    }
+
+    @Override
+    public Model train(VRI data) throws JaqpotException {
+        ArffDownloader downloader = new ArffDownloader(datasetUri);
+        Instances inst = downloader.getInstances();
+        if (inst != null) {
+            return train(inst);
+        } else {
+            try {
+                return train(new Dataset(datasetUri).loadFromRemote());
+            } catch (ToxOtisException ex) {
+                throw new JaqpotException(ex);
+            } catch (ServiceInvocationException ex) {
+                throw new JaqpotException(ex);
+            }
+        }
     }
 }

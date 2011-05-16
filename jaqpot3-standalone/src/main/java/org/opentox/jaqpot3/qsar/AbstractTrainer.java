@@ -1,15 +1,19 @@
 package org.opentox.jaqpot3.qsar;
 
 import java.util.UUID;
+import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.toxotis.client.VRI;
+import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 
 /**
  *
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public abstract class AbstractTrainer implements ITrainer {
+public abstract class AbstractTrainer implements ITrainer {   
 
     private boolean enabled = true;
     private boolean synch = true;
@@ -43,4 +47,6 @@ public abstract class AbstractTrainer implements ITrainer {
     public boolean needsDataset(){
         return true;
     }
+
+    
 }
