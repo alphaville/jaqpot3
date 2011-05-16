@@ -29,6 +29,7 @@ import org.opentox.toxotis.factory.FeatureFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -43,6 +44,7 @@ public class ScalingFilter extends AbstractTrainer {
     double max = 1;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
     private VRI featureService;
+    private VRI datasetUri;
     Set<String> ignored = new HashSet<String>();
 
     private double minValue(Instances dataInst, int attributeIndex) {
@@ -62,9 +64,7 @@ public class ScalingFilter extends AbstractTrainer {
         return maxVal;
     }
 
-    private Model processAbsoluteScaling(Dataset data) throws JaqpotException {
-        Instances dataInst = data.getInstances();
-
+    private Model processAbsoluteScaling(Instances dataInst) throws JaqpotException {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model scalingModel = new Model(newModelUri);
         ScalingModel actualModel = new ScalingModel();
@@ -122,14 +122,12 @@ public class ScalingFilter extends AbstractTrainer {
         }
 
         scalingModel.setAlgorithm(getAlgorithm());
-        scalingModel.setDataset(data.getUri());
-
+        scalingModel.setDataset(datasetUri);
         return scalingModel;
     }
 
     @Override
-    public Model train(Dataset data) throws JaqpotException {
-
+    public Model train(Instances data) throws JaqpotException {
         return processAbsoluteScaling(data);
     }
 
@@ -155,6 +153,18 @@ public class ScalingFilter extends AbstractTrainer {
             throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
                     + "you spcified are inconsistent. min=" + min + " while max=" + max + ". It should be min &lt; max.");
         }
+
+        String datasetUriString = clientParameters.getFirstValue("dataset_uri");
+        if (datasetUriString == null) {
+            throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");
+        }
+        try {
+            datasetUri = new VRI(datasetUriString);
+        } catch (URISyntaxException ex) {
+            throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
+        }
+
+
         String featureServiceString = clientParameters.getFirstValue("feature_service");
         if (featureServiceString != null) {
             try {
@@ -185,12 +195,24 @@ public class ScalingFilter extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Instances data) throws JaqpotException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Model train(Dataset data) throws JaqpotException {
+        return train(data.getInstances());
     }
 
-    @Override
+     @Override
     public Model train(VRI data) throws JaqpotException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArffDownloader downloader = new ArffDownloader(datasetUri);
+        Instances inst = downloader.getInstances();
+        if (inst != null) {
+            return train(inst);
+        } else {
+            try {
+                return train(new Dataset(datasetUri).loadFromRemote());
+            } catch (ToxOtisException ex) {
+                throw new JaqpotException(ex);
+            } catch (ServiceInvocationException ex) {
+                throw new JaqpotException(ex);
+            }
+        }
     }
 }
