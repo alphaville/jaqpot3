@@ -70,7 +70,7 @@ public class ScalingFilter extends AbstractTrainer {
         ScalingModel actualModel = new ScalingModel();
         int nAttr = dataInst.numAttributes();
         for (int i = 0; i < nAttr; i++) {
-            Attribute attribute = dataInst.attribute(i);            
+            Attribute attribute = dataInst.attribute(i);
             if (attribute.isNumeric() && !ignored.contains(attribute.name())) {
                 try {
                     VRI featureVri = new VRI(attribute.name());
@@ -194,25 +194,5 @@ public class ScalingFilter extends AbstractTrainer {
         return dataset;
     }
 
-    @Override
-    public Model train(Dataset data) throws JaqpotException {
-        return train(data.getInstances());
-    }
-
-     @Override
-    public Model train(VRI data) throws JaqpotException {
-        ArffDownloader downloader = new ArffDownloader(datasetUri);
-        Instances inst = downloader.getInstances();
-        if (inst != null) {
-            return train(inst);
-        } else {
-            try {
-                return train(new Dataset(datasetUri).loadFromRemote());
-            } catch (ToxOtisException ex) {
-                throw new JaqpotException(ex);
-            } catch (ServiceInvocationException ex) {
-                throw new JaqpotException(ex);
-            }
-        }
-    }
+    
 }

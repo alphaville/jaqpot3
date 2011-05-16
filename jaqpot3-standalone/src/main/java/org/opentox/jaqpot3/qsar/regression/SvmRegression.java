@@ -63,28 +63,6 @@ public class SvmRegression extends AbstractTrainer {
         return Algorithms.svm();
     }
 
-    @Override
-    public Model train(Dataset data) throws JaqpotException {
-        return train(data.getInstances());
-    }
-
-    @Override
-    public Model train(VRI data) throws JaqpotException {
-        ArffDownloader downloader = new ArffDownloader(datasetUri);
-        Instances inst = downloader.getInstances();
-        if (inst != null) {
-            return train(inst);
-        } else {
-            try {
-                return train(new Dataset(datasetUri).loadFromRemote());
-            } catch (ToxOtisException ex) {
-                throw new JaqpotException(ex);
-            } catch (ServiceInvocationException ex) {
-                throw new JaqpotException(ex);
-            }
-        }
-    }
-
     private enum SvmParameter {
 
         gamma,
