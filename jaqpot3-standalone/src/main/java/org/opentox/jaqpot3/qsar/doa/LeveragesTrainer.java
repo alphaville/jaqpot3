@@ -25,8 +25,11 @@ import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
+import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -63,10 +66,9 @@ public class LeveragesTrainer extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Dataset data) throws JaqpotException {
-        Instances trainingSet = null;
+    public Model train(Instances trainingSet) throws JaqpotException {
         try {
-            trainingSet = preprocessInstances(data.getInstances());
+            trainingSet = preprocessInstances(trainingSet);
             Attribute target = trainingSet.attribute(targetUri.toString());
             if (target == null) {
                 throw new BadParameterException("The prediction feature you provided was not found in the dataset");
@@ -201,12 +203,24 @@ public class LeveragesTrainer extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Instances data) throws JaqpotException {
+    public Model train(Dataset data) throws JaqpotException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Model train(VRI data) throws JaqpotException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArffDownloader downloader = new ArffDownloader(datasetUri);
+        Instances inst = downloader.getInstances();
+        if (inst != null) {
+            return train(inst);
+        } else {
+            try {
+                return train(new Dataset(datasetUri).loadFromRemote());
+            } catch (ToxOtisException ex) {
+                throw new JaqpotException(ex);
+            } catch (ServiceInvocationException ex) {
+                throw new JaqpotException(ex);
+            }
+        }
     }
 }
