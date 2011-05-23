@@ -65,7 +65,7 @@ import org.restlet.resource.ResourceException;
  */
 public class TrainGeneric extends JaqpotResource {
 
-    public static final URITemplate template = new URITemplate("train", "generic", null);
+    
 
     @Override
     protected void doInit() throws ResourceException {

@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.opentox.toxotis</groupId>
             <artifactId>ToxOtis-core</artifactId>
-            <version>0.5.42</version>
+            <version>0.5.45</version>
         </dependency>
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>

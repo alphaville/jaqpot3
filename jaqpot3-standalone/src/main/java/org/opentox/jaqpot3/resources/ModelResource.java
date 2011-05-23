@@ -31,8 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
-
 package org.opentox.jaqpot3.resources;
 
 import java.net.URISyntaxException;
@@ -114,7 +112,6 @@ public class ModelResource extends JaqpotResource {
         parseStandardParameters();
         updatePrimaryId(template);
     }
-    
 
     @Override
     public Representation doConditionalHandle() {
@@ -292,14 +289,14 @@ public class ModelResource extends JaqpotResource {
          */
         if (newUser) {
             try {
-                PolicyManager.defaultSignleUserPolicy(Configuration.getBaseUri().getHost()+"user_" + creator.getUid(), Configuration.getBaseUri().augment("user",creator.getUid()), getUserToken()).
+                PolicyManager.defaultSignleUserPolicy(Configuration.getBaseUri().getHost() + "user_" + creator.getUid(), Configuration.getBaseUri().augment("user", creator.getUid()), getUserToken()).
                         publish(null, getUserToken());
             } catch (ToxOtisException ex) {
                 toggleServerError();
-                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+                return errorReport(ex, "Policy Creation Failed for user " + creator.getName(), "", variant.getMediaType(), false);
             } catch (ServiceInvocationException ex) {
                 toggleRemoteError();
-                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+                return errorReport(ex, "Policy Creation Failed for user " + creator.getName(), "", variant.getMediaType(), false);
             }
             creator.setMaxModels(2000);
             creator.setMaxBibTeX(2000);
@@ -398,8 +395,9 @@ public class ModelResource extends JaqpotResource {
             }
         }
 
+        IClientInput clientInput = null;
         if (model != null) {
-            IClientInput clientInput = new ClientInput(entity);
+            clientInput = new ClientInput(entity);
             IPredictor predictor = PredictorFinder.getPredictor(model.getAlgorithm().getUri().getId());
             predictor.setModel(model);
             predictor.setTask(task);
@@ -413,6 +411,12 @@ public class ModelResource extends JaqpotResource {
         getResponse().setStatus(Status.valueOf((int) task.getHttpStatus()));
         /** The user takes a task and waits for completion**/
         Publisher publisher = new Publisher(variant.getMediaType());
+        if (clientInput != null) {
+            String comingFrom = null;
+            if ((comingFrom = clientInput.getFirstValue("comingFrom")) != null && comingFrom.equals("webInterface")) {
+                toggleSeeOther(Configuration.getBaseUri().augment("task", uuid).toString());
+            }
+        }
         release();
         try {
             return publisher.createRepresentation(task, true);
