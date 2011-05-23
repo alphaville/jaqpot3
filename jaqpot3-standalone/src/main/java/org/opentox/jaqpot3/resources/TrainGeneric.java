@@ -189,6 +189,7 @@ public class TrainGeneric extends JaqpotResource {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        toggleSeeOther(nextUri);
         String htmlResponse = "<html>"
                 + "<head>"
                 + "  <title>Task Created</title>"
@@ -198,7 +199,6 @@ public class TrainGeneric extends JaqpotResource {
                 + "<p><a href=\"" + nextUri + "\">Task Created</a></p>"
                 + "</body>"
                 + "</html>";
-        toggleSuccess();
         return new StringRepresentation(htmlResponse, MediaType.TEXT_HTML);
     }
 }
