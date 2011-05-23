@@ -78,7 +78,7 @@ public class ScalingFilter extends AbstractTrainer {
                     //TODO: Create in-house private methods to find min and max values
                     actualModel.getMinVals().put(featureVri, minValue(dataInst, i));
                     actualModel.getMaxVals().put(featureVri, maxValue(dataInst, i));
-                    Feature f = FeatureFactory.createAndPublishFeature("Scaled Feature " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
+                    Feature f = FeatureFactory.createAndPublishFeature("Scaled " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
                             new ResourceValue(newModelUri, OTClasses.Model()), featureService, token);
                     f.getMeta().setHasSources(new HashSet<ResourceValue>());// << workaround!
                     scalingModel.addPredictedFeatures(f);

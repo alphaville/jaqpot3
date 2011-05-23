@@ -47,6 +47,7 @@ public class PredictionService extends RunnableTaskService {
 
     @Override
     public void run() {
+        System.out.println("**-1");
 
         /*
          * Change the status of the task from QUEUED to RUNNING
@@ -78,6 +79,7 @@ public class PredictionService extends RunnableTaskService {
             Dataset ds = new Dataset(datasetURI).loadFromRemote(token);
 
             /* GET THE PREDICTIONS FROM THE PREDICTOR */
+            System.out.println("**-1"+predictor.getClass());
             Dataset output = predictor.predict(ds);
 
             /* */

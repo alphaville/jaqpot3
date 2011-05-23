@@ -16,9 +16,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.opentox.toxotis</groupId>
+            <artifactId>ToxOtis-core</artifactId>
+            <version>0.5.42</version>
+        </dependency>
+        <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
             <version>0.2.24</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opentox.toxotis</groupId>
+                    <artifactId>ToxOtis-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>Jama</groupId>

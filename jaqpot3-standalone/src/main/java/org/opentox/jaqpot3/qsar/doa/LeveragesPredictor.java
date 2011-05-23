@@ -54,12 +54,13 @@ public class LeveragesPredictor extends AbstractPredictor {
 
     @Override
     public Dataset predict(Dataset data) throws JaqpotException {
-
         LeveragesModel actualModel = (LeveragesModel) model.getActualModel();
         Matrix matrix = actualModel.getDataMatrix();
         double gamma = actualModel.getGamma();
         Instances inputSet = data.getInstances();
+        System.out.println("Input:\n" + inputSet);
         Instances orderedDataset = null;
+        System.out.println("XX-2");
         try {
             orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);
         } catch (JaqpotException ex) {
@@ -69,6 +70,7 @@ public class LeveragesPredictor extends AbstractPredictor {
             logger.debug(message, ex);
             throw new JaqpotException(message, ex);
         }
+        System.out.println("XX-3");
 
 
         AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
@@ -98,21 +100,26 @@ public class LeveragesPredictor extends AbstractPredictor {
         }
 
 
+        System.out.println("XX-4 :'" + numInstances + "'" + " gamma is :" + gamma);
+
         Matrix x = null;
         for (int i = 0; i < numInstances; i++) {
             x = new Matrix(orderedDataset.instance(i).toDoubleArray(), numAttributes);
+            x.print(1, 10);
             double indicator = Math.max(0, (gamma - x.transpose().times(matrix).times(x).get(0, 0)) / gamma);
+            System.out.println(indicator + "..");
             predictions.instance(i).setClassValue(indicator);
         }
 
         try {
 
             Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
+            System.out.println(output.getInstances());
             return output;
         } catch (ToxOtisException ex) {
             logger.error(null, ex);
             throw new JaqpotException(ex);
-        } 
+        }
 
 
     }
