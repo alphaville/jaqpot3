@@ -136,7 +136,6 @@ public class SvmRegression extends AbstractTrainer {
                 }
             }
 
-            System.out.println(6);
 
             // INITIALIZE THE REGRESSOR
             SVMreg regressor = new SVMreg();
@@ -162,14 +161,15 @@ public class SvmRegression extends AbstractTrainer {
                 poly_kernel.setCacheSize(Integer.parseInt(Integer.toString(cacheSize)));
                 poly_kernel.setUseLowerOrder(true);
                 svm_kernel = poly_kernel;
-            }
-            regressor.setKernel(svm_kernel);
+            }           
+
             try {
                 regressor.setOptions(regressorOptions);
             } catch (final Exception ex) {
                 throw new QSARException("Bad options in SVM trainer for epsilon = {" + epsilon + "} or "
                         + "tolerance = {" + tolerance + "}.", ex);
             }
+            regressor.setKernel(svm_kernel);
 
             // START TRAINING
             try {
@@ -180,7 +180,10 @@ public class SvmRegression extends AbstractTrainer {
             }
 
             //CREATE MODEL
-            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
+
+            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));            
+
+
             try {
                 m.setActualModel(regressor);
             } catch (NotSerializableException ex) {
