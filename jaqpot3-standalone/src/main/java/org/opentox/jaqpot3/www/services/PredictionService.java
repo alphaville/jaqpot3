@@ -1,6 +1,8 @@
 package org.opentox.jaqpot3.www.services;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.concurrent.Future;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -13,6 +15,9 @@ import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.ontology.LiteralValue;
+import org.opentox.toxotis.ontology.ResourceValue;
+import org.opentox.toxotis.ontology.collection.OTClasses;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 
 /**
@@ -47,16 +52,21 @@ public class PredictionService extends RunnableTaskService {
 
     @Override
     public void run() {
-        System.out.println("**-1");
 
         /*
          * Change the status of the task from QUEUED to RUNNING
          * The task has ALREADY been registered (see ModelResource)
          */
         predictor.getTask().setStatus(Status.RUNNING);
+        predictor.getTask().getMeta().setDate(
+                new LiteralValue(new Date(System.currentTimeMillis()), XSDDatatype.XSDdate));
+        if (predictor.getModel() != null && predictor.getModel().getUri() != null) {
+            predictor.getTask().getMeta().addHasSource(new ResourceValue(predictor.getModel().getUri(), OTClasses.Model()));
+        }
 
         UpdateTask updater = new UpdateTask(predictor.getTask());
         updater.setUpdateTaskStatus(true);
+        updater.setUpdateMeta(true);
         try {
             updater.update();// update the task (QUEUED --> RUNNING)
         } catch (DbException ex) {
@@ -79,7 +89,6 @@ public class PredictionService extends RunnableTaskService {
             Dataset ds = new Dataset(datasetURI).loadFromRemote(token);
 
             /* GET THE PREDICTIONS FROM THE PREDICTOR */
-            System.out.println("**-1"+predictor.getClass());
             Dataset output = predictor.predict(ds);
 
             /* */

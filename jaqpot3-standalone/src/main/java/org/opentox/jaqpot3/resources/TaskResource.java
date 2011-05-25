@@ -281,8 +281,6 @@ public class TaskResource extends JaqpotResource {
                 }
             }
         }
-
-
         return new StringRepresentation("Task cancelled" + NEWLINE);
 
     }

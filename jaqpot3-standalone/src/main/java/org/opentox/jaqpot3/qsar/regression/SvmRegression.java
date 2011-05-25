@@ -1,3 +1,37 @@
+/*
+ *
+ * Jaqpot - version 3
+ *
+ * The JAQPOT-3 web services are OpenTox API-1.2 compliant web services. Jaqpot
+ * is a web application that supports model training and data preprocessing algorithms
+ * such as multiple linear regression, support vector machines, neural networks
+ * (an in-house implementation based on an efficient algorithm), an implementation
+ * of the leverage algorithm for domain of applicability estimation and various
+ * data preprocessing algorithms like PLS and data cleanup.
+ *
+ * Copyright (C) 2009-2012 Pantelis Sopasakis & Charalampos Chomenides
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * Pantelis Sopasakis
+ * chvng@mail.ntua.gr
+ * Address: Iroon Politechniou St. 9, Zografou, Athens Greece
+ * tel. +30 210 7723236
+ *
+ */
+
 package org.opentox.jaqpot3.qsar.regression;
 
 import java.io.NotSerializableException;
@@ -6,10 +40,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -28,15 +60,12 @@ import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
-import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
-import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
-import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.classifiers.functions.SVMreg;
 import weka.classifiers.functions.supportVector.Kernel;
 import weka.classifiers.functions.supportVector.PolyKernel;
@@ -161,7 +190,7 @@ public class SvmRegression extends AbstractTrainer {
                 poly_kernel.setCacheSize(Integer.parseInt(Integer.toString(cacheSize)));
                 poly_kernel.setUseLowerOrder(true);
                 svm_kernel = poly_kernel;
-            }           
+            }
 
             try {
                 regressor.setOptions(regressorOptions);
@@ -181,7 +210,7 @@ public class SvmRegression extends AbstractTrainer {
 
             //CREATE MODEL
 
-            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));            
+            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
 
 
             try {

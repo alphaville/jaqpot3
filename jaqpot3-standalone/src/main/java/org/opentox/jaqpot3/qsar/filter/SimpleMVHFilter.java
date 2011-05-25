@@ -1,5 +1,40 @@
-package org.opentox.jaqpot3.qsar.filter;
+/*
+ *
+ * Jaqpot - version 3
+ *
+ * The JAQPOT-3 web services are OpenTox API-1.2 compliant web services. Jaqpot
+ * is a web application that supports model training and data preprocessing algorithms
+ * such as multiple linear regression, support vector machines, neural networks
+ * (an in-house implementation based on an efficient algorithm), an implementation
+ * of the leverage algorithm for domain of applicability estimation and various
+ * data preprocessing algorithms like PLS and data cleanup.
+ *
+ * Copyright (C) 2009-2012 Pantelis Sopasakis & Charalampos Chomenides
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * Pantelis Sopasakis
+ * chvng@mail.ntua.gr
+ * Address: Iroon Politechniou St. 9, Zografou, Athens Greece
+ * tel. +30 210 7723236
+ *
+ */
 
+
+
+package org.opentox.jaqpot3.qsar.filter;
 
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -17,13 +52,11 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
  * @author Charalampos Chomenides
  * @deprecated
  */
-
 @Deprecated
-public class SimpleMVHFilter  {
+public class SimpleMVHFilter {
 
     private boolean ignoreClass = false;
 
-    
     public Algorithm getAlgorithm() {
         return Algorithms.plsFilter();
     }
@@ -63,15 +96,4 @@ public class SimpleMVHFilter  {
         /* No parameters needed here */
         return this;
     }
-//    public static void main(String... args) throws Exception{
-//        Dataset d = new Dataset(Services.ambitUniPlovdiv().augment("dataset","6").addUrlParameter("max", "5")).loadFromRemote();
-//        SimpleMVHFilter filter = new SimpleMVHFilter();
-//        Dataset o = filter.process(d);
-//        System.out.println(o.getInstances());
-//        System.out.println();
-//        Future<VRI> t = o.publish(Services.ambitUniPlovdiv().augment("dataset"), (AuthenticationToken) null);
-//         while (!t.isDone()) {
-//        }
-//        System.out.println(t.get());
-//    }
 }

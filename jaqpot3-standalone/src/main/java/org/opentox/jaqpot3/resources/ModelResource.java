@@ -342,7 +342,7 @@ public class ModelResource extends JaqpotResource {
 
         Task task = TaskFactory.newQueuedTask(creator, uuid);
         task.getMeta().
-                addDescription("Asynchronous Task for Prediction").
+                addDescription("Asynchronous Task for Prediction using the model " + getCurrentVRI()).
                 addComment("Asynchronous task created for a background job initiated by the model: " + primaryId).
                 addHasSource(new ResourceValue(getCurrentVRI().removeUrlParameter("subjectid"), OTClasses.Model()));
 

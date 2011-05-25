@@ -58,4 +58,9 @@ public abstract class AbstractPredictor implements IPredictor {
         this.token = token;
         return this;
     }
+
+    @Override
+    public Model getModel() {
+        return model;
+    }
 }

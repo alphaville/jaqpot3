@@ -17,7 +17,7 @@ import org.opentox.toxotis.util.aa.AuthenticationToken;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public interface IPredictor  {
+public interface IPredictor {
 
     /**
      * Parametrize the prediction procedure. Using this interface method, user can provide
@@ -50,6 +50,8 @@ public interface IPredictor  {
      *      Updated predictor with the model
      */
     IPredictor setModel(Model model);
+
+    Model getModel();
 
     /**
      * The predictor has to have control of the task under which the prediction job

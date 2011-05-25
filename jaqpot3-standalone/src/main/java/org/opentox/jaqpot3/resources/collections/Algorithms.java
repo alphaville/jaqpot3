@@ -103,9 +103,6 @@ public class Algorithms {
             "along with this program.  If not, see http://www.gnu.org/licenses/ .\n\n" +
             "The Jaqpot source code is found online at https://github.com/alphaville/jaqpot3";
 
-//    public static void main(String... args){
-//        System.out.println(HTMLUtils.normalizeTextForHtml(HTMLUtils.linkUrlsInText(_LICENSE)));
-//    }
 
     static {
         repository = new HashSet<Algorithm>();
@@ -566,7 +563,4 @@ public class Algorithms {
         }
         return leverages;
     }
-//    public static void main(String... args){
-//        System.out.println(Algorithms.forName("null").getUri());
-//    }
 }
