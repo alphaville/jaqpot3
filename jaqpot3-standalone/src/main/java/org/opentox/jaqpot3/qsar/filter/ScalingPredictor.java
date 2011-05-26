@@ -1,27 +1,20 @@
 package org.opentox.jaqpot3.qsar.filter;
 
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractPredictor;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.DatasetFactory;
 import weka.core.Attribute;
-import weka.core.Instance;
 import weka.core.Instances;
 
 /**

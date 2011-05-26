@@ -2,6 +2,7 @@ package org.opentox.jaqpot3.qsar.filter;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.io.NotSerializableException;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -14,12 +15,20 @@ import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
+import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
+import org.opentox.toxotis.database.engine.task.UpdateTask;
+import org.opentox.toxotis.database.exception.DbException;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.factory.FeatureFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
+import org.opentox.toxotis.ontology.ResourceValue;
+import org.opentox.toxotis.ontology.collection.OTClasses;
+import weka.core.Attribute;
 import weka.core.Instances;
 
 /**
@@ -30,6 +39,8 @@ import weka.core.Instances;
 public class MissingValueFilter extends AbstractTrainer {
 
     HashSet<String> ignored = new HashSet<String>();
+    private VRI datasetUri;
+    private VRI featureService;
 
     @Override
     public Dataset preprocessDataset(Dataset dataset) {
@@ -37,7 +48,7 @@ public class MissingValueFilter extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Dataset data) throws JaqpotException {
+    public Model train(Instances data) throws JaqpotException {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model mvh = new Model(newModelUri);
         try {
@@ -49,8 +60,43 @@ public class MissingValueFilter extends AbstractTrainer {
          * TODO: Create NEW Features!!!
          * For every feature of the old dataset, create a new one
          */
-        
-        
+        int nAttr = data.numAttributes();
+
+        for (int i = 0; i < nAttr; i++) {
+            Attribute attribute = data.attribute(i);
+            if ((attribute.isNumeric() || attribute.isNominal()) && !ignored.contains(attribute.name())) {
+
+                try {
+                    VRI featureVri = new VRI(attribute.name());
+                    mvh.addIndependentFeatures(new Feature(featureVri));
+                    Feature f = FeatureFactory.createAndPublishFeature("MVH " + featureVri.toString(), "",
+                            new ResourceValue(newModelUri, OTClasses.Model()), featureService, token);
+                    mvh.addPredictedFeatures(f);
+                    getTask().getMeta().addComment("MVH feature for " + featureVri.toString()
+                            + " has been created at " + f.getUri().toString());
+                    getTask().setPercentageCompleted((float) ((float) i / (float) nAttr) * 99.5f);
+                    UpdateTask taskUpdater = new UpdateTask(getTask());                    
+                    taskUpdater.setUpdateMeta(true);
+                    try {
+                        taskUpdater.update();
+                    } catch (DbException ex) {
+                        throw new JaqpotException(ex);
+                    } finally {
+                        try {
+                            taskUpdater.close();
+                        } catch (DbException ex) {
+                            throw new JaqpotException(ex);
+                        }
+                    }
+                } catch (ServiceInvocationException ex) {
+                    Logger.getLogger(MissingValueFilter.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(MissingValueFilter.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        }
+
         if (ignored != null && !ignored.isEmpty()) {
             mvh.setParameters(new HashSet<Parameter>());
             for (String ign : ignored) {
@@ -61,11 +107,11 @@ public class MissingValueFilter extends AbstractTrainer {
             }
         }
         mvh.setCreatedBy(getTask().getCreatedBy());
-        mvh.setDataset(data != null ? data.getUri() : null);
+        mvh.setDataset(datasetUri);
         mvh.setAlgorithm(getAlgorithm());
-        mvh.getMeta().addTitle("Missing Value Handling Model").addDescription("This model is used to replace missing values in a " +
-                "dataset using the Means & Modes algorithm").addComment("MVH models, unlike predictive QSAR models, do not have predicted features. " +
-                "Additionally they were not trained using some dataset for they are not models in the QSAR sense, but better to say \"Model-like web services\"");
+        mvh.getMeta().addTitle("Missing Value Handling Model").addDescription("This model is used to replace missing values in a "
+                + "dataset using the Means & Modes algorithm").addComment("MVH models, unlike predictive QSAR models, do not have predicted features. "
+                + "Additionally they were not trained using some dataset for they are not models in the QSAR sense, but better to say \"Model-like web services\"");
         return mvh;
     }
 
@@ -74,6 +120,25 @@ public class MissingValueFilter extends AbstractTrainer {
         String[] ignoredUris = clientParameters.getValuesArray("ignore_uri");
         for (String s : ignoredUris) {
             ignored.add(s);
+        }
+        String datasetUriString = clientParameters.getFirstValue("dataset_uri");
+        if (datasetUriString == null) {
+            throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");
+        }
+        try {
+            datasetUri = new VRI(datasetUriString);
+        } catch (URISyntaxException ex) {
+            throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
+        }
+        String featureServiceString = clientParameters.getFirstValue("feature_service");
+        if (featureServiceString != null) {
+            try {
+                featureService = new VRI(featureServiceString);
+            } catch (URISyntaxException ex) {
+                throw new BadParameterException("The parameter 'feature_service' you provided is not a valid URI.", ex);
+            }
+        } else {
+            featureService = Services.ideaconsult().augment("feature");
         }
         return this;
     }
@@ -86,15 +151,5 @@ public class MissingValueFilter extends AbstractTrainer {
     @Override
     public boolean needsDataset() {
         return false;
-    }
-
-    @Override
-    public Model train(Instances data) throws JaqpotException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Model train(VRI data) throws JaqpotException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
