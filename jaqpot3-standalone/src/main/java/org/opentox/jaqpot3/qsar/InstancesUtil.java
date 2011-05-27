@@ -87,21 +87,21 @@ public class InstancesUtil {
         return result;
     }
 
-    /**
-     * Main method just for testing purposes.
-     * @param art
-     *      Not used arguments
-     * @throws Exception
-     */
-    public static void main(String... art) throws Exception {
-        Dataset ds = new Dataset(Services.ideaconsult().augment("dataset", "54").addUrlParameter("max", "10")).loadFromRemote();
-        Instances initialDataset = ds.getInstances();
-        System.out.println(initialDataset);
-        List<String> list = new ArrayList<String>();
-        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22201");
-        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22199");
-        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22202");
-        Instances newInst = InstancesUtil.sortByFeatureAttrList(list, initialDataset, -1);
-        System.out.println(newInst);
-    }
+//    /**
+//     * Main method just for testing purposes.
+//     * @param art
+//     *      Not used arguments
+//     * @throws Exception
+//     */
+//    public static void main(String... art) throws Exception {
+//        Dataset ds = new Dataset(Services.ideaconsult().augment("dataset", "54").addUrlParameter("max", "10")).loadFromRemote();
+//        Instances initialDataset = ds.getInstances();
+//        System.out.println(initialDataset);
+//        List<String> list = new ArrayList<String>();
+//        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22201");
+//        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22199");
+//        list.add("http://apps.ideaconsult.net:8080/ambit2/feature/22202");
+//        Instances newInst = InstancesUtil.sortByFeatureAttrList(list, initialDataset, -1);
+//        System.out.println(newInst);
+//    }
 }

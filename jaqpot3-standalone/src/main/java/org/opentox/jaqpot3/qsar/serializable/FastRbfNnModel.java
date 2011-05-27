@@ -1,4 +1,4 @@
-package org.opentox.jaqpot3.qsar.regression;
+package org.opentox.jaqpot3.qsar.serializable;
 
 import java.io.Serializable;
 import weka.core.Instances;

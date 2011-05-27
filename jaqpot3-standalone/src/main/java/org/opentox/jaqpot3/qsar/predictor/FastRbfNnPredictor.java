@@ -33,8 +33,9 @@
  */
 
 
-package org.opentox.jaqpot3.qsar.regression;
+package org.opentox.jaqpot3.qsar.predictor;
 
+import org.opentox.jaqpot3.qsar.serializable.FastRbfNnModel;
 import java.net.URISyntaxException;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractPredictor;
@@ -43,7 +44,7 @@ import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.filter.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Dataset;
@@ -53,7 +54,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
-import static org.opentox.jaqpot3.qsar.filter.AttributeCleanup.ATTRIBUTE_TYPE.*;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.ATTRIBUTE_TYPE.*;
 
 /**
  *

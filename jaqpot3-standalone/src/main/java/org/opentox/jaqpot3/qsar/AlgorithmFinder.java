@@ -1,12 +1,17 @@
 package org.opentox.jaqpot3.qsar;
 
+import org.opentox.jaqpot3.qsar.trainer.ScalingFilter;
+import org.opentox.jaqpot3.qsar.trainer.MissingValueFilter;
+import org.opentox.jaqpot3.qsar.trainer.SvmRegression;
+import org.opentox.jaqpot3.qsar.trainer.MlrRegression;
+import org.opentox.jaqpot3.qsar.trainer.FastRbfNnTrainer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import org.opentox.jaqpot3.qsar.doa.LeveragesTrainer;
+import org.opentox.jaqpot3.qsar.trainer.LeveragesTrainer;
 import org.opentox.jaqpot3.qsar.filter.*;
-import org.opentox.jaqpot3.qsar.regression.*;
+import org.opentox.jaqpot3.qsar.trainer.*;
 import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 
 /**

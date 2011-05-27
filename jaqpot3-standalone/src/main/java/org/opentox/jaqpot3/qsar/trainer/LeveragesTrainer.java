@@ -1,5 +1,6 @@
-package org.opentox.jaqpot3.qsar.doa;
+package org.opentox.jaqpot3.qsar.trainer;
 
+import org.opentox.jaqpot3.qsar.serializable.LeveragesModel;
 import Jama.Matrix;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.filter.AttributeCleanup;
-import org.opentox.jaqpot3.qsar.filter.SimpleMVHFilter;
+import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;

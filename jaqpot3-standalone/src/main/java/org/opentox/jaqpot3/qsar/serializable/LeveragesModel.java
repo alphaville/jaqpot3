@@ -1,4 +1,4 @@
-package org.opentox.jaqpot3.qsar.doa;
+package org.opentox.jaqpot3.qsar.serializable;
 
 import Jama.Matrix;
 import java.io.Serializable;

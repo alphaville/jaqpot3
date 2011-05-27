@@ -1,5 +1,6 @@
-package org.opentox.jaqpot3.qsar.doa;
+package org.opentox.jaqpot3.qsar.predictor;
 
+import org.opentox.jaqpot3.qsar.serializable.LeveragesModel;
 import Jama.Matrix;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
@@ -11,7 +12,7 @@ import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.filter.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Dataset;
@@ -23,7 +24,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
 
-import static org.opentox.jaqpot3.qsar.filter.AttributeCleanup.ATTRIBUTE_TYPE.*;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.ATTRIBUTE_TYPE.*;
 
 /**
  *
