@@ -1,18 +1,10 @@
 package org.opentox.jaqpot3.qsar;
 
-import org.opentox.jaqpot3.qsar.trainer.ScalingFilter;
-import org.opentox.jaqpot3.qsar.trainer.MissingValueFilter;
-import org.opentox.jaqpot3.qsar.trainer.SvmRegression;
-import org.opentox.jaqpot3.qsar.trainer.MlrRegression;
-import org.opentox.jaqpot3.qsar.trainer.FastRbfNnTrainer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import org.opentox.jaqpot3.qsar.trainer.LeveragesTrainer;
-import org.opentox.jaqpot3.qsar.filter.*;
 import org.opentox.jaqpot3.qsar.trainer.*;
-import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 
 /**
  *
@@ -29,7 +21,7 @@ public class AlgorithmFinder {
         map.put("mlr", MlrRegression.class);
         map.put("svm", SvmRegression.class);
         map.put("leverages", LeveragesTrainer.class);
-//        map.put("plsFilter", PLSFilter.class);
+        map.put("pls", PLSTrainer.class);
 //        map.put("svmFilter", SvmAttrSelFilter.class);
         map.put("fastRbfNn", FastRbfNnTrainer.class);
         map.put("scaling", ScalingFilter.class);

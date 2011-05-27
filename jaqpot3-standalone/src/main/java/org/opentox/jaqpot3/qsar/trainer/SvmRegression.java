@@ -315,11 +315,7 @@ public class SvmRegression extends AbstractTrainer {
             throw new JaqpotException(ex);
         }
     }
-
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
+    
 
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);

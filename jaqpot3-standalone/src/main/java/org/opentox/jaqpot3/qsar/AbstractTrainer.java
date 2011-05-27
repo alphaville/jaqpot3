@@ -24,7 +24,12 @@ public abstract class AbstractTrainer implements ITrainer {
     private Task task;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();
-    
+
+
+    @Override
+    public Dataset preprocessDataset(Dataset dataset) {
+        return dataset;
+    }
 
     @Override
     public ITrainer setTask(Task task) {

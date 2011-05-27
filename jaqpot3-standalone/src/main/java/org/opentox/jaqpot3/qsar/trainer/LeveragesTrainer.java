@@ -47,10 +47,6 @@ public class LeveragesTrainer extends AbstractTrainer {
     private UUID uuid = UUID.randomUUID();
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesTrainer.class);
 
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
 
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);

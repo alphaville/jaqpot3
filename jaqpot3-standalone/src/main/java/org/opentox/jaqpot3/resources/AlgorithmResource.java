@@ -128,6 +128,7 @@ public class AlgorithmResource extends JaqpotResource {
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
 
+        System.out.println(getCurrentVRI()+"!!");
         /*
          * The user that triggered the training procedure
          */

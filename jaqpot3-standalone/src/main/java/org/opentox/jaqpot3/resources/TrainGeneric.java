@@ -102,6 +102,7 @@ public class TrainGeneric extends JaqpotResource {
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "scaling") + "\">Preprocessing: Scaling</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "mvh") + "\">Preprocessing: MVH</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "cleanup") + "\">Preprocessing: Data Cleanup</option>");
+        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "pls") + "\">Preprocessing: PLS fitler</option>");
         formBuilder.append("</select></td>");
         formBuilder.append("</tr>");
 

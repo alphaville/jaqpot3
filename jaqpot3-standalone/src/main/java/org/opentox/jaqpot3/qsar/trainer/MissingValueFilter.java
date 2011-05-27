@@ -76,10 +76,6 @@ public class MissingValueFilter extends AbstractTrainer {
     private VRI datasetUri;
     private VRI featureService;
 
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
 
     @Override
     public Model train(Instances data) throws JaqpotException {

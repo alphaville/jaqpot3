@@ -189,10 +189,6 @@ public class ScalingFilter extends AbstractTrainer {
         return Algorithms.scaling();
     }
 
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
 
     
 }

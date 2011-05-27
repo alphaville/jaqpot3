@@ -339,8 +339,8 @@ public class Algorithms {
     public static Algorithm plsFilter() {
         if (plsFilter == null) {
             try {
-                plsFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "plsFilter"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("plsFilter", "Partial Least Squares Filter", "PLS Dataset Preprocessing").
+                plsFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "pls"));
+                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("pls", "Partial Least Squares Filter", "PLS Dataset Preprocessing").
                         addComment("You can also use this algorithm from withing the proxy service at " + Configuration.BASE_URI + "/algorithm/multifilter").
                         addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
                         addSubject("Filter", "Data Preprocessing", "PLS", "Data Preparation", "Weka").
@@ -378,7 +378,10 @@ public class Algorithms {
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "plsTarget"), "target", null).setScope(
                         Parameter.ParameterScope.MANDATORY);
-                target.getMeta().addDescription("URI of the target/class feature of the dataset with the respect to which PLS runs");
+                target.getMeta().addDescription("URI of the target/class feature of the dataset with the respect to which PLS runs").
+                        addComment("This is different from the parameter prediction_feature. This is not stort of a dependent feature " +
+                        "since this is a filtering algorithm and it does not generate a predictive model but transforms the submitted " +
+                        "dataset").addComment("The value should be a URI among the features of the sumbitted dataset");
                 plsFilter.getParameters().add(target);
 
                 plsFilter.setMeta(algorithmMeta);
@@ -511,33 +514,6 @@ public class Algorithms {
         return svm;
     }
 
-//    public static Algorithm svc() {
-//        if (svc == null) {
-//            try {
-//                svc = new Algorithm(Configuration.getBaseUri().augment("algorithm", "svc"));
-//                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("svc").
-//                        addTitle("Support Vector Machine Classification Training Algorithm").
-//                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-//                        addSubject("Regression", "Linear", "Training", "Multiple Linear Regression", "Machine Learning", "Single Target", "Eager Learning", "Weka").
-//                        addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-//                        addDescription("Algorithm for training classification models using the Support Vector Machine Learning Algorithm. "
-//                        + "A comprehensive introductory text is provided by John Shawe-Taylor and Nello Cristianin in the book 'Support Vector Machines' "
-//                        + "Cambridge University Press, 2000").
-//                        addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
-//                svc.setParameters(svm().getParameters());
-//                svc.setMeta(algorithmMeta);
-//                svc.setOntologies(new HashSet<OntologicalClass>());
-//                svc.getOntologies().add(OTAlgorithmTypes.Regression());
-//                svc.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-//                svc.getOntologies().add(OTAlgorithmTypes.EagerLearning());
-//                svc.getMeta().addRights(_LICENSE);
-//                svc.setEnabled(true);
-//            } catch (ToxOtisException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        }
-//        return svc;
-//    }
 
     public static Algorithm leverages() {
         if (leverages == null) {

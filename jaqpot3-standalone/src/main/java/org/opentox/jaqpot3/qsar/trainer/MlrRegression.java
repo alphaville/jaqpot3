@@ -84,10 +84,6 @@ public class MlrRegression extends AbstractTrainer {
     public MlrRegression() {
     }
 
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
 
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
