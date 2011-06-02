@@ -68,7 +68,7 @@ public class LeveragesTrainer extends AbstractTrainer {
             trainingSet = preprocessInstances(trainingSet);
             Attribute target = trainingSet.attribute(targetUri.toString());
             if (target == null) {
-                throw new BadParameterException("The prediction feature you provided was not found in the dataset");
+                // Do nothing! It doesn't matter :)
             } else {
                 if (!target.isNumeric()) {
                     throw new QSARException("The prediction feature you provided is not numeric.");

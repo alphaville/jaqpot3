@@ -33,7 +33,9 @@
  */
 package org.opentox.jaqpot3.qsar.trainer;
 
+import java.io.NotSerializableException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -42,6 +44,7 @@ import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
+import org.opentox.jaqpot3.qsar.serializable.PLSModel;
 import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
@@ -50,6 +53,7 @@ import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import weka.classifiers.functions.PLSClassifier;
 import weka.core.Instances;
@@ -95,8 +99,13 @@ public class PLSTrainer extends AbstractTrainer {
         if (numComponentsString != null) {
             numComponents = Integer.parseInt(numComponentsString);
         }
-
         pls_algorithm = clientParameters.getFirstValue("algorithm");
+        if (pls_algorithm == null) {
+            pls_algorithm = "PLS1";
+        }
+        /*
+         * This is a mandatory parameter:
+         */
         target = clientParameters.getFirstValue("target");
         return this;
     }
@@ -108,16 +117,33 @@ public class PLSTrainer extends AbstractTrainer {
 
     @Override
     public Model train(Instances data) throws JaqpotException {
-        System.out.println("Hello");
+        Model model = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
+
+        /*
+         * Remove unnecessary (string) features
+         */
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
         try {
             data = cleanup.filter(data);
         } catch (QSARException ex) {
-            Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new JaqpotException(ex);
         }
         data.setClass(data.attribute(target));
-        PLSFilter pls = new PLSFilter();
 
+        model.setIndependentFeatures(new ArrayList<Feature>(data.numAttributes()));
+        for (int i = 0; i < data.numAttributes(); i++) {
+            try {
+                model.getIndependentFeatures().add(new Feature(new VRI(data.attribute(i).name())));
+            } catch (URISyntaxException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+
+        /*
+         * Train the PLS filter
+         */
+        PLSFilter pls = new PLSFilter();
         try {
             pls.setInputFormat(data);
             pls.setOptions(new String[]{"-C", numComponents + "", "-A", pls_algorithm, "-P", "none", "-U", "off"});
@@ -127,9 +153,17 @@ public class PLSTrainer extends AbstractTrainer {
             Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        PLSModel actualModel = new PLSModel(pls);
+        try {
+            model.setActualModel(actualModel);
+        } catch (NotSerializableException ex) {
+            Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new JaqpotException(ex);
+        }
+        model.setDataset(datasetUri);
+        model.setAlgorithm(Algorithms.plsFilter());
 
-        Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
-        //  "-C 20 -U on -A SIMPLS -P none  "
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        return model;
     }
 }
