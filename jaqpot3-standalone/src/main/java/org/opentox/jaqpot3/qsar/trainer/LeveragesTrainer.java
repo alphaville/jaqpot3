@@ -133,7 +133,9 @@ public class LeveragesTrainer extends AbstractTrainer {
             }
 
             model.addPredictedFeatures(predictedFeature);
-            trainingSet.deleteAttributeAt(targetIndex);
+            if (target != null) {
+                trainingSet.deleteAttributeAt(targetIndex);
+            }
             int k = trainingSet.numInstances();
             int n = trainingSet.numAttributes();
             double[][] dataArray = new double[k][n];
