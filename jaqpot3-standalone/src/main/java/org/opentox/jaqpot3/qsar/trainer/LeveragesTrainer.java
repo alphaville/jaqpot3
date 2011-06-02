@@ -47,7 +47,6 @@ public class LeveragesTrainer extends AbstractTrainer {
     private UUID uuid = UUID.randomUUID();
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesTrainer.class);
 
-
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
         try {
@@ -74,7 +73,11 @@ public class LeveragesTrainer extends AbstractTrainer {
                     throw new QSARException("The prediction feature you provided is not numeric.");
                 }
             }
-            int targetIndex = trainingSet.attribute(targetUri.toString()).index();
+
+            int targetIndex = -1;
+            if (target != null) {
+                targetIndex = trainingSet.attribute(targetUri.toString()).index();
+            }
             /* PROVIDE META DATA FOR THE MODEL */
             Model model = new Model(Configuration.getBaseUri().augment("model", uuid.toString()));
             model.setAlgorithm(getAlgorithm());
@@ -198,7 +201,4 @@ public class LeveragesTrainer extends AbstractTrainer {
     public Algorithm getAlgorithm() {
         return Algorithms.leverages();
     }
-    
-
-
 }
