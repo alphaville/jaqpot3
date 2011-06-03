@@ -173,7 +173,7 @@ public class TrainGeneric extends JaqpotResource {
                 Entry<String, String> entry = iterator.next();
                 client.addPostParameter(entry.getKey(), entry.getValue());
             }
-        }
+        }        
         client.authorize(userToken);
         try {
             client.post();

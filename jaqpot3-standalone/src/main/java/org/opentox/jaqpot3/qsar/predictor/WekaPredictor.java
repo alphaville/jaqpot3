@@ -73,8 +73,7 @@ public class WekaPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Dataset data) throws JaqpotException {
-        Instances inputSet = data.getInstances();
+    public Dataset predict(Instances inputSet) throws JaqpotException {
         try {
             /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
             Instances newData = InstancesUtil.sortForModel(model, inputSet, -1);

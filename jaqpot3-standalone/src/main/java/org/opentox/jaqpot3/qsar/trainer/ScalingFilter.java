@@ -2,7 +2,6 @@ package org.opentox.jaqpot3.qsar.trainer;
 
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -18,19 +17,14 @@ import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Algorithm;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
-import org.opentox.toxotis.exceptions.impl.ToxOtisException;
-import org.opentox.toxotis.factory.DatasetFactory;
 import org.opentox.toxotis.factory.FeatureFactory;
-import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
-import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instances;
 

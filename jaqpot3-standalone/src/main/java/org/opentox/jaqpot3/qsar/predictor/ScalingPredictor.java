@@ -78,7 +78,7 @@ public class ScalingPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Dataset input) throws JaqpotException {
+    public Dataset predict(Instances inputData) throws JaqpotException {
         try{
         ScalingModel actualModel = (ScalingModel) model.getActualModel();
         
@@ -86,9 +86,7 @@ public class ScalingPredictor extends AbstractPredictor {
         Map<String, Double> maxs = actualModel.getMaxVals2();
 
         updateFeatureMap(model);
-
-        /** GET INSTANCES**/
-        Instances inputData = input.getInstances();
+        
 
 
         //int Nattr = inputData.numAttributes();

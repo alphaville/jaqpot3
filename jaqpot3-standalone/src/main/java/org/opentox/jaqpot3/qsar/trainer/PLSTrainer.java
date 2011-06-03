@@ -33,9 +33,13 @@
  */
 package org.opentox.jaqpot3.qsar.trainer;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -46,18 +50,20 @@ import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import org.opentox.jaqpot3.qsar.serializable.PLSModel;
 import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
-import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Algorithm;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
-import weka.classifiers.functions.PLSClassifier;
+import org.opentox.toxotis.core.component.Parameter;
+import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.factory.FeatureFactory;
+import org.opentox.toxotis.ontology.LiteralValue;
+import org.opentox.toxotis.ontology.ResourceValue;
+import org.opentox.toxotis.ontology.collection.OTClasses;
 import weka.core.Instances;
-import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilter;
 
 /**
@@ -67,11 +73,13 @@ import weka.filters.supervised.attribute.PLSFilter;
  */
 public class PLSTrainer extends AbstractTrainer {
 
+    private static final Random RANDOM = new Random(11 * System.currentTimeMillis() + 21);
     private VRI featureService;
     private VRI datasetUri;
     private int numComponents;
     private String preprocessing;
     private String pls_algorithm;
+    private String doUpdateClass;
     private String target;
 
     @Override
@@ -103,6 +111,29 @@ public class PLSTrainer extends AbstractTrainer {
         if (pls_algorithm == null) {
             pls_algorithm = "PLS1";
         }
+        if (!pls_algorithm.equals("PLS1") && !pls_algorithm.equals("SIMPLS")) {
+            throw new BadParameterException("Algorithm not acceptable : " + pls_algorithm + ". Admissible "
+                    + "values are PLS1 and SIMPLS");
+        }
+
+        preprocessing = clientParameters.getFirstValue("preprocessing");
+        if (preprocessing == null) {
+            preprocessing = "none";
+        }
+        if (!preprocessing.equals("none") && !preprocessing.equals("standardize") && !preprocessing.equals("center")) {
+            throw new BadParameterException("Bad Parameter : '" + preprocessing + "'. Admissible values for the parameter 'preprocessing' "
+                    + "are 'none', 'center' and 'standardize'.");
+        }
+
+        doUpdateClass = clientParameters.getFirstValue("doUpdateClass");
+        if (doUpdateClass == null) {
+            doUpdateClass = "off";
+        }
+        if (!doUpdateClass.equals("off") && !doUpdateClass.equals("on")) {
+            throw new BadParameterException("Bad Parameter : '" + doUpdateClass + "'. Admissible values for the "
+                    + "parameter doUpdateClass are only 'on' and 'off'.");
+        }
+
         /*
          * This is a mandatory parameter:
          */
@@ -146,7 +177,10 @@ public class PLSTrainer extends AbstractTrainer {
         PLSFilter pls = new PLSFilter();
         try {
             pls.setInputFormat(data);
-            pls.setOptions(new String[]{"-C", numComponents + "", "-A", pls_algorithm, "-P", "none", "-U", "off"});
+            pls.setOptions(new String[]{"-C", Integer.toString(numComponents),
+                        "-A", pls_algorithm,
+                        "-P", preprocessing,
+                        "-U", doUpdateClass});
             System.out.println(
                     PLSFilter.useFilter(data, pls));
         } catch (Exception ex) {
@@ -162,6 +196,37 @@ public class PLSTrainer extends AbstractTrainer {
         }
         model.setDataset(datasetUri);
         model.setAlgorithm(Algorithms.plsFilter());
+        model.getMeta().addTitle("PLS Model for " + datasetUri);
+
+        Set<Parameter> parameters = new HashSet<Parameter>();
+        Parameter targetPrm = new Parameter(Configuration.getBaseUri().augment("parameter", RANDOM.nextLong()),
+                "target", new LiteralValue(target, XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.MANDATORY);
+        Parameter nComponentsPrm = new Parameter(Configuration.getBaseUri().
+                augment("parameter", RANDOM.nextLong()), "numComponents",
+                new LiteralValue(numComponents, XSDDatatype.XSDpositiveInteger)).setScope(Parameter.ParameterScope.MANDATORY);
+        Parameter preprocessingPrm = new Parameter(Configuration.getBaseUri().
+                augment("parameter", RANDOM.nextLong()), "preprocessing",
+                new LiteralValue(preprocessing, XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.OPTIONAL);
+        Parameter algorithmPrm = new Parameter(Configuration.getBaseUri().
+                augment("parameter", RANDOM.nextLong()), "algorithm",
+                new LiteralValue(pls_algorithm, XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.OPTIONAL);
+
+
+        parameters.add(targetPrm);
+        parameters.add(nComponentsPrm);
+        parameters.add(preprocessingPrm);
+        parameters.add(algorithmPrm);
+        model.setParameters(parameters);
+
+
+        for (int i = 0; i < numComponents; i++) {
+            try {
+                Feature f = FeatureFactory.createAndPublishFeature("PLS-" + i, "", new ResourceValue(model.getUri(), OTClasses.Model()), featureService, token);
+                model.addPredictedFeatures(f);
+            } catch (ServiceInvocationException ex) {
+                Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
 
         return model;

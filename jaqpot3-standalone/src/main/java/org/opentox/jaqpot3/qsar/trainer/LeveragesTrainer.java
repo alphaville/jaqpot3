@@ -21,16 +21,12 @@ import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Algorithm;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
-import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
-import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
-import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -142,7 +138,7 @@ public class LeveragesTrainer extends AbstractTrainer {
             for (int i = 0; i < k; i++) {
                 dataArray[i] = trainingSet.instance(i).toDoubleArray();
             }
-            Matrix dataMatrix = new Matrix(dataArray);
+            Matrix dataMatrix = new Matrix(dataArray);                        
             Matrix omega = (dataMatrix.transpose().times(dataMatrix)).inverse();
             LeveragesModel actualModel = new LeveragesModel();
             actualModel.setDataMatrix(omega);

@@ -2,10 +2,12 @@ package org.opentox.jaqpot3.qsar;
 
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
+import weka.core.Instances;
 
 /**
  * An IPredictor is a processor that accepts a test dataset and produces a dataset
@@ -85,4 +87,8 @@ public interface IPredictor {
     IPredictor setToken(AuthenticationToken token);
 
     Dataset predict(Dataset input) throws JaqpotException;
+
+    Dataset predict(Instances input) throws JaqpotException;
+    
+    Dataset predict(VRI input) throws JaqpotException;
 }

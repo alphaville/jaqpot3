@@ -356,7 +356,8 @@ public class Algorithms {
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "numComponents"), "numComponents", null).setScope(
                         Parameter.ParameterScope.MANDATORY);
-                numComponents.getMeta().addDescription("The maximum number of attributes(features) to use");
+                numComponents.getMeta().addDescription("The maximum number of attributes(features) to use").
+                        addComment("The number of components must be less than the number of independent features in the dataset");
                 plsFilter.getParameters().add(numComponents);
 
                 Parameter plsAlgorithm =
@@ -371,8 +372,20 @@ public class Algorithms {
                         Configuration.getBaseUri().augment("prm", "plsPreprocessing"), "preprocessing", new LiteralValue<String>("center")).setScope(
                         Parameter.ParameterScope.OPTIONAL);
                 plsPreprocessing.getMeta().addDescription("Preprocessing on the provided data prior to the application of the PLS algorithm").
-                        addComment("Admissible values are 'none', 'center' and 'standardize'");
+                        addComment("Admissible values are 'none', 'center' and 'standardize'. Default is 'none'");
                 plsFilter.getParameters().add(plsPreprocessing);
+
+
+                Parameter doUpdateClass =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "doUpdateClass"), "doUpdateClass", new LiteralValue<String>("off")).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                doUpdateClass.getMeta().addDescription("Whether the target feature should be updated. The target feature is specified using the " +
+                        "mandatory parameter 'target'.").
+                        addComment(" Admissible values are 'on' and 'off'. Default is 'off'.");
+                plsFilter.getParameters().add(doUpdateClass);
+
+                
 
                 Parameter target =
                         new Parameter(

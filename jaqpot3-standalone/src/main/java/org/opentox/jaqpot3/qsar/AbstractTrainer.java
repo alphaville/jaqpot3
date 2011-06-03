@@ -19,8 +19,6 @@ import weka.core.Instances;
  */
 public abstract class AbstractTrainer implements ITrainer {   
 
-    private boolean enabled = true;
-    private boolean synch = true;
     private Task task;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();

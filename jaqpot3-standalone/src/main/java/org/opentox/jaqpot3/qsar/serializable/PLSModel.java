@@ -18,6 +18,7 @@ public class PLSModel implements Serializable {
         this.pls = pls;
     }
 
+
     public PLSFilter getPls() {
         return pls;
     }

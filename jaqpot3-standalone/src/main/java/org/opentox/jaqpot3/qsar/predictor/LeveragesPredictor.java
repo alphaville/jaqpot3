@@ -50,16 +50,15 @@ public class LeveragesPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Dataset data) throws JaqpotException {
+    public Dataset predict(Instances inputSet) throws JaqpotException {
         LeveragesModel actualModel = (LeveragesModel) model.getActualModel();
         Matrix matrix = actualModel.getDataMatrix();
         double gamma = actualModel.getGamma();
-        Instances inputSet = data.getInstances();
         Instances orderedDataset = null;
         try {
             orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);
         } catch (JaqpotException ex) {
-            String message = "It is not possible to apply the dataset " + (data != null ? data.getUri().toString() : "(no URI)")
+            String message = "It is not possible to apply the dataset " 
                     + " to the model : " + (model != null ? model.getUri().toString() : "(no URI)") + ". Most probably the dataset does not contain "
                     + "the independent features for this model.";
             logger.debug(message, ex);
@@ -67,6 +66,7 @@ public class LeveragesPredictor extends AbstractPredictor {
         }
 
         AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
+        justCompounds.setKeepCompoundURI(true);
         Instances compounds = null;
         try {
             compounds = justCompounds.filter(inputSet);
@@ -96,14 +96,14 @@ public class LeveragesPredictor extends AbstractPredictor {
         Matrix x = null;
         for (int i = 0; i < numInstances; i++) {
             x = new Matrix(orderedDataset.instance(i).toDoubleArray(), numAttributes);
-            x.print(1, 10);
             double indicator = Math.max(0, (gamma - x.transpose().times(matrix).times(x).get(0, 0)) / gamma);
             predictions.instance(i).setClassValue(indicator);
         }
 
         try {
-
+                        
             Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
+            
             return output;
         } catch (ToxOtisException ex) {
             logger.error(null, ex);

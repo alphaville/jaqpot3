@@ -55,6 +55,7 @@ public class PredictorFinder {
         map.put("fastRbfNn", FastRbfNnPredictor.class);
         map.put("scaling", ScalingPredictor.class);
         map.put("mvh", MissingValueFilterPredictor.class);
+        map.put("pls", PLSPredictor.class);
     }
 
     public static Map<String, Class<? extends IPredictor>> getMapping() {

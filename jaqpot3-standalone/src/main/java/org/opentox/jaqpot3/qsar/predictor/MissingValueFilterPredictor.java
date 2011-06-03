@@ -79,9 +79,8 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Dataset input) throws JaqpotException {
-        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();
-        Instances data = input.getInstances();
+    public Dataset predict(Instances data) throws JaqpotException {
+        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();        
         for (String attribute2Bignored : ignoredUris) {
             Attribute attr = data.attribute(attribute2Bignored);
             if (attr != null) {

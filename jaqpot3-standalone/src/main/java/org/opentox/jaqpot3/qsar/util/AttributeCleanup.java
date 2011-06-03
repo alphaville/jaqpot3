@@ -98,7 +98,7 @@ public class AttributeCleanup {
                 attributeList.add(i);
                 continue;
             } else if (attribute.isString() && toBeRemoved.contains(ATTRIBUTE_TYPE.string)) {               
-                if (attribute.name().equals("compound_uri") && isKeepCompoundURI()) {
+                if ((attribute.name().equals("compound_uri") || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
                     continue;
                 } 
                     attributeList.add(i);

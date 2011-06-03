@@ -74,22 +74,8 @@ public class TrainingService extends RunnableTaskService {
         try {
             trainer.parametrize(clientInput); // #NODE_01
             VRI datasetURI = datasetUri != null ? new VRI(datasetUri) : null;// #NODE_02
-            Dataset ds = null;
-            
-//            ## old version ##
-//            if (datasetURI != null) {
-//                ds = new Dataset(datasetURI);// #NODE_03_a
-//                if (trainer.needsDataset()) {
-//                    ds.loadFromRemote(token);// #NODE_03_a
-//                }
-//            }
-//            Model resultModel = trainer.train(ds);// #NODE_03_b
-//            ## old version -- ##
 
-
-//            ## new version  ##
             Model resultModel = trainer.train(datasetURI);// #NODE_03_b
-//            ## new version -- ##
 
             /* Create a policy for the model (on behalf of the user) */
             IPolicyWrapper pw = PolicyManager.defaultSignleUserPolicy("model_" + resultModel.getUri().getId(), resultModel.getUri(), token);
