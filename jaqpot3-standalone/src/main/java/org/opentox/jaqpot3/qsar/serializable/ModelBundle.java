@@ -32,28 +32,41 @@
  *
  */
 
+package org.opentox.jaqpot3.qsar.serializable;
 
-package org.opentox.jaqpot3.exception;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
  * @author Pantelis Sopasakis
- * @author Charalampos Chomenides
  */
-public class JaqpotException extends Exception {
+public class ModelBundle implements Serializable {
 
-    public JaqpotException(Throwable cause) {
-        super(cause);
+    private static final long serialVersionUID = 77274120800111457L;
+    private ArrayList<String> modelUris = new ArrayList<String>();
+
+    public ModelBundle() {
     }
 
-    public JaqpotException(String message, Throwable cause) {
-        super(message, cause);
+    public boolean addModel(String e) {
+        return modelUris.add(e);
     }
 
-    public JaqpotException(String message) {
-        super(message);
+    public boolean addModels(Collection<? extends String> c) {
+        return modelUris.addAll(c);
     }
 
-    public JaqpotException() {
+    public void addModel(int index, String element) {
+        modelUris.add(index, element);
+    }
+
+    public void setModelUris(ArrayList<String> modelUris) {
+        this.modelUris = modelUris;
+    }
+
+    public ArrayList<String> getModelUris() {
+        return modelUris;
     }
 }

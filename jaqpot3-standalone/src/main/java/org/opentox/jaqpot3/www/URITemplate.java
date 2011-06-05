@@ -1,14 +1,15 @@
 /*
  *
- * YAQP - Yet Another QSAR Project:
- * Machine Learning algorithms designed for the prediction of toxicological
- * features of chemical compounds become available on the Web. Yaqp is developed
- * under OpenTox (http://opentox.org) which is an FP7-funded EU research project.
- * This project was developed at the Automatic Control Lab in the Chemical Engineering
- * School of the National Technical University of Athens. Please read README for more
- * information.
+ * Jaqpot - version 3
  *
- * Copyright (C) 2009-2010 Pantelis Sopasakis & Charalampos Chomenides
+ * The JAQPOT-3 web services are OpenTox API-1.2 compliant web services. Jaqpot
+ * is a web application that supports model training and data preprocessing algorithms
+ * such as multiple linear regression, support vector machines, neural networks
+ * (an in-house implementation based on an efficient algorithm), an implementation
+ * of the leverage algorithm for domain of applicability estimation and various
+ * data preprocessing algorithms like PLS and data cleanup.
+ *
+ * Copyright (C) 2009-2012 Pantelis Sopasakis & Charalampos Chomenides
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,10 @@
  * chvng@mail.ntua.gr
  * Address: Iroon Politechniou St. 9, Zografou, Athens Greece
  * tel. +30 210 7723236
+ *
  */
+
+
 package org.opentox.jaqpot3.www;
 
 import org.opentox.jaqpot3.util.Configuration;

@@ -31,8 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
-
 package org.opentox.jaqpot3.resources.collections;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -43,10 +41,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.opentox.jaqpot3.util.Configuration;
-//import org.opentox.toxotis.ToxOtisException;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Parameter;
-import org.opentox.toxotis.core.html.HTMLUtils;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.MetaInfo;
@@ -74,35 +70,34 @@ public class Algorithms {
     private static Algorithm svmFilter;
     private static Algorithm fastRbfNn;
     private static Algorithm scaling;
+    private static Algorithm modelBundler;
 //    private static Algorithm fcbf;
 //    private static Algorithm multifilter;
     private static Set<Algorithm> repository;
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Algorithms.class);
-
-    private static final String _LICENSE = "JAQPOT - Just Another QSAR Project under OpenTox\n" +
-            "Machine Learning algorithms designed for the prediction of toxicological " +
-            "features of chemical compounds become available on the Web.\n\nJaqpot is developed " +
-            "under OpenTox (see http://opentox.org ) which is an FP7-funded EU research project. " +
-            "This project was developed at the Automatic Control Lab in the Chemical Engineering " +
-            "School of National Technical University of Athens. Please read README for more " +
-            "information.\n" +
-            "\n" +
-            "Copyright (C) 2009-2010 Pantelis Sopasakis & Charalampos Chomenides\n" +
-            "\n" +
-            "This program is free software: you can redistribute it and/or modify " +
-            "it under the terms of the GNU General Public License as published by " +
-            "the Free Software Foundation, either version 3 of the License, or " +
-            "(at your option) any later version.\n" +
-            "\n" +
-            "This program is distributed in the hope that it will be useful, " +
-            "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
-            "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
-            "GNU General Public License for more details." +
-            "\n\n" +
-            "You should have received a copy of the GNU General Public License " +
-            "along with this program.  If not, see http://www.gnu.org/licenses/ .\n\n" +
-            "The Jaqpot source code is found online at https://github.com/alphaville/jaqpot3";
-
+    private static final String _LICENSE = "JAQPOT - Just Another QSAR Project under OpenTox\n"
+            + "Machine Learning algorithms designed for the prediction of toxicological "
+            + "features of chemical compounds become available on the Web.\n\nJaqpot is developed "
+            + "under OpenTox (see http://opentox.org ) which is an FP7-funded EU research project. "
+            + "This project was developed at the Automatic Control Lab in the Chemical Engineering "
+            + "School of National Technical University of Athens. Please read README for more "
+            + "information.\n"
+            + "\n"
+            + "Copyright (C) 2009-2010 Pantelis Sopasakis & Charalampos Chomenides\n"
+            + "\n"
+            + "This program is free software: you can redistribute it and/or modify "
+            + "it under the terms of the GNU General Public License as published by "
+            + "the Free Software Foundation, either version 3 of the License, or "
+            + "(at your option) any later version.\n"
+            + "\n"
+            + "This program is distributed in the hope that it will be useful, "
+            + "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+            + "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+            + "GNU General Public License for more details."
+            + "\n\n"
+            + "You should have received a copy of the GNU General Public License "
+            + "along with this program.  If not, see http://www.gnu.org/licenses/ .\n\n"
+            + "The Jaqpot source code is found online at https://github.com/alphaville/jaqpot3";
 
     static {
         repository = new HashSet<Algorithm>();
@@ -130,13 +125,12 @@ public class Algorithms {
 
     public static Algorithm forName(String name) {
         for (Algorithm a : getAll()) {
-            if (a.getMeta().getTitles().contains(new LiteralValue(name))) {
+            if (a.getUri().getId().equals(name)) {
                 return a;
             }
         }
         return null;
     }
-    
 
     public static Algorithm fastRbfNn() {
         if (fastRbfNn == null) {
@@ -201,10 +195,10 @@ public class Algorithms {
                 MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("scaling").
                         addSubject("Filter", "Data Preprocessing", "Scaling", "Data Preparation").
                         addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-                        addDescription("This web service is intended to scale the numeric values of an OpenTox dataset within a specified range." +
-                        "If not otherwise specified by the client, this range is assumed to be [-1,1]. Scaling is necessary for algorithms " +
-                        "like SVM and Neural Networks as it substantially improves the accuracy of the trained models. In other cases such as " +
-                        "MLR it can numerically stabilize the training procedure and is one of the mode fundamental preprocessing steps").
+                        addDescription("This web service is intended to scale the numeric values of an OpenTox dataset within a specified range."
+                        + "If not otherwise specified by the client, this range is assumed to be [-1,1]. Scaling is necessary for algorithms "
+                        + "like SVM and Neural Networks as it substantially improves the accuracy of the trained models. In other cases such as "
+                        + "MLR it can numerically stabilize the training procedure and is one of the mode fundamental preprocessing steps").
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
                         addIdentifier(scaling.getUri().toString());
@@ -274,6 +268,7 @@ public class Algorithms {
         }
         return mlr;
     }
+
     public static Algorithm consensus() {
         if (consensus == null) {
             try {
@@ -281,7 +276,7 @@ public class Algorithms {
                 MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("consensus", "Multiple Linear Regression Training Algorithm").
                         addComment("Multiple Linear Regression Algorithm").
                         addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Regression", "Classification", "Training", "Consensus modeling","Machine Learning", "Single Target", "Eager Learning").
+                        addSubject("Regression", "Classification", "Training", "Consensus modeling", "Machine Learning", "Single Target", "Eager Learning").
                         addContributor("Pantelis Sopasakis").
                         addDescription("Training algorithm for Consensus Models").
                         addPublisher(Configuration.BASE_URI).
@@ -380,21 +375,21 @@ public class Algorithms {
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "doUpdateClass"), "doUpdateClass", new LiteralValue<String>("off")).setScope(
                         Parameter.ParameterScope.OPTIONAL);
-                doUpdateClass.getMeta().addDescription("Whether the target feature should be updated. The target feature is specified using the " +
-                        "mandatory parameter 'target'.").
+                doUpdateClass.getMeta().addDescription("Whether the target feature should be updated. The target feature is specified using the "
+                        + "mandatory parameter 'target'.").
                         addComment(" Admissible values are 'on' and 'off'. Default is 'off'.");
                 plsFilter.getParameters().add(doUpdateClass);
 
-                
+
 
                 Parameter target =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "plsTarget"), "target", null).setScope(
                         Parameter.ParameterScope.MANDATORY);
                 target.getMeta().addDescription("URI of the target/class feature of the dataset with the respect to which PLS runs").
-                        addComment("This is different from the parameter prediction_feature. This is not stort of a dependent feature " +
-                        "since this is a filtering algorithm and it does not generate a predictive model but transforms the submitted " +
-                        "dataset").addComment("The value should be a URI among the features of the sumbitted dataset");
+                        addComment("This is different from the parameter prediction_feature. This is not stort of a dependent feature "
+                        + "since this is a filtering algorithm and it does not generate a predictive model but transforms the submitted "
+                        + "dataset").addComment("The value should be a URI among the features of the sumbitted dataset");
                 plsFilter.getParameters().add(target);
 
                 plsFilter.setMeta(algorithmMeta);
@@ -409,7 +404,6 @@ public class Algorithms {
         }
         return plsFilter;
     }
-
 
     public static Algorithm cleanup() {
         if (cleanup == null) {
@@ -527,7 +521,6 @@ public class Algorithms {
         return svm;
     }
 
-
     public static Algorithm leverages() {
         if (leverages == null) {
             try {
@@ -551,5 +544,35 @@ public class Algorithms {
             }
         }
         return leverages;
+    }
+
+    public static Algorithm modelBundler() {
+        if (modelBundler == null) {
+            try {
+                modelBundler = new Algorithm(Configuration.getBaseUri().augment("algorithm", "modelBundler"));
+                MetaInfo algorithmMeta = new MetaInfoImpl();
+                algorithmMeta.addTitle("Model Bundler");
+                algorithmMeta.addSubject("Model Super-service").
+                        addContributor("Pantelis Sopasakis").
+                        addDescription("...").
+                        addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
+                modelBundler.setMeta(algorithmMeta);
+                modelBundler.setOntologies(new HashSet<OntologicalClass>());
+                modelBundler.getOntologies().add(OTAlgorithmTypes.AlgorithmType());
+                modelBundler.getOntologies().add(OTAlgorithmTypes.SingleTarget());
+                modelBundler.getMeta().addRights(_LICENSE);
+
+                modelBundler.setParameters(new HashSet<Parameter>());
+                Parameter model = new Parameter(Configuration.getBaseUri().augment("prm", "model"));
+                model.setName("model").setScope(Parameter.ParameterScope.MANDATORY);
+                model.getMeta().addDescription("Model").
+                        addIdentifier(model.getUri().toString());
+                modelBundler.getParameters().add(model);
+
+            } catch (ToxOtisException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return modelBundler;
     }
 }
