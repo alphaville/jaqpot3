@@ -1,0 +1,10 @@
+*.log
+**/*.log
+**/logging/**
+**/logging/*.*
+*.class
+**/target
+./logging/**
+./logging
+*.jar
+**/*.jar
