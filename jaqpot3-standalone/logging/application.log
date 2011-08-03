@@ -1,0 +1,908 @@
+Jun 19, 2011 1:41:05 AM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 19, 2011 1:41:05 AM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 19, 2011 1:41:14 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:14	0:0:0:0:0:0:0:1	-	-	8080	GET	/	-	200	-	-	24	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:15 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:15	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	159	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:15 AM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1393)
+	at org.restlet.ext.xml.XmlWriter.writeName(XmlWriter.java:1497)
+	at org.restlet.ext.xml.XmlWriter.writeAttributes(XmlWriter.java:1414)
+	at org.restlet.ext.xml.XmlWriter.startElement(XmlWriter.java:1351)
+	at org.restlet.ext.wadl.ResourceInfo.writeElement(ResourceInfo.java:338)
+	at org.restlet.ext.wadl.ResourcesInfo.writeElement(ResourcesInfo.java:174)
+	at org.restlet.ext.wadl.ApplicationInfo.writeElement(ApplicationInfo.java:375)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:950)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:164)
+	at org.restlet.engine.http.header.HeaderUtils.writeCRLF(HeaderUtils.java:1574)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:149)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:263)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:106)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:116)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:203)
+	at java.io.Writer.write(Writer.java:140)
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1391)
+	... 22 more
+Jun 19, 2011 1:41:15 AM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Jun 19, 2011 1:41:16 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:16	0:0:0:0:0:0:0:1	-	-	8080	GET	/iface	-	200	-	-	5	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/
+Jun 19, 2011 1:41:16 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:16	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	11	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:16 AM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1393)
+	at org.restlet.ext.xml.XmlWriter.writeName(XmlWriter.java:1497)
+	at org.restlet.ext.xml.XmlWriter.writeAttributes(XmlWriter.java:1414)
+	at org.restlet.ext.xml.XmlWriter.startElement(XmlWriter.java:1351)
+	at org.restlet.ext.wadl.ResourceInfo.writeElement(ResourceInfo.java:338)
+	at org.restlet.ext.wadl.ResourcesInfo.writeElement(ResourcesInfo.java:174)
+	at org.restlet.ext.wadl.ApplicationInfo.writeElement(ApplicationInfo.java:375)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:950)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:164)
+	at org.restlet.engine.http.header.HeaderUtils.writeCRLF(HeaderUtils.java:1574)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:145)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:263)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:106)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:116)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:203)
+	at java.io.Writer.write(Writer.java:140)
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1391)
+	... 22 more
+Jun 19, 2011 1:41:16 AM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Jun 19, 2011 1:41:17 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:17	0:0:0:0:0:0:0:1	-	-	8080	GET	/iface/generic	-	303	1865	-	10	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/iface
+Jun 19, 2011 1:41:17 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:17 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:17 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 1:41:17 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:17 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:17	0:0:0:0:0:0:0:1	-	-	8080	GET	/login	redirect=http://localhost:8080/iface/generic	200	923	-	4	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/iface
+Jun 19, 2011 1:41:17 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:17	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	8	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:18 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:18	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	13	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:18 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:18	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	8	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:18 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:18	0:0:0:0:0:0:0:1	-	-	8080	GET	/favicon.ico	-	200	-	-	11	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:41:19 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:19	0:0:0:0:0:0:0:1	-	-	8080	GET	/iface	-	200	-	-	6	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/
+Jun 19, 2011 1:41:19 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:19	0:0:0:0:0:0:0:1	-	-	8080	GET	/iface/generic	-	303	1865	-	6	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/iface
+Jun 19, 2011 1:41:19 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:19 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:19 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 1:41:19 AM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:41:19 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:19	0:0:0:0:0:0:0:1	-	-	8080	GET	/login	redirect=http://localhost:8080/iface/generic	200	923	-	3	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/iface
+Jun 19, 2011 1:41:25 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	01:41:25	0:0:0:0:0:0:0:1	-	-	8080	POST	/login	redirect=http://localhost:8080/iface/generic	200	970	29	1465	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/login?redirect=http://localhost:8080/iface/generic
+Jun 19, 2011 1:18:56 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 19, 2011 1:18:56 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 19, 2011 1:18:59 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:18:59	0:0:0:0:0:0:0:1	-	-	8080	GET	/	-	200	-	-	23	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 1:19:01 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:19:01	0:0:0:0:0:0:0:1	-	-	8080	GET	/login	-	200	923	-	11	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/
+Jun 19, 2011 1:19:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:19:10	0:0:0:0:0:0:0:1	-	-	8080	POST	/login	-	303	1075	29	4343	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/login
+Jun 19, 2011 1:19:10 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:19:10 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:19:10 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 1:19:10 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 1:19:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:19:10	0:0:0:0:0:0:0:1	-	-	8080	GET	/login	-	200	1075	-	398	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/login
+Jun 19, 2011 1:19:21 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:19:21	0:0:0:0:0:0:0:1	-	-	8080	GET	/	-	200	-	-	3	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/login
+Jun 19, 2011 1:19:24 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	13:19:24	0:0:0:0:0:0:0:1	-	-	8080	GET	/iface	-	200	-	-	5	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/
+Jun 19, 2011 1:19:30 PM org.restlet.ext.grizzly.GrizzlyServerHelper stop
+INFO: Stopping the Grizzly [HTTP] server
+Jun 19, 2011 11:34:54 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 19, 2011 11:34:54 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 19, 2011 11:35:01 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:01	0:0:0:0:0:0:0:1	-	-	8080	GET	/	-	200	-	-	27	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 11:35:03 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:03	0:0:0:0:0:0:0:1	-	-	8080	GET	/algorithm	-	200	-	-	162	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/
+Jun 19, 2011 11:35:04 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:04	0:0:0:0:0:0:0:1	-	-	8080	GET	/algorithm/mlr	-	200	-	-	23	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm
+Jun 19, 2011 11:35:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:08	127.0.0.1	-	-	8080	POST	/algorithm/mlr	-	202	-	165	2307	http://localhost:8080	Java/1.6.0_24	-
+Jun 19, 2011 11:35:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:08	0:0:0:0:0:0:0:1	-	-	8080	POST	/iface/generic	-	303	183	327	2349	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:08 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:35:08 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:35:08 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 11:35:08 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:35:08 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:08	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	202	-	-	47	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:10 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:10	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	202	-	-	20	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:11 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:11	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	202	-	-	23	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:12 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:12	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	202	-	-	17	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:13	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	202	-	-	26	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:35:13 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:35:13	0:0:0:0:0:0:0:1	-	-	8080	GET	/task/41b10c69-bf1d-4fab-9969-b57bc3c6f420	-	200	-	-	22	http://localhost:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://localhost:8080/algorithm/mlr
+Jun 19, 2011 11:36:38 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:36:38	127.0.0.1	-	-	8080	GET	/	-	200	-	-	2	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 11:36:38 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:36:38	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	28	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 11:36:38 PM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.ext.xml.XmlWriter.endDocument(XmlWriter.java:898)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:951)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implFlushBuffer(StreamEncoder.java:272)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:276)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.XmlWriter.endDocument(XmlWriter.java:896)
+	... 16 more
+Jun 19, 2011 11:36:38 PM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Jun 19, 2011 11:36:41 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:36:41	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 11:36:41 PM org.restlet.ext.grizzly.GrizzlyServerHelper stop
+INFO: Stopping the Grizzly [HTTP] server
+Jun 19, 2011 11:37:17 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 19, 2011 11:37:17 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 19, 2011 11:37:20 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:20	127.0.0.1	-	-	8080	GET	/	-	200	-	-	23	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 19, 2011 11:37:22 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:22	127.0.0.1	-	-	8080	GET	/algorithm	-	200	-	-	184	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/
+Jun 19, 2011 11:37:25 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:25	127.0.0.1	-	-	8080	GET	/algorithm/mlr	-	200	-	-	32	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/algorithm
+Jun 19, 2011 11:37:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:27	127.0.0.1	-	-	8080	POST	/iface/generic	-	303	23	328	6	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/algorithm/mlr
+Jun 19, 2011 11:37:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 11:37:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:27	127.0.0.1	-	-	8080	GET	/login	redirect=http://alphaville:8080/iface/generic	200	923	-	6	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/algorithm/mlr
+Jun 19, 2011 11:37:39 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:39	127.0.0.1	-	-	8080	POST	/login	redirect=http://alphaville:8080/iface/generic	303	1075	29	7445	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/login?redirect=http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:39 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:39 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:39 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 11:37:39 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:39 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:39	127.0.0.1	-	-	8080	GET	/iface/generic	-	200	1875	-	6	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/login?redirect=http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:42 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:42	127.0.0.1	-	-	8080	POST	/algorithm/mlr	-	202	-	165	369	http://alphaville:8080	Java/1.6.0_24	-
+Jun 19, 2011 11:37:42 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:42	127.0.0.1	-	-	8080	POST	/iface/generic	-	303	184	312	385	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:42 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:42 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:42 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 11:37:42 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:37:42 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:42	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	21	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:44 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:44	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	14	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:44 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:44	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	19	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:45 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:45	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	21	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:45 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:45	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:46 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:46	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	20	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:47 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:47	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	10	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:48 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:48	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	18	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:49 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:49	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	14	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:50 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:50	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	202	-	-	14	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:52 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:52	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	200	-	-	19	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:37:54 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:37:54	127.0.0.1	-	-	8080	GET	/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a	-	200	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/iface/generic
+Jun 19, 2011 11:38:03 PM org.restlet.resource.UniformResource doCatch
+WARNING: Exception or error caught in resource
+Internal Server Error (500) - The server encountered an unexpected condition which prevented it from fulfilling the request
+	at org.opentox.jaqpot3.resources.ModelResource.get(ModelResource.java:200)
+	at org.restlet.resource.ServerResource.doHandle(ServerResource.java:462)
+	at org.restlet.resource.ServerResource.doNegotiatedHandle(ServerResource.java:522)
+	at org.restlet.resource.ServerResource.doConditionalHandle(ServerResource.java:258)
+	at org.opentox.jaqpot3.resources.ModelResource.doConditionalHandle(ModelResource.java:160)
+	at org.restlet.resource.ServerResource.handle(ServerResource.java:752)
+	at org.restlet.resource.Finder.handle(Finder.java:515)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.engine.application.ApplicationHelper.handle(ApplicationHelper.java:72)
+	at org.restlet.Application.handle(Application.java:379)
+	at org.restlet.ext.wadl.WadlApplication.handle(WadlApplication.java:769)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Router.doHandle(Router.java:472)
+	at org.restlet.routing.Router.handle(Router.java:688)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.engine.application.StatusFilter.doHandle(StatusFilter.java:152)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.routing.Filter.doHandle(Filter.java:156)
+	at org.restlet.routing.Filter.handle(Filter.java:203)
+	at org.restlet.engine.ChainHelper.handle(ChainHelper.java:111)
+	at org.restlet.Component.handle(Component.java:385)
+	at org.restlet.Server.handle(Server.java:474)
+	at org.restlet.engine.ServerHelper.handle(ServerHelper.java:71)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:150)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Jun 19, 2011 11:38:03 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:38:03	127.0.0.1	-	-	8080	GET	/model/0c7e1feb-d313-4c5d-a512-76617709535a	-	500	398	-	4964	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a
+Jun 19, 2011 11:46:40 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 19, 2011 11:46:40 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 19, 2011 11:46:49 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:46:49	127.0.0.1	-	-	8080	GET	/model/0c7e1feb-d313-4c5d-a512-76617709535a	-	200	-	-	3661	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/task/f3e05b47-0675-448b-a59b-7cbcd8300e7a
+Jun 19, 2011 11:47:01 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:47:01	127.0.0.1	-	-	8080	POST	/model/0c7e1feb-d313-4c5d-a512-76617709535a	-	303	-	188	2535	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/model/0c7e1feb-d313-4c5d-a512-76617709535a
+Jun 19, 2011 11:47:01 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:47:01 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:47:01 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Jun 19, 2011 11:47:01 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Jun 19, 2011 11:47:01 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:47:01	127.0.0.1	-	-	8080	GET	/task/10b2fe72-2e92-4374-b848-2bb57a0167aa	-	202	-	-	19	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/model/0c7e1feb-d313-4c5d-a512-76617709535a
+Jun 19, 2011 11:47:03 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:47:03	127.0.0.1	-	-	8080	GET	/task/10b2fe72-2e92-4374-b848-2bb57a0167aa	-	202	-	-	19	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/model/0c7e1feb-d313-4c5d-a512-76617709535a
+Jun 19, 2011 11:47:04 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:47:04	127.0.0.1	-	-	8080	GET	/task/10b2fe72-2e92-4374-b848-2bb57a0167aa	-	202	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/model/0c7e1feb-d313-4c5d-a512-76617709535a
+Jun 19, 2011 11:47:05 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-19	23:47:05	127.0.0.1	-	-	8080	GET	/task/10b2fe72-2e92-4374-b848-2bb57a0167aa	-	200	-	-	23	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/model/0c7e1feb-d313-4c5d-a512-76617709535a
+Jun 20, 2011 12:05:18 AM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 20, 2011 12:05:18 AM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 20, 2011 12:05:20 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:05:20	127.0.0.1	-	-	8080	GET	/bibtex	-	200	-	-	31	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 20, 2011 12:05:22 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:05:22	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	200	-	-	136	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:08:31 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:08:31	127.0.0.1	-	-	8080	GET	/bibtex	-	200	-	-	6	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 20, 2011 12:12:39 AM org.restlet.ext.grizzly.GrizzlyServerHelper stop
+INFO: Stopping the Grizzly [HTTP] server
+Jun 20, 2011 12:12:52 AM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 20, 2011 12:12:52 AM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Jun 20, 2011 12:12:53 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:12:53	127.0.0.1	-	-	8080	GET	/bibtex	-	200	-	-	23	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	-
+Jun 20, 2011 12:12:55 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:12:55	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	138	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:13:27 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:13:27	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	11	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:13:28 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:13:28	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	10	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:13:29 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:13:29	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	10	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:14:15 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:14:15	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:14:35 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:14:35	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	9	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:14:38 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:14:38	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	200	-	-	11	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:14:58 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:14:58	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	404	-	-	84	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:14:59 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:14:59	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	404	-	-	8	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:15:00 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:15:00	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	200	-	-	10	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:15:09 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:15:09	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	11	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:15:29 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:15:29	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	8	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:15:32 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:15:32	127.0.0.1	-	-	8080	GET	/bibtex/FastRbfNn-Sarimveis-Alexandridis-Bafas	-	200	-	-	13	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:15:42 AM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-06-20	00:15:42	127.0.0.1	-	-	8080	GET	/bibtex/caco2	-	200	-	-	14	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110422 Ubuntu/10.04 (lucid) Firefox/3.6.17	http://alphaville:8080/bibtex
+Jun 20, 2011 12:32:54 AM org.restlet.ext.grizzly.GrizzlyServerHelper stop
+INFO: Stopping the Grizzly [HTTP] server
+Jun 20, 2011 12:33:25 AM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Jun 20, 2011 12:33:25 AM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Aug 3, 2011 12:35:19 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Aug 3, 2011 12:35:19 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Aug 3, 2011 12:35:24 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:24	127.0.0.1	-	-	8080	GET	/	-	200	-	-	47	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:25 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:25	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	148	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:25 PM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1393)
+	at org.restlet.ext.xml.XmlWriter.writeName(XmlWriter.java:1497)
+	at org.restlet.ext.xml.XmlWriter.writeAttributes(XmlWriter.java:1414)
+	at org.restlet.ext.xml.XmlWriter.startElement(XmlWriter.java:1351)
+	at org.restlet.ext.wadl.ResourceInfo.writeElement(ResourceInfo.java:338)
+	at org.restlet.ext.wadl.ResourcesInfo.writeElement(ResourcesInfo.java:174)
+	at org.restlet.ext.wadl.ApplicationInfo.writeElement(ApplicationInfo.java:375)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:950)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:164)
+	at org.restlet.engine.http.header.HeaderUtils.writeCRLF(HeaderUtils.java:1575)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:145)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:263)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:106)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:116)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:203)
+	at java.io.Writer.write(Writer.java:140)
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1391)
+	... 22 more
+Aug 3, 2011 12:35:25 PM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Aug 3, 2011 12:35:26 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:26	127.0.0.1	-	-	8080	GET	/iface	-	200	-	-	7	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/
+Aug 3, 2011 12:35:26 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:26	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	32	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:26 PM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1393)
+	at org.restlet.ext.xml.XmlWriter.writeName(XmlWriter.java:1497)
+	at org.restlet.ext.xml.XmlWriter.writeAttributes(XmlWriter.java:1414)
+	at org.restlet.ext.xml.XmlWriter.startElement(XmlWriter.java:1351)
+	at org.restlet.ext.wadl.ResourceInfo.writeElement(ResourceInfo.java:338)
+	at org.restlet.ext.wadl.ResourcesInfo.writeElement(ResourcesInfo.java:174)
+	at org.restlet.ext.wadl.ApplicationInfo.writeElement(ApplicationInfo.java:375)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:950)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Connection reset by peer
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:263)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:106)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:116)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:203)
+	at java.io.Writer.write(Writer.java:140)
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1391)
+	... 22 more
+Aug 3, 2011 12:35:26 PM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Aug 3, 2011 12:35:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:27	127.0.0.1	-	-	8080	GET	/iface/generic	-	303	1875	-	9	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface
+Aug 3, 2011 12:35:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:35:27 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:27	127.0.0.1	-	-	8080	GET	/login	redirect=http://alphaville:8080/iface/generic	200	923	-	5	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface
+Aug 3, 2011 12:35:27 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:27	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:27 PM org.restlet.ext.wadl.WadlRepresentation write
+SEVERE: Error when writing the WADL Representation.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1393)
+	at org.restlet.ext.xml.XmlWriter.writeName(XmlWriter.java:1497)
+	at org.restlet.ext.xml.XmlWriter.writeAttributes(XmlWriter.java:1414)
+	at org.restlet.ext.xml.XmlWriter.startElement(XmlWriter.java:1351)
+	at org.restlet.ext.wadl.ResourceInfo.writeElement(ResourceInfo.java:338)
+	at org.restlet.ext.wadl.ResourcesInfo.writeElement(ResourcesInfo.java:174)
+	at org.restlet.ext.wadl.ApplicationInfo.writeElement(ApplicationInfo.java:375)
+	at org.restlet.ext.wadl.WadlRepresentation.write(WadlRepresentation.java:950)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:243)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:164)
+	at org.restlet.engine.http.header.HeaderUtils.writeCRLF(HeaderUtils.java:1574)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:145)
+	at org.restlet.engine.http.io.ChunkedOutputStream.write(ChunkedOutputStream.java:128)
+	at java.io.OutputStream.write(OutputStream.java:99)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:263)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:106)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:116)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:203)
+	at java.io.Writer.write(Writer.java:140)
+	at org.restlet.ext.xml.XmlWriter.write(XmlWriter.java:1391)
+	... 22 more
+Aug 3, 2011 12:35:27 PM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:278)
+	at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+	at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+	at org.restlet.ext.xml.XmlWriter.flush(XmlWriter.java:1002)
+	at org.restlet.ext.xml.SaxRepresentation.write(SaxRepresentation.java:244)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Aug 3, 2011 12:35:28 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:28	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:28 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:28	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:28 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:28	127.0.0.1	-	-	8080	GET	/favicon.ico	-	200	-	-	9	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	-
+Aug 3, 2011 12:35:31 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:31	127.0.0.1	-	-	8080	POST	/login	redirect=http://alphaville:8080/iface/generic	303	1075	29	1201	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/login?redirect=http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:31 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:31 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:31 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:35:31 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:31 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:31	127.0.0.1	-	-	8080	GET	/iface/generic	-	200	1875	-	5	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/login?redirect=http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:34 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:34	127.0.0.1	-	-	8080	POST	/algorithm/mlr	-	202	-	165	300	http://alphaville:8080	Java/1.6.0_24	-
+Aug 3, 2011 12:35:34 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:34	127.0.0.1	-	-	8080	POST	/iface/generic	-	303	184	312	316	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:34 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:34 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:34 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:35:34 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:34 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:34	127.0.0.1	-	-	8080	GET	/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222	-	202	-	-	58	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:35 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:35	127.0.0.1	-	-	8080	GET	/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222	-	202	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:36 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:36	127.0.0.1	-	-	8080	GET	/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222	-	202	-	-	17	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:37 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:37	127.0.0.1	-	-	8080	GET	/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222	-	200	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/iface/generic
+Aug 3, 2011 12:35:39 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:39	127.0.0.1	-	-	8080	GET	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	200	-	-	341	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222
+Aug 3, 2011 12:35:44 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:44	127.0.0.1	-	-	8080	POST	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	303	-	188	423	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:35:44 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:44 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:44 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:35:44 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:35:44 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:44	127.0.0.1	-	-	8080	GET	/task/d87a5af9-4001-410f-9e45-7a0921cba212	-	202	-	-	17	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:35:45 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:45	127.0.0.1	-	-	8080	GET	/task/d87a5af9-4001-410f-9e45-7a0921cba212	-	202	-	-	15	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:35:45 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:35:45	127.0.0.1	-	-	8080	GET	/task/d87a5af9-4001-410f-9e45-7a0921cba212	-	500	-	-	24	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:37:06 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Aug 3, 2011 12:37:06 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Aug 3, 2011 12:37:09 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:37:09	127.0.0.1	-	-	8080	GET	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	200	-	-	1076	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222
+Aug 3, 2011 12:37:11 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:37:11	127.0.0.1	-	-	8080	POST	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	303	-	188	495	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:37:11 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:37:11 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:37:11 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:37:11 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:37:11 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:37:11	127.0.0.1	-	-	8080	GET	/task/12fc066f-1815-423f-84f3-a8320fa6bdb5	-	202	-	-	33	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:37:45 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:37:45	127.0.0.1	-	-	8080	GET	/task/12fc066f-1815-423f-84f3-a8320fa6bdb5	-	500	-	-	23	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:39:28 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Aug 3, 2011 12:39:28 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Aug 3, 2011 12:39:30 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:39:30	127.0.0.1	-	-	8080	GET	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	200	-	-	1482	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222
+Aug 3, 2011 12:39:32 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:39:32	127.0.0.1	-	-	8080	POST	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	303	-	188	416	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:39:32 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:39:32 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:39:32 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:39:32 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:39:32 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:39:32	127.0.0.1	-	-	8080	GET	/task/a391db8b-3c34-4ef3-8413-fdf00ace5514	-	202	-	-	22	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:39:32 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:39:32	127.0.0.1	-	-	8080	GET	/task/a391db8b-3c34-4ef3-8413-fdf00ace5514	-	202	-	-	16	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:39:33 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:39:33	127.0.0.1	-	-	8080	GET	/task/a391db8b-3c34-4ef3-8413-fdf00ace5514	-	500	-	-	29	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:35 PM org.restlet.engine.http.connector.HttpClientHelper start
+INFO: Starting the default HTTP client
+Aug 3, 2011 12:50:35 PM org.restlet.ext.grizzly.GrizzlyServerHelper start
+INFO: Starting the Grizzly [HTTP] server
+Aug 3, 2011 12:50:42 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:42	127.0.0.1	-	-	8080	GET	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	200	-	-	1411	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/task/5dfeeba4-f27f-4e10-8d65-7d3e34948222
+Aug 3, 2011 12:50:46 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:46	127.0.0.1	-	-	8080	POST	/model/95907284-da77-44b7-968f-6c46eaf87c65	-	303	-	188	402	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:46 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:50:46 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Cache-Control" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:50:46 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+INFO: Addition of the standard header "Pragma" is discouraged as a future versions of the Restlet API will directly support it.
+Aug 3, 2011 12:50:46 PM org.restlet.engine.http.header.HeaderUtils addExtensionHeaders
+WARNING: Addition of the standard header "Expires" is not allowed. Please use the equivalent property in the Restlet API.
+Aug 3, 2011 12:50:46 PM org.restlet.engine.http.adapter.ServerAdapter commit
+INFO: The connection was broken. It was probably closed by the client.
+java.io.IOException: Unable to write to the non-blocking channel. Broken pipe
+	at org.restlet.engine.io.NbChannelOutputStream.doWrite(NbChannelOutputStream.java:135)
+	at org.restlet.engine.io.NbChannelOutputStream.write(NbChannelOutputStream.java:155)
+	at java.io.OutputStream.write(OutputStream.java:58)
+	at org.restlet.engine.http.io.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:143)
+	at org.restlet.engine.http.io.ChunkedOutputStream.flush(ChunkedOutputStream.java:114)
+	at org.opentox.jaqpot3.resources.publish.Representer$1.write(Representer.java:80)
+	at org.restlet.engine.http.ServerCall.writeResponseBody(ServerCall.java:477)
+	at org.restlet.engine.http.ServerCall.sendResponse(ServerCall.java:414)
+	at org.restlet.engine.http.adapter.ServerAdapter.commit(ServerAdapter.java:196)
+	at org.restlet.engine.http.HttpServerHelper.handle(HttpServerHelper.java:151)
+	at org.restlet.ext.grizzly.internal.HttpParserFilter.execute(HttpParserFilter.java:84)
+	at com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:135)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:102)
+	at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:88)
+	at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:53)
+	at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:57)
+	at com.sun.grizzly.ContextTask.run(ContextTask.java:69)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.dowork(FixedThreadPool.java:379)
+	at com.sun.grizzly.util.FixedThreadPool$BasicWorker.run(FixedThreadPool.java:360)
+	at java.lang.Thread.run(Thread.java:662)
+Aug 3, 2011 12:50:46 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:46	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	21	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:47 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:47	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	27	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:48 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:48	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	12	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:48 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:48	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	26	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:49 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:49	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	17	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:50 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:50	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	21	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:51 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:51	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	15	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:50:51 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:50:51	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	19	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
+Aug 3, 2011 12:51:48 PM org.restlet.engine.log.LogFilter afterHandle
+INFO: 2011-08-03	12:51:48	127.0.0.1	-	-	8080	GET	/task/3a108c09-42ad-4561-8074-a6e8ae241ecd	-	202	-	-	15	http://alphaville:8080	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.18) Gecko/20110615 Ubuntu/10.04 (lucid) Firefox/3.6.18	http://alphaville:8080/model/95907284-da77-44b7-968f-6c46eaf87c65
