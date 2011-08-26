@@ -156,6 +156,11 @@ public class OpenSSOAuthorizer extends Authorizer {
     @Override
     protected boolean authorize(Request request, Response response) {
         String clientRequest = request.getMethod().getName();
+        
+        if ("OPTIONS".equals(clientRequest)) {
+            return true;
+        }
+        
         if ("GET".equals(clientRequest) && !protectGet) {
             return true;
         }
