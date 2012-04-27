@@ -31,8 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
-
 package org.opentox.jaqpot3.resources;
 
 import java.util.logging.Level;
@@ -47,6 +45,8 @@ import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.restlet.data.Language;
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
+import org.restlet.engine.util.CookieSeries;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
@@ -95,13 +95,20 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append("<td>Password</td> <td><input type=\"password\" size=\"15\" maxlength=\"40\" name=\"password\"></td>");
         formBuilder.append("</tr><tr>");
         formBuilder.append("<td>Token</td> <td>");
-        formBuilder.append(token != null ? token : "");
+        formBuilder.append(token != null ? token : "You are not currently logged in");
         formBuilder.append("</td>");
         formBuilder.append("</tr>");
         formBuilder.append("</table>");
         formBuilder.append("<input type=\"submit\" value=\"Login\">");
-
-        formBuilder.append("</form><br/>");
+        formBuilder.append("</form>");
+        if (token != null && !token.isEmpty()) {
+            formBuilder.append("<p>If you are already logged in and you need to logout click :</p>");
+            formBuilder.append("<form method=\"POST\" actionUri=\"./\">");
+            formBuilder.append("<input name=\"logout\" value=\"logout\" type=\"hidden\"");
+            formBuilder.append("<input name=\"token\" value=\"").append(token).append("\" type=\"hidden\"");
+            formBuilder.append("<input type=\"submit\" value=\"Logout\"/></form>");
+            formBuilder.append("<br/>");
+        }
 
         formBuilder.append("<p>Click <a href=\"..\">here</a> to go back to the main page</p>");
         if (token != null) {
@@ -109,7 +116,8 @@ public class LoginResource extends JaqpotResource {
             try {
                 User u = at.getUser();
                 String userid = u.getUid();
-                formBuilder.append("<p>Check your profile <a href=\"/user/" + userid + "\">here</a></p>");
+                formBuilder.append("<p>Check your profile <a href=\"/user/").
+                        append(userid).append("\">here</a></p>");
             } catch (ServiceInvocationException ex) {
                 Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ToxOtisException ex) {
@@ -122,7 +130,6 @@ public class LoginResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
-
         String tokenAsCookie = getRequest().getCookies().getValues("subjectid");
         String userName = null;
         if (tokenAsCookie != null) {
@@ -131,7 +138,7 @@ public class LoginResource extends JaqpotResource {
                 User u = at.getUser();
                 userName = u.getUid().split("@")[0];
             } catch (ServiceInvocationException ex) {
-                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+                tokenAsCookie = null;
             } catch (ToxOtisException ex) {
                 Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -142,6 +149,30 @@ public class LoginResource extends JaqpotResource {
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
         IClientInput clientInput = new ClientInput(entity);
+        String purpose = clientInput.getFirstValue("logout");
+        /*
+         * LOG OUT
+         */
+        if ("logout".equals(purpose)) {
+            String token = getRequest().getCookies().getValues("subjectid");
+            if (token != null) {
+                getCookieSettings().removeAll("subjectid");
+                AuthenticationToken at = new AuthenticationToken(token);
+                try {
+                    at.invalidate();
+                    toggleSeeOther(redirect);
+                    return new StringRepresentation(getLoginForm("", "1x2x3x4x5x", ""),
+                            MediaType.TEXT_HTML);
+                } catch (ServiceInvocationException ex) {
+                    getResponse().setStatus(Status.valueOf(ex.getHttpStatus()));
+                    return errorReport(ex, ex.errorCode(), "The user cannot be logged out",
+                            variant.getMediaType(), false);
+                } finally {
+                    
+                }
+            }
+        }
+
         String un = clientInput.getFirstValue("username");
         String ps = clientInput.getFirstValue("password");
         String tok = null;
@@ -157,12 +188,13 @@ public class LoginResource extends JaqpotResource {
         try {
             AuthenticationToken at = new AuthenticationToken(un, ps);
             ps = null;
-
             getCookieSettings().removeAll("subjectid");
             tok = at.stringValue();
             getCookieSettings().add("subjectid", tok);// set it as a cookie
         } catch (ServiceInvocationException ex) {
-            Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+            getResponse().setStatus(Status.valueOf(ex.getHttpStatus()));
+            return errorReport(ex, ex.errorCode(), "The user cannot be authorized",
+                    variant.getMediaType(), false);
         }
         if (tok == null) {
             tok = "Invalid Credentials - Unauthorized";

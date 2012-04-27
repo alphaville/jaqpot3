@@ -79,7 +79,6 @@ public class TrainingService extends RunnableTaskService {
     @Override
     public void run() {
         long startingTime = System.currentTimeMillis();
-
         /*
          * Change the status of the task from QUEUED to RUNNING
          * The task has ALREADY been registered (see ModelResource)
@@ -87,19 +86,20 @@ public class TrainingService extends RunnableTaskService {
         trainer.getTask().setStatus(Status.RUNNING);
         trainer.getTask().getMeta().addHasSource(new ResourceValue(trainer.getAlgorithm().getUri(), null)).setDate(
                 new LiteralValue(new Date(System.currentTimeMillis()), XSDDatatype.XSDdate));
-
         UpdateTask updater = new UpdateTask(trainer.getTask());
         updater.setUpdateTaskStatus(true);
         updater.setUpdateMeta(true);
         try {
             updater.update();// update the task
         } catch (DbException ex) {
+            ex.printStackTrace();
             logger.error("Cannot update task to RUNNING", ex);
-        } finally {
+        } finally {           
             if (updater != null) {
                 try {
                     updater.close();
                 } catch (DbException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
@@ -125,6 +125,7 @@ public class TrainingService extends RunnableTaskService {
             modelAdder.close();
 
             /* UPDATE THE TASK - COMPLETED :)*/
+            
             trainer.getTask().setDuration(System.currentTimeMillis() - startingTime);
             trainer.getTask().getMeta().
                     addComment("Training completed successfully! The model is now stored in the database.");

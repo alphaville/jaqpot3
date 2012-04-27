@@ -18,12 +18,12 @@
         <dependency>
             <groupId>org.opentox.toxotis</groupId>
             <artifactId>ToxOtis-core</artifactId>
-            <version>0.6.7</version>
+            <version>0.8</version>
         </dependency>
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.2.24</version>
+            <version>0.3.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.opentox.toxotis</groupId>
@@ -40,17 +40,13 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ambit-plovdiv-snapshots</id>
-            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/snapshots</url>
+            <id>opentox-snapshots</id>
+            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>ambit-plovdiv-thirdparty</id>
-            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
+            <id>opentox-ntua-gr</id>
+            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
         </repository>
-        <site>
-            <id>website_ambit</id>
-            <url>scp://shell.sourceforge.net/home/groups/a/am/ambit/htdocs/AMBIT2-LIBS</url>
-        </site>
     </distributionManagement>
 
     <repositories>

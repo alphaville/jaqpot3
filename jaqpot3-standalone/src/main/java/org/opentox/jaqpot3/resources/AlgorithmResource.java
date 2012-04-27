@@ -127,8 +127,6 @@ public class AlgorithmResource extends JaqpotResource {
 
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
-
-        System.out.println(getCurrentVRI()+"!!");
         /*
          * The user that triggered the training procedure
          */
@@ -217,7 +215,6 @@ public class AlgorithmResource extends JaqpotResource {
             return errorReport(ex, "DbError", "Cannot get the number of running tasks from "
                     + "the database - Read Error", variant.getMediaType(), false);
         }
-
         //TODO: This should become user-specific
         int maxModels = creator.getMaxModels();
         int maxTasks = creator.getMaxParallelTasks();
@@ -262,6 +259,7 @@ public class AlgorithmResource extends JaqpotResource {
         try {
             taskAdder.write();
         } catch (DbException ex) {
+            ex.printStackTrace();
             String msg = "Task cannot be added in the database due to connectivity reasons";
             logger.error(msg, ex);
             toggleServerError();
@@ -270,14 +268,14 @@ public class AlgorithmResource extends JaqpotResource {
             try {
                 taskAdder.close();
             } catch (DbException ex) {
+                ex.printStackTrace();
                 String msg = "Task DB writer is uncloseable";
                 logger.error(msg, ex);
                 toggleServerError();
                 return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
-
-
+        
         IParametrizableAlgorithm algorithm = AlgorithmFinder.getAlgorithm(primaryId);
         if (algorithm != null) {// algorithm found!
             IClientInput clientInput = new ClientInput(entity);

@@ -65,8 +65,6 @@ import org.restlet.resource.ResourceException;
  */
 public class TrainGeneric extends JaqpotResource {
 
-    
-
     @Override
     protected void doInit() throws ResourceException {
         super.doInit();
@@ -174,14 +172,14 @@ public class TrainGeneric extends JaqpotResource {
                 Entry<String, String> entry = iterator.next();
                 client.addPostParameter(entry.getKey(), entry.getValue());
             }
-        }        
+        }
         client.authorize(userToken);
         try {
             client.post();
         } catch (ServiceInvocationException ex) {
-        }
+        }        
         String nextUri = null;
-        try {
+        try {            
             nextUri = client.getResponseUriList().iterator().next().toString();
         } catch (ServiceInvocationException ex) {
             //return ex.asErrorReport().;
