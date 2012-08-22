@@ -185,20 +185,20 @@ public class LoginResource extends JaqpotResource {
         }
         try {
             AuthenticationToken at = new AuthenticationToken(un, ps);
-            try {
-                User user = at.getUser();
-                user.setMaxBibTeX(2000);
-                user.setMaxParallelTasks(5);
-                user.setMaxModels(10000);
-                System.out.println(user);
-                AddUser adder = new AddUser(user);
-                adder.write();
-                adder.close();
-            } catch (ServiceInvocationException ex) {
-                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ToxOtisException ex) {
-                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//            try {
+//                User user = at.getUser();
+//                user.setMaxBibTeX(2000);
+//                user.setMaxParallelTasks(5);
+//                user.setMaxModels(10000);
+//                System.out.println(user);
+//                AddUser adder = new AddUser(user);
+//                adder.write();
+//                adder.close();
+//            } catch (ServiceInvocationException ex) {
+//                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (ToxOtisException ex) {
+//                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             ps = null;
             getCookieSettings().removeAll("subjectid");
             tok = at.stringValue();

@@ -31,7 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.resources;
 
 import java.util.UUID;
@@ -50,6 +49,7 @@ import org.opentox.jaqpot3.util.TaskFactory;
 import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.TrainingService;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.ServiceRestDocumentation;
@@ -168,14 +168,19 @@ public class AlgorithmResource extends JaqpotResource {
          */
         if (newUser) {
             try {
-                PolicyManager.defaultSignleUserPolicy("user_" + creator.getUid(), Configuration.getBaseUri().augment("user",creator.getUid()), getUserToken()).
-                        publish(null, getUserToken());
+                VRI resourceToProtect = Configuration.getBaseUri().augment("user", creator.getUid());
+                String policyOwner = PolicyManager.getPolicyOwner(resourceToProtect, null, getUserToken());
+                if (policyOwner == null) {
+                    PolicyManager.defaultSignleUserPolicy("user_" + creator.getUid(),
+                            resourceToProtect, getUserToken()).
+                            publish(null, getUserToken());
+                }
             } catch (ToxOtisException ex) {
                 toggleServerError();
-                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+                return errorReport(ex, "Policy Creation Failed for user " + creator.getName(), "", variant.getMediaType(), false);
             } catch (ServiceInvocationException ex) {
                 toggleRemoteError();
-                return errorReport(ex, "Policy Creation Failed for user "+creator.getName(), "", variant.getMediaType(), false);
+                return errorReport(ex, "Policy Creation Failed for user " + creator.getName(), "", variant.getMediaType(), false);
             }
             creator.setMaxModels(2000);
             creator.setMaxBibTeX(2000);
@@ -275,7 +280,7 @@ public class AlgorithmResource extends JaqpotResource {
                 return errorReport(ex, "DBWriterUncloseable", msg, variant.getMediaType(), false);
             }
         }
-        
+
         IParametrizableAlgorithm algorithm = AlgorithmFinder.getAlgorithm(primaryId);
         if (algorithm != null) {// algorithm found!
             IClientInput clientInput = new ClientInput(entity);
