@@ -186,8 +186,12 @@ public class LoginResource extends JaqpotResource {
         try {
             AuthenticationToken at = new AuthenticationToken(un, ps);
             try {
-                System.out.println(at.getUser());
-                AddUser adder = new AddUser(at.getUser());
+                User user = at.getUser();
+                user.setMaxBibTeX(2000);
+                user.setMaxParallelTasks(5);
+                user.setMaxModels(10000);
+                System.out.println(user);
+                AddUser adder = new AddUser(user);
                 adder.write();
                 adder.close();
             } catch (ServiceInvocationException ex) {
