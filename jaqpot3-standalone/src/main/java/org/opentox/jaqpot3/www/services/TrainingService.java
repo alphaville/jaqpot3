@@ -31,7 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.www.services;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -84,7 +83,8 @@ public class TrainingService extends RunnableTaskService {
          * The task has ALREADY been registered (see ModelResource)
          */
         trainer.getTask().setStatus(Status.RUNNING);
-        trainer.getTask().getMeta().addHasSource(new ResourceValue(trainer.getAlgorithm().getUri(), null)).setDate(
+        trainer.getTask().getMeta().addHasSource(
+                new ResourceValue(trainer.getAlgorithm().getUri(), null)).setDate(
                 new LiteralValue(new Date(System.currentTimeMillis()), XSDDatatype.XSDdate));
         UpdateTask updater = new UpdateTask(trainer.getTask());
         updater.setUpdateTaskStatus(true);
@@ -94,7 +94,7 @@ public class TrainingService extends RunnableTaskService {
         } catch (DbException ex) {
             ex.printStackTrace();
             logger.error("Cannot update task to RUNNING", ex);
-        } finally {           
+        } finally {
             if (updater != null) {
                 try {
                     updater.close();
@@ -125,13 +125,15 @@ public class TrainingService extends RunnableTaskService {
             modelAdder.close();
 
             /* UPDATE THE TASK - COMPLETED :)*/
-            
+
             trainer.getTask().setDuration(System.currentTimeMillis() - startingTime);
             trainer.getTask().getMeta().
                     addComment("Training completed successfully! The model is now stored in the database.");
-            trainer.getTask().setStatus(Status.COMPLETED).setHttpStatus(200).setResultUri(resultModel.getUri()).setPercentageCompleted(100);
+            trainer.getTask().setStatus(Status.COMPLETED).setHttpStatus(200).
+                    setResultUri(resultModel.getUri()).setPercentageCompleted(100);
 
             UpdateTask taskFinalUpdater = new UpdateTask(trainer.getTask());
+            taskFinalUpdater.setUpdateHttpStatus(true);
             taskFinalUpdater.setUpdateTaskStatus(true);
             taskFinalUpdater.setUpdateDuration(true);
             taskFinalUpdater.setUpdateResultUri(true);
