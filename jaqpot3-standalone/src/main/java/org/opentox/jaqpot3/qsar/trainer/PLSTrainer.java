@@ -153,7 +153,7 @@ public class PLSTrainer extends AbstractTrainer {
         /*
          * Remove unnecessary (string) features
          */
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             data = cleanup.filter(data);
         } catch (QSARException ex) {

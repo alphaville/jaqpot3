@@ -44,7 +44,7 @@ public class LeveragesTrainer extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesTrainer.class);
 
     private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             Instances filt1 = cleanup.filter(in);
             SimpleMVHFilter mvh = new SimpleMVHFilter();

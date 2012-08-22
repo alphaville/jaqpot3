@@ -35,7 +35,6 @@ package org.opentox.jaqpot3.qsar.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import weka.core.Attribute;
@@ -52,17 +51,17 @@ public class AttributeCleanup {
     private boolean keepCompoundURI = false;
 
     /**
-     * An enumeration for the main datatypes recognized by weka which
+     * An enumeration for the main data-types recognized by weka which
      * are also useful for YAQP. These are <code>string, nominal</code> and
      * <code>numeric</code>.
      */
-    public enum ATTRIBUTE_TYPE {
+    public enum AttributeType {
 
         string,
         nominal,
         numeric;
     }
-    private Set<ATTRIBUTE_TYPE> toBeRemoved;
+    private java.util.EnumSet<AttributeType> toBeRemoved;
 
     /**
      * Constructs a new clean-up filter which removes string attributes
@@ -70,24 +69,24 @@ public class AttributeCleanup {
      */
     public AttributeCleanup() {
         super();
-        this.toBeRemoved = new HashSet<ATTRIBUTE_TYPE>();
+        this.toBeRemoved = java.util.EnumSet.noneOf(AttributeType.class);
     }
 
-    public AttributeCleanup(boolean keepCompoundURI, ATTRIBUTE_TYPE... toBeRemoved) {
+    public AttributeCleanup(boolean keepCompoundURI, AttributeType... toBeRemoved) {
         this.keepCompoundURI = keepCompoundURI;
-        this.toBeRemoved = new HashSet<ATTRIBUTE_TYPE>();
+        this.toBeRemoved = java.util.EnumSet.noneOf(AttributeType.class);
         this.toBeRemoved.addAll(Arrays.asList(toBeRemoved));
     }
 
-    public AttributeCleanup(boolean keepCompoundURI, ATTRIBUTE_TYPE toBeRemoved) {
+    public AttributeCleanup(boolean keepCompoundURI, AttributeType toBeRemoved) {
         this.keepCompoundURI = keepCompoundURI;
-        this.toBeRemoved = new HashSet<ATTRIBUTE_TYPE>();
+        this.toBeRemoved = java.util.EnumSet.noneOf(AttributeType.class);
         this.toBeRemoved.add(toBeRemoved);
     }
 
-    public AttributeCleanup(boolean keepCompoundURI, Set<ATTRIBUTE_TYPE> toBeRemoved) {
+    public AttributeCleanup(boolean keepCompoundURI, Set<AttributeType> toBeRemoved) {
         this.keepCompoundURI = keepCompoundURI;
-        this.toBeRemoved = toBeRemoved;
+        this.toBeRemoved = java.util.EnumSet.noneOf(AttributeType.class);
     }
 
     public boolean isKeepCompoundURI() {
@@ -98,22 +97,22 @@ public class AttributeCleanup {
         this.keepCompoundURI = keepCompoundURI;
     }
 
-    public Set<ATTRIBUTE_TYPE> getToBeRemoved() {
+    public Set<AttributeType> getToBeRemoved() {
         return toBeRemoved;
     }
 
-    public void setToBeRemoved(Set<ATTRIBUTE_TYPE> toBeRemoved) {
-        this.toBeRemoved = toBeRemoved;
+    public void setToBeRemoved(java.util.EnumSet<AttributeType> toBeRemoved) {
+        this.toBeRemoved = java.util.EnumSet.allOf(AttributeType.class);
     }
 
-    public void addToBeRemoved(ATTRIBUTE_TYPE type) {
+    public void addToBeRemoved(AttributeType type) {
         toBeRemoved.add(type);
     }
 
     public Instances filter(Instances data) throws QSARException {
         if (toBeRemoved == null || (toBeRemoved != null && toBeRemoved.size() == 0)) {
-            this.toBeRemoved = new HashSet<ATTRIBUTE_TYPE>();
-            toBeRemoved.add(ATTRIBUTE_TYPE.string);
+            this.toBeRemoved = java.util.EnumSet.allOf(AttributeType.class);
+            toBeRemoved.add(AttributeType.string);
         }
 
         return remove(data);
@@ -123,23 +122,23 @@ public class AttributeCleanup {
         Remove remove = new Remove();
         ArrayList<Integer> attributeList = new ArrayList<Integer>();
 
-        int j = 0;
         for (int i = 0; i < input.numAttributes(); i++) {
             Attribute attribute = input.attribute(i);
-            if (attribute.isNominal() && toBeRemoved.contains(ATTRIBUTE_TYPE.nominal)) {
-                if (!(attribute.name().equals("compound_uri")
-                        || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
-                    attributeList.add(i);
-                }
+            System.out.println(attribute.name());
+            if ((attribute.name().equals("compound_uri")
+                    || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
                 continue;
-            } else if (attribute.isString() && toBeRemoved.contains(ATTRIBUTE_TYPE.string)) {
-                if ((attribute.name().equals("compound_uri")
-                        || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
-                    continue;
-                }
+            } else if (!isKeepCompoundURI()
+                    && (attribute.name().equals("compound_uri") || attribute.name().equalsIgnoreCase("uri"))) {
+                attributeList.add(i);
+            }
+            if (attribute.isNominal() && toBeRemoved.contains(AttributeType.nominal)) {
                 attributeList.add(i);
                 continue;
-            } else if (attribute.isNumeric() && toBeRemoved.contains(ATTRIBUTE_TYPE.numeric)) {
+            } else if (attribute.isString() && toBeRemoved.contains(AttributeType.string)) {
+                attributeList.add(i);
+                continue;
+            } else if (attribute.isNumeric() && toBeRemoved.contains(AttributeType.numeric)) {
                 attributeList.add(i);
                 continue;
             }
@@ -152,13 +151,15 @@ public class AttributeCleanup {
         try {
             remove.setInputFormat(input);
         } catch (Exception ex) {
-            throw new QSARException("FilteringError: Invalid input format for attribute-type removing filter", ex);
+            throw new QSARException("FilteringError: Invalid input format "
+                    + "for attribute-type removing filter", ex);
         }
         Instances output;
         try {
             output = Remove.useFilter(input, remove);
         } catch (Exception ex) {
-            throw new QSARException("FilteringError: The filter is unable to remove the specified types :" + toBeRemoved.toString(), ex);
+            throw new QSARException("FilteringError: The filter is unable to "
+                    + "remove the specified types :" + toBeRemoved.toString(), ex);
         }
         return output;
 

@@ -150,8 +150,8 @@ public class PredictionService extends RunnableTaskService {
                 VRI resultUri = future.get();
                 predictor.getTask().setHttpStatus(200).setPercentageCompleted(100.0f).
                         setResultUri(resultUri).setStatus(Status.COMPLETED);
-
                 UpdateTask updateTask = new UpdateTask(predictor.getTask());
+                updateTask.setUpdateHttpStatus(true);
                 updateTask.setUpdateTaskStatus(true);
                 updateTask.setUpdateResultUri(true);
                 updateTask.update();

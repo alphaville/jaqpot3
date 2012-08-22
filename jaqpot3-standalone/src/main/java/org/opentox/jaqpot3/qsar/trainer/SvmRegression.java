@@ -131,6 +131,7 @@ public class SvmRegression extends AbstractTrainer {
                 }
             }
             trainingSet.setClass(target);
+            //trainingSet.deleteAttributeAt(0);//remove the first attribute, i.e. 'compound_uri' or 'URI'
             /* Very important: place the target feature at the end! (target = last)*/
             int numAttributes = trainingSet.numAttributes();
             int classIndex = trainingSet.classIndex();
@@ -263,6 +264,7 @@ public class SvmRegression extends AbstractTrainer {
                     predictedFeature.setUri(resultUri);
                     getTask().getMeta().addComment("Prediction Feature created: " + resultUri);
                     UpdateTask taskUpdater = new UpdateTask(getTask());
+                    System.out.println(getTask().getUri());
                     taskUpdater.setUpdateMeta(true);
                     try {
                         taskUpdater.update();
@@ -318,7 +320,7 @@ public class SvmRegression extends AbstractTrainer {
     
 
     private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             Instances filt1 = cleanup.filter(in);
             SimpleMVHFilter mvh = new SimpleMVHFilter();

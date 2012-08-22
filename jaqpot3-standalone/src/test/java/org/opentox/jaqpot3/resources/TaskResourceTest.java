@@ -35,6 +35,7 @@
 
 package org.opentox.jaqpot3.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
@@ -53,9 +54,11 @@ import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Media;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
+import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.training.Trainer;
 import org.opentox.toxotis.util.TaskRunner;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
+import org.opentox.toxotis.util.aa.TokenPool;
 import static org.junit.Assert.*;
 
 /**
@@ -84,13 +87,14 @@ public class TaskResourceTest {
     }
 
     @Test
-    public void testSomeMethod() throws ServiceInvocationException, URISyntaxException, InterruptedException, ExecutionException, IOException {
+    public void testSomeMethod() throws ServiceInvocationException, 
+    URISyntaxException, InterruptedException, ExecutionException, IOException, ToxOtisException {
         /*
          * Train a model
          */
         AuthenticationToken at = new AuthenticationToken("guest", "guest");
-        AuthenticationToken athampos = new AuthenticationToken("hampos", "arabela");
-        
+        File passwordFile = new File(System.getProperty("user.home") + "/toxotisKeys/.my.key");        
+        AuthenticationToken athampos = TokenPool.getInstance().login(passwordFile);
         IPostClient post = ClientFactory.createPostClient(Configuration.getBaseUri().augment("algorithm", "mlr"));
         post.authorize(at);
         post.addPostParameter("dataset_uri", "http://apps.ideaconsult.net:8080/ambit2/dataset/R545");
@@ -99,7 +103,7 @@ public class TaskResourceTest {
         post.post();
         int status = post.getResponseCode();
         if (status != 202) {
-            fail();
+            fail("Status is "+status);
         }
         String task = post.getResponseText();
         post.close();

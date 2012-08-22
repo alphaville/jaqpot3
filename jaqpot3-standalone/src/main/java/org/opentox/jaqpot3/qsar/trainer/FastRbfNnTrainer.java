@@ -70,7 +70,7 @@ import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.ATTRIBUTE_TYPE.*;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
 
 /**
  *
@@ -166,7 +166,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     }
 
     private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             Instances filt1 = cleanup.filter(in);
             SimpleMVHFilter mvh = new SimpleMVHFilter();

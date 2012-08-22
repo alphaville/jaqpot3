@@ -86,7 +86,7 @@ public class MlrRegression extends AbstractTrainer {
 
 
     private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.ATTRIBUTE_TYPE.string);
+        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             Instances filt1 = cleanup.filter(in);
             SimpleMVHFilter mvh = new SimpleMVHFilter();
@@ -162,7 +162,7 @@ public class MlrRegression extends AbstractTrainer {
             }
 
             Instances trainingSet = preprocessInstances(data);
-            trainingSet.deleteAttributeAt(0);
+            //trainingSet.deleteAttributeAt(0);
             System.out.println("Training Set:");
             System.out.println(trainingSet);
             getTask().getMeta().addComment("The downloaded dataset is now preprocessed");
