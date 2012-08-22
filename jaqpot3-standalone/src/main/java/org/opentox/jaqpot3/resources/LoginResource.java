@@ -40,13 +40,12 @@ import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.core.html.GoogleAnalytics;
+import org.opentox.toxotis.database.engine.user.AddUser;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
-import org.restlet.data.Language;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.engine.util.CookieSeries;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
@@ -168,7 +167,6 @@ public class LoginResource extends JaqpotResource {
                     return errorReport(ex, ex.errorCode(), "The user cannot be logged out",
                             variant.getMediaType(), false);
                 } finally {
-                    
                 }
             }
         }
@@ -187,6 +185,16 @@ public class LoginResource extends JaqpotResource {
         }
         try {
             AuthenticationToken at = new AuthenticationToken(un, ps);
+            try {
+                System.out.println(at.getUser());
+                AddUser adder = new AddUser(at.getUser());
+                adder.write();
+                adder.close();
+            } catch (ServiceInvocationException ex) {
+                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ToxOtisException ex) {
+                Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
             ps = null;
             getCookieSettings().removeAll("subjectid");
             tok = at.stringValue();
