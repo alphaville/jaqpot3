@@ -79,18 +79,21 @@ public class ParameterResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
+        System.out.println("Getting a parameter");
         FindParameter finder = new FindParameter(Configuration.getBaseUri());
         IDbIterator parameterIterator = null;
         finder.setSearchById(primaryId);
-
+        System.out.println("ID:"+primaryId);
         try {
             parameterIterator = finder.list();
             if (parameterIterator.hasNext()) {
+                System.out.println("FOUND!!!!!!!");
                 Parameter prm = (Parameter) parameterIterator.next();
                 Publisher p = new Publisher(variant.getMediaType());
                 try {
                     return p.createRepresentation(prm, true);
                 } catch (JaqpotException ex) {
+                    ex.printStackTrace();
                     Logger.getLogger(ParameterResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
