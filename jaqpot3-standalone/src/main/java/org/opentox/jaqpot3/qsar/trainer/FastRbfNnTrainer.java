@@ -295,7 +295,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         try {
             Feature predictedFeature = FeatureFactory.createAndPublishFeature(
                     "Feature created as prediction feature for the RBF NN model " + m.getUri(), "",
-                    new ResourceValue(m.getUri(), OTClasses.Model()), featureService, token);
+                    new ResourceValue(m.getUri(), OTClasses.model()), featureService, token);
             m.addPredictedFeatures(predictedFeature);
         } catch (ServiceInvocationException ex) {
             logger.warn(null, ex);

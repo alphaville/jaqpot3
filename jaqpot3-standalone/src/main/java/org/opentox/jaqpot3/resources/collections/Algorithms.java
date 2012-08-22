@@ -149,9 +149,9 @@ public class Algorithms {
                         addIdentifier(fastRbfNn.getUri().toString());
                 fastRbfNn.setMeta(algorithmMeta);
                 fastRbfNn.setOntologies(new HashSet<OntologicalClass>());
-                fastRbfNn.getOntologies().add(OTAlgorithmTypes.Regression());
-                fastRbfNn.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                fastRbfNn.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                fastRbfNn.getOntologies().add(OTAlgorithmTypes.regression());
+                fastRbfNn.getOntologies().add(OTAlgorithmTypes.singleTarget());
+                fastRbfNn.getOntologies().add(OTAlgorithmTypes.eagerLearning());
 
                 fastRbfNn.setParameters(new HashSet<Parameter>());
 
@@ -204,7 +204,7 @@ public class Algorithms {
                         addIdentifier(scaling.getUri().toString());
                 scaling.setMeta(algorithmMeta);
                 scaling.setOntologies(new HashSet<OntologicalClass>());
-                scaling.getOntologies().add(OTAlgorithmTypes.Preprocessing());
+                scaling.getOntologies().add(OTAlgorithmTypes.preprocessing());
 
                 scaling.setParameters(new HashSet<Parameter>());
 
@@ -257,9 +257,9 @@ public class Algorithms {
                         addIdentifier(mlr.getUri().toString());
                 mlr.setMeta(algorithmMeta);
                 mlr.setOntologies(new HashSet<OntologicalClass>());
-                mlr.getOntologies().add(OTAlgorithmTypes.Regression());
-                mlr.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                mlr.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                mlr.getOntologies().add(OTAlgorithmTypes.regression());
+                mlr.getOntologies().add(OTAlgorithmTypes.singleTarget());
+                mlr.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 mlr.getMeta().addRights(_LICENSE);
                 mlr.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -284,9 +284,9 @@ public class Algorithms {
                         addIdentifier(mlr.getUri().toString());
                 consensus.setMeta(algorithmMeta);
                 consensus.setOntologies(new HashSet<OntologicalClass>());
-                consensus.getOntologies().add(OTAlgorithmTypes.Regression());
-                consensus.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                consensus.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                consensus.getOntologies().add(OTAlgorithmTypes.regression());
+                consensus.getOntologies().add(OTAlgorithmTypes.singleTarget());
+                consensus.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 consensus.getMeta().addRights(_LICENSE);
                 consensus.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -321,7 +321,7 @@ public class Algorithms {
 
                 mvh.setMeta(algorithmMeta);
                 mvh.setOntologies(new HashSet<OntologicalClass>());
-                mvh.getOntologies().add(OTAlgorithmTypes.Preprocessing());
+                mvh.getOntologies().add(OTAlgorithmTypes.preprocessing());
                 mvh.getMeta().addRights(_LICENSE);
                 mvh.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -394,8 +394,8 @@ public class Algorithms {
 
                 plsFilter.setMeta(algorithmMeta);
                 plsFilter.setOntologies(new HashSet<OntologicalClass>());
-                plsFilter.getOntologies().add(OTAlgorithmTypes.Preprocessing());
-                plsFilter.getOntologies().add(OTAlgorithmTypes.Supervised());
+                plsFilter.getOntologies().add(OTAlgorithmTypes.preprocessing());
+                plsFilter.getOntologies().add(OTAlgorithmTypes.supervised());
                 plsFilter.getMeta().addRights(_LICENSE);
                 plsFilter.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -416,7 +416,7 @@ public class Algorithms {
                         addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
                         addDescription("Removes from the dataset all attributes of certain types. This is useful in many cases, when for example one "
                         + "needs to train a model but have a clean dataset that doesn't include string values").
-                        addSeeAlso(new ResourceValue(mvh().getUri(), OTClasses.Algorithm())).
+                        addSeeAlso(new ResourceValue(mvh().getUri(), OTClasses.algorithm())).
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
                         addIdentifier(cleanup.getUri().toString());
@@ -432,7 +432,7 @@ public class Algorithms {
                 cleanup.getParameters().add(attribute_type);
                 cleanup.setMeta(algorithmMeta);
                 cleanup.setOntologies(new HashSet<OntologicalClass>());
-                cleanup.getOntologies().add(OTAlgorithmTypes.Preprocessing());
+                cleanup.getOntologies().add(OTAlgorithmTypes.preprocessing());
                 cleanup.getMeta().addRights(_LICENSE);
                 cleanup.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -509,9 +509,9 @@ public class Algorithms {
 
                 svm.setMeta(algorithmMeta);
                 svm.setOntologies(new HashSet<OntologicalClass>());
-                svm.getOntologies().add(OTAlgorithmTypes.Regression());
-                svm.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                svm.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                svm.getOntologies().add(OTAlgorithmTypes.regression());
+                svm.getOntologies().add(OTAlgorithmTypes.singleTarget());
+                svm.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 svm.getMeta().addRights(_LICENSE);
                 svm.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -535,9 +535,9 @@ public class Algorithms {
                         addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
                 leverages.setMeta(algorithmMeta);
                 leverages.setOntologies(new HashSet<OntologicalClass>());
-                leverages.getOntologies().add(OTAlgorithmTypes.ApplicabilityDomain());
-                leverages.getOntologies().add(OTAlgorithmTypes.SingleTarget());
-                leverages.getOntologies().add(OTAlgorithmTypes.EagerLearning());
+                leverages.getOntologies().add(OTAlgorithmTypes.applicabilityDomain());
+                leverages.getOntologies().add(OTAlgorithmTypes.singleTarget());
+                leverages.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 leverages.getMeta().addRights(_LICENSE);
             } catch (ToxOtisException ex) {
                 throw new RuntimeException(ex);
@@ -558,8 +558,8 @@ public class Algorithms {
                         addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
                 modelBundler.setMeta(algorithmMeta);
                 modelBundler.setOntologies(new HashSet<OntologicalClass>());
-                modelBundler.getOntologies().add(OTAlgorithmTypes.AlgorithmType());
-                modelBundler.getOntologies().add(OTAlgorithmTypes.SingleTarget());
+                modelBundler.getOntologies().add(OTAlgorithmTypes.algorithmType());
+                modelBundler.getOntologies().add(OTAlgorithmTypes.singleTarget());
                 modelBundler.getMeta().addRights(_LICENSE);
 
                 modelBundler.setParameters(new HashSet<Parameter>());

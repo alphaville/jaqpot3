@@ -31,10 +31,10 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.qsar.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
@@ -76,9 +76,7 @@ public class AttributeCleanup {
     public AttributeCleanup(boolean keepCompoundURI, ATTRIBUTE_TYPE... toBeRemoved) {
         this.keepCompoundURI = keepCompoundURI;
         this.toBeRemoved = new HashSet<ATTRIBUTE_TYPE>();
-        for (ATTRIBUTE_TYPE type : toBeRemoved) {
-            this.toBeRemoved.add(type);
-        }
+        this.toBeRemoved.addAll(Arrays.asList(toBeRemoved));
     }
 
     public AttributeCleanup(boolean keepCompoundURI, ATTRIBUTE_TYPE toBeRemoved) {
@@ -129,14 +127,18 @@ public class AttributeCleanup {
         for (int i = 0; i < input.numAttributes(); i++) {
             Attribute attribute = input.attribute(i);
             if (attribute.isNominal() && toBeRemoved.contains(ATTRIBUTE_TYPE.nominal)) {
+                if (!(attribute.name().equals("compound_uri")
+                        || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
+                    attributeList.add(i);
+                }
+                continue;
+            } else if (attribute.isString() && toBeRemoved.contains(ATTRIBUTE_TYPE.string)) {
+                if ((attribute.name().equals("compound_uri")
+                        || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
+                    continue;
+                }
                 attributeList.add(i);
                 continue;
-            } else if (attribute.isString() && toBeRemoved.contains(ATTRIBUTE_TYPE.string)) {               
-                if ((attribute.name().equals("compound_uri") || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
-                    continue;
-                } 
-                    attributeList.add(i);
-                    continue;               
             } else if (attribute.isNumeric() && toBeRemoved.contains(ATTRIBUTE_TYPE.numeric)) {
                 attributeList.add(i);
                 continue;

@@ -246,7 +246,7 @@ public class SvmRegression extends AbstractTrainer {
 
             /* CREATE PREDICTED FEATURE AND POST IT TO REMOTE SERVER */
             Feature predictedFeature = new Feature();
-            predictedFeature.getMeta().addHasSource(new ResourceValue(m.getUri(), OTClasses.Model())).
+            predictedFeature.getMeta().addHasSource(new ResourceValue(m.getUri(), OTClasses.model())).
                     addTitle("Feature created as prediction feature for SVM model " + m.getUri());
             try {
                 Future<VRI> predictedFeatureUri = predictedFeature.publish(featureService, token);

@@ -100,7 +100,7 @@ public class MissingValueFilter extends AbstractTrainer {
                     VRI featureVri = new VRI(attribute.name());
                     mvh.addIndependentFeatures(new Feature(featureVri));
                     Feature f = FeatureFactory.createAndPublishFeature("MVH " + featureVri.toString(), "",
-                            new ResourceValue(newModelUri, OTClasses.Model()), featureService, token);
+                            new ResourceValue(newModelUri, OTClasses.model()), featureService, token);
                     mvh.addPredictedFeatures(f);
                     getTask().getMeta().addComment("MVH feature for " + featureVri.toString()
                             + " has been created at " + f.getUri().toString());

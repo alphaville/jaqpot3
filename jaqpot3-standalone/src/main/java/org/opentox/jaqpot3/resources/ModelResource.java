@@ -344,7 +344,7 @@ public class ModelResource extends JaqpotResource {
         task.getMeta().
                 addDescription("Asynchronous Task for Prediction using the model " + getCurrentVRI()).
                 addComment("Asynchronous task created for a background job initiated by the model: " + primaryId).
-                addHasSource(new ResourceValue(getCurrentVRI().removeUrlParameter("subjectid"), OTClasses.Model()));
+                addHasSource(new ResourceValue(getCurrentVRI().removeUrlParameter("subjectid"), OTClasses.model()));
 
 
 
@@ -430,19 +430,19 @@ public class ModelResource extends JaqpotResource {
         ServiceRestDocumentation doc = new ServiceRestDocumentation(new DummyComponent(getCurrentVRINoQuery()));
         IRestOperation get = new RestOperation();
         get.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("The model was found in the database and its representation in the prefered MIME type is returned to the client.")),
-                new HttpStatus(OTRestClasses.STATUS_404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
+                new HttpStatus(OTRestClasses.status404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
                 addDescription("The model was not found in the database").addComment("You can have a complete list of the available models at "
                 + Configuration.getBaseUri().augment("model"))),
-                new HttpStatus(OTRestClasses.STATUS_403()),
-                new HttpStatus(OTRestClasses.STATUS_401()));
-        get.addOntologicalClasses(OTRestClasses.GET_Model());
-        get.addMediaTypes(new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_uri_list()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_html()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_xml()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_n3()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_turtle()));
+                new HttpStatus(OTRestClasses.status403()),
+                new HttpStatus(OTRestClasses.status401()));
+        get.addOntologicalClasses(OTRestClasses.getModel());
+        get.addMediaTypes(new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeTextUriList()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeTextHtml()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfXml()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfN3()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfTurtle()));
 
 
         doc.addRestOperations(get);

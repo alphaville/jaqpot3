@@ -113,7 +113,7 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
         
 
         try {
-            return DatasetFactory.createFromArff(data);
+            return DatasetFactory.getInstance().createFromArff(data);
         } catch (ToxOtisException ex) {
             Logger.getLogger(MissingValueFilterPredictor.class.getName()).log(Level.SEVERE, null, ex);
             throw new JaqpotException(ex);

@@ -58,7 +58,7 @@ public class LeveragesPredictor extends AbstractPredictor {
         try {
             orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);
         } catch (JaqpotException ex) {
-            String message = "It is not possible to apply the dataset " 
+            String message = "It is not possible to apply the dataset "
                     + " to the model : " + (model != null ? model.getUri().toString() : "(no URI)") + ". Most probably the dataset does not contain "
                     + "the independent features for this model.";
             logger.debug(message, ex);
@@ -101,9 +101,10 @@ public class LeveragesPredictor extends AbstractPredictor {
         }
 
         try {
-                        
-            Dataset output = DatasetFactory.createFromArff(Instances.mergeInstances(compounds, predictions));
-            
+
+            Dataset output = DatasetFactory.getInstance().
+                    createFromArff(Instances.mergeInstances(compounds, predictions));
+
             return output;
         } catch (ToxOtisException ex) {
             logger.error(null, ex);

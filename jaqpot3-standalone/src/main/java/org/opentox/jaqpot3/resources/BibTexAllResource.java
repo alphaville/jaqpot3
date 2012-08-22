@@ -348,9 +348,9 @@ public class BibTexAllResource extends JaqpotResource {
             bibTypeParameter = "Entry";// use the default bibtype (Entry).
         }
 
-        BibTeX.BIB_TYPE type = null;
+        BibTeX.BibTYPE type = null;
         try {
-            type = BibTeX.BIB_TYPE.valueOf(bibTypeParameter);
+            type = BibTeX.BibTYPE.valueOf(bibTypeParameter);
         } catch (IllegalArgumentException ex) {
             logger.debug("Bibtype requested is not supported (" + bibTypeParameter + ")", ex);
             toggleBadRequest();

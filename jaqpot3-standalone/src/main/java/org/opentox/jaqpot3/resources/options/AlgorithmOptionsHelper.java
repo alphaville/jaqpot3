@@ -20,14 +20,14 @@ public class AlgorithmOptionsHelper {
         IRestOperation rest = new RestOperation();
         rest.setMethod(MethodsEnum.GET);
         rest.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addDescription("The GET method succeeds and "
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addDescription("The GET method succeeds and "
                 + "a representation of the algorithm is returned to the client in the prefered MIME type")),
-                new HttpStatus(OTRestClasses.STATUS_401()).setMeta(new MetaInfoImpl().addDescription("The user is authenticated but not authorized to access the "
+                new HttpStatus(OTRestClasses.status401()).setMeta(new MetaInfoImpl().addDescription("The user is authenticated but not authorized to access the "
                 + "underlying resource")),
-                new HttpStatus(OTRestClasses.STATUS_403()).setMeta(new MetaInfoImpl().addDescription("Forbidden action and access")),
-                new HttpStatus(OTRestClasses.STATUS_500()).setMeta(new MetaInfoImpl().addDescription("The GET method fails and returns an error status "
+                new HttpStatus(OTRestClasses.status403()).setMeta(new MetaInfoImpl().addDescription("Forbidden action and access")),
+                new HttpStatus(OTRestClasses.status500()).setMeta(new MetaInfoImpl().addDescription("The GET method fails and returns an error status "
                 + "code 500 in case some unexplicable error inhibits the algorithm to be accessed.")));
-        rest.addRestClasses(OTRestClasses.GET_Algorithm(), OTRestClasses.OperationAlgorithm(), OTRestClasses.OperationResultAlgorithm());
+        rest.addRestClasses(OTRestClasses.getAlgorithm(), OTRestClasses.operationAlgorithm(), OTRestClasses.operationResultAlgorithm());
         return rest;
     }
 

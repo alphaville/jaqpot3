@@ -125,7 +125,7 @@ public class ScalingPredictor extends AbstractPredictor {
             inputData.renameAttribute(currentAttribute, featureToScaled.get(nextFeature));
         }
         try {
-            return DatasetFactory.createFromArff(inputData);
+            return DatasetFactory.getInstance().createFromArff(inputData);
         } catch (ToxOtisException ex) {
             throw new JaqpotException(ex);
         }

@@ -79,7 +79,7 @@ public class SimpleMVHFilter {
         Instances out = filter(in);
         Dataset o = null;
         try {
-            o = DatasetFactory.createFromArff(out);
+            o = DatasetFactory.getInstance().createFromArff(out);
         } catch (ToxOtisException ex) {
             throw new JaqpotException(ex);
         }

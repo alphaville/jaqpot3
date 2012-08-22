@@ -163,31 +163,32 @@ public class TaskResource extends JaqpotResource {
 
         RestOperation delete = new RestOperation();
         delete.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("The task was successfully deleted from the database").
                 addComment("The status code 200 is returned in any case of successful deletion but excluding the "
                 + "case where the underlying task was not found in the database")),
-                new HttpStatus(OTRestClasses.STATUS_404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
+                new HttpStatus(OTRestClasses.status404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
                 addDescription("The task was not found in the database")),
-                new HttpStatus(OTRestClasses.STATUS_403()),
-                new HttpStatus(OTRestClasses.STATUS_401()));
+                new HttpStatus(OTRestClasses.status403()),
+                new HttpStatus(OTRestClasses.status401()));
         delete.setMethod(MethodsEnum.DELETE);
-        delete.addOntologicalClasses(OTRestClasses.DELETE_Task(), OTRestClasses.OperationTask(), OTRestClasses.OperationNoResult());
+        delete.addOntologicalClasses(OTRestClasses.deleteTask(), 
+                OTRestClasses.operationTask(), OTRestClasses.operationNoResult());
         delete.getMeta().addDescription("Cancels a running task.");
         delete.setProtectedResource(false);
 
 
         RestOperation get = new RestOperation();
         get.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("The task is successfully retrieved from the database and has completed redirecting to the result "
                 + "of the calculation")),
-                new HttpStatus(OTRestClasses.STATUS_202()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status202()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("The task is successfully retrieved from the database and is still running/processing")),
-                new HttpStatus(OTRestClasses.STATUS_201()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status201()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("The task is successfully retrieved from the database has completed its own part of the overall work but redirect to "
                 + "some other task on some other server")),
-                new HttpStatus(OTRestClasses.STATUS_404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
+                new HttpStatus(OTRestClasses.status404()).setMeta(new MetaInfoImpl().addTitle("Not Found").
                 addDescription("The task was successfully deleted from the database")));
         get.addUrlParameter("media", true, XSDDatatype.XSDstring, new MetaInfoImpl().addTitle("media").
                 addDescription("Specify your prefered MIME type in the URL of the request. In particular useful if "

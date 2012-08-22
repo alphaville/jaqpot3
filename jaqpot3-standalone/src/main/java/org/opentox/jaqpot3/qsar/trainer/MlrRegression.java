@@ -40,6 +40,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -143,7 +144,8 @@ public class MlrRegression extends AbstractTrainer {
         data.renameAttribute(0, "compound_uri");
         try {
 
-            getTask().getMeta().addComment("Dataset successfully retrieved and converted into a weka.core.Instances object");
+            getTask().getMeta().addComment("Dataset successfully retrieved and converted "
+                    + "into a weka.core.Instances object");
             UpdateTask firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);
             firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
@@ -160,7 +162,9 @@ public class MlrRegression extends AbstractTrainer {
             }
 
             Instances trainingSet = preprocessInstances(data);
-
+            trainingSet.deleteAttributeAt(0);
+            System.out.println("Training Set:");
+            System.out.println(trainingSet);
             getTask().getMeta().addComment("The downloaded dataset is now preprocessed");
             firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);
@@ -219,7 +223,7 @@ public class MlrRegression extends AbstractTrainer {
                 Logger.getLogger(MlrRegression.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            HashSet<LiteralValue> depFeatTitles = dependentFeature.getMeta().getTitles();
+            Set<LiteralValue> depFeatTitles = dependentFeature.getMeta().getTitles();
 
             String depFeatTitle = dependentFeature.getUri().toString();
             if (!depFeatTitles.isEmpty()) {
@@ -255,7 +259,7 @@ public class MlrRegression extends AbstractTrainer {
             try {
                 Feature predictedFeature = FeatureFactory.createAndPublishFeature(
                         "Predicted " + depFeatTitle + " by MLR model", dependentFeature.getUnits(),
-                        new ResourceValue(m.getUri(), OTClasses.Model()), featureService, token);
+                        new ResourceValue(m.getUri(), OTClasses.model()), featureService, token);
                 m.addPredictedFeatures(predictedFeature);
                 predictionFeatureUri = predictedFeature.getUri().toString();
             } catch (ServiceInvocationException ex) {
@@ -299,7 +303,7 @@ public class MlrRegression extends AbstractTrainer {
                 logger.error(message, ex);
                 throw new JaqpotException(message, ex);
             }
-
+            m.getMeta().addPublisher("OpenTox").addComment("This is a Multiple Linear Regression Model");
             return m;
         } catch (QSARException ex) {
             String message = "QSAR Exception: cannot train MLR model";

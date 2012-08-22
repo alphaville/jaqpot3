@@ -95,7 +95,8 @@ public class PredictionService extends RunnableTaskService {
         predictor.getTask().getMeta().setDate(
                 new LiteralValue(new Date(System.currentTimeMillis()), XSDDatatype.XSDdate));
         if (predictor.getModel() != null && predictor.getModel().getUri() != null) {
-            predictor.getTask().getMeta().addHasSource(new ResourceValue(predictor.getModel().getUri(), OTClasses.Model()));
+            predictor.getTask().getMeta().addHasSource(new ResourceValue(predictor.getModel().getUri(), 
+                    OTClasses.model()));
         }
 
         UpdateTask updater = new UpdateTask(predictor.getTask());

@@ -93,7 +93,7 @@ public class LeveragesTrainer extends AbstractTrainer {
             }
             model.setIndependentFeatures(independentFeatures);
             Feature predictedFeature = new Feature();
-            predictedFeature.getMeta().addHasSource(new ResourceValue(model.getUri(), OTClasses.Model())).
+            predictedFeature.getMeta().addHasSource(new ResourceValue(model.getUri(), OTClasses.model())).
                     addTitle("Feature created as prediction feature for DoA model " + model.getUri());
 
             Future<VRI> predictedFeatureUri = predictedFeature.publish(featureService, token);

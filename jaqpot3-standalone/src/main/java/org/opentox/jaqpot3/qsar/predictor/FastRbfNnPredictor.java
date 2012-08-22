@@ -147,7 +147,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
 
         try {
             Instances resultSet = Instances.mergeInstances(compounds, predictions);
-            Dataset output = DatasetFactory.createFromArff(resultSet);
+            Dataset output = DatasetFactory.getInstance().createFromArff(resultSet);
             return output;
         } catch (ToxOtisException ex) {
             logger.error(null, ex);

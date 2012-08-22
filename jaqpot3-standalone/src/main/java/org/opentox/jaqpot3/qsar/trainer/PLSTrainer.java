@@ -221,7 +221,9 @@ public class PLSTrainer extends AbstractTrainer {
 
         for (int i = 0; i < numComponents; i++) {
             try {
-                Feature f = FeatureFactory.createAndPublishFeature("PLS-" + i, "", new ResourceValue(model.getUri(), OTClasses.Model()), featureService, token);
+                Feature f = FeatureFactory.createAndPublishFeature("PLS-" + i, "",
+                        new ResourceValue(model.getUri(), OTClasses.model()),
+                        featureService, token);
                 model.addPredictedFeatures(f);
             } catch (ServiceInvocationException ex) {
                 Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);

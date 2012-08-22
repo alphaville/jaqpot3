@@ -128,23 +128,23 @@ public class AlgorithmsResource extends JaqpotResource {
     @Override
     protected ServiceRestDocumentation getServiceDocumentation(Variant variant) {
         IRestOperation restOperation = new RestOperation();
-        restOperation.addRestClasses(OTRestClasses.GET_Algorithm(), OTRestClasses.OperationResultAlgorithm());
+        restOperation.addRestClasses(OTRestClasses.getAlgorithm(), OTRestClasses.operationResultAlgorithm());
         restOperation.getMeta().addTitle("Rest interface documentation for the resource /algorithm");
         restOperation.setMethod(MethodsEnum.GET);
         restOperation.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addDescription("The GET method succeeds and "
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addDescription("The GET method succeeds and "
                 + "a representation of the algorithm is returned to the client in the prefered MIME type")),
-                new HttpStatus(OTRestClasses.STATUS_401()).setMeta(new MetaInfoImpl().addDescription("The user is authenticated but not authorized to access the "
+                new HttpStatus(OTRestClasses.status401()).setMeta(new MetaInfoImpl().addDescription("The user is authenticated but not authorized to access the "
                 + "underlying resource")),
-                new HttpStatus(OTRestClasses.STATUS_403()).setMeta(new MetaInfoImpl().addDescription("Forbidden action and access")),
-                new HttpStatus(OTRestClasses.STATUS_500()).setMeta(new MetaInfoImpl().addDescription("The GET method fails and returns an error status "
+                new HttpStatus(OTRestClasses.status403()).setMeta(new MetaInfoImpl().addDescription("Forbidden action and access")),
+                new HttpStatus(OTRestClasses.status500()).setMeta(new MetaInfoImpl().addDescription("The GET method fails and returns an error status "
                 + "code 500 in case some unexplicable error inhibits the algorithm to be accessed.")));
         restOperation.addMediaTypes(
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_xml()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_turtle()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_rdf_n3()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_html()),
-                new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_uri_list()));
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfXml()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfTurtle()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeRdfN3()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeTextHtml()),
+                new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeTextUriList()));
 
         ServiceRestDocumentation doc = new ServiceRestDocumentation(new DummyComponent(getCurrentVRINoQuery()));
         doc.addRestOperations(restOperation);

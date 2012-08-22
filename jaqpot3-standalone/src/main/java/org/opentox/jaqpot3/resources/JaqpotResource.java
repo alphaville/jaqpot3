@@ -517,7 +517,7 @@ public abstract class JaqpotResource extends WadlServerResource {
      */
     protected ServiceRestDocumentation getServiceDocumentation(Variant variant) {
         DummyComponent dc = new DummyComponent(getCurrentVRINoQuery());
-        dc.addOntologicalClasses(OTClasses.OpenToxResource());
+        dc.addOntologicalClasses(OTClasses.openToxResource());
         ServiceRestDocumentation doc = new ServiceRestDocumentation(dc);
         return doc;
     }

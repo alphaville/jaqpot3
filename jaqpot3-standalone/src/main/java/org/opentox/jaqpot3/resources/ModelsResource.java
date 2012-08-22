@@ -147,52 +147,52 @@ public class ModelsResource extends JaqpotResource {
         IRestOperation get = new RestOperation();
         get.setMethod(MethodsEnum.GET);
         get.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("Successful retrieval of the list of models.")),
-                new HttpStatus(OTRestClasses.STATUS_403()),
-                new HttpStatus(OTRestClasses.STATUS_401()));
-        get.addOntologicalClasses(OTRestClasses.GET_Model());
-        get.addMediaTypes(new HttpMediatype().addOntologicalClasses(OTRestClasses.mime_text_uri_list()));
+                new HttpStatus(OTRestClasses.status403()),
+                new HttpStatus(OTRestClasses.status401()));
+        get.addOntologicalClasses(OTRestClasses.getModel());
+        get.addMediaTypes(new HttpMediatype().addOntologicalClasses(OTRestClasses.mimeTextUriList()));
 
         get.addHttpParameters(
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("max").setMeta(new MetaInfoImpl().addDescription("The maximum number of results to be displayed").
                 addDescription("The page size when paging is applied on the number of results")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("creator").setMeta(new MetaInfoImpl().addDescription("Display only the models created by a certain creator "
                 + "identified by its UID (like user%40opensso.in-silico.ch)")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("dataset_uri").setMeta(new MetaInfoImpl().addDescription("Display only those models that were "
                 + "trained using the speicified dataset (provide its URI)")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("dependent_feature").setMeta(new MetaInfoImpl().addDescription("Display a list only containing the "
                 + "models that have the provided dependent feature")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("algorithm").setMeta(new MetaInfoImpl().addDescription("List of models trained with the "
                 + "given algorithm (provide the algorithm id)")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("algorithm_uri").setMeta(new MetaInfoImpl().addDescription("List of models that were trained "
                 + "using the specified algorithm (provide the algorithm's URI)")).setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.URLParameter()).
+                new HttpParameter().addInputParamClass(OTRestClasses.urlParameter()).
                 setOpentoxParameter(false).setParamName("page").setMeta(new MetaInfoImpl().addDescription("The index number of the page. Used for paging of the"
                 + "listed models.")).setParamOptional(true));
         get.addHttpParameters(
-                new HttpParameter().addInputParamClass(OTRestClasses.Header()).setParamName("Authorization").setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.Header()).setParamName("Policy").setParamOptional(true));
+                new HttpParameter().addInputParamClass(OTRestClasses.header()).setParamName("Authorization").setParamOptional(true),
+                new HttpParameter().addInputParamClass(OTRestClasses.header()).setParamName("Policy").setParamOptional(true));
         get.setProtectedResource(true);
 
         IRestOperation delete = new RestOperation();
         delete.addHttpStatusCodes(
-                new HttpStatus(OTRestClasses.STATUS_200()).setMeta(new MetaInfoImpl().addTitle("Success").
+                new HttpStatus(OTRestClasses.status200()).setMeta(new MetaInfoImpl().addTitle("Success").
                 addDescription("All model resources (that were created by the user that applies the DELETE request) were successfully deleted")),
-                new HttpStatus(OTRestClasses.STATUS_403()),
-                new HttpStatus(OTRestClasses.STATUS_401()));
+                new HttpStatus(OTRestClasses.status403()),
+                new HttpStatus(OTRestClasses.status401()));
         delete.setMethod(MethodsEnum.DELETE);
-        delete.addOntologicalClasses(OTRestClasses.DELETE_Model(), OTRestClasses.OperationNoResult());
+        delete.addOntologicalClasses(OTRestClasses.deleteModel(), OTRestClasses.operationNoResult());
         delete.getMeta().addDescription("Deletes all model resources that were created by the user that applies the DELETE operation");
         delete.addHttpParameters(
-                new HttpParameter().addInputParamClass(OTRestClasses.Header()).setParamName("Authorization").setParamOptional(true),
-                new HttpParameter().addInputParamClass(OTRestClasses.Header()).setParamName("Policy").setParamOptional(true));
+                new HttpParameter().addInputParamClass(OTRestClasses.header()).setParamName("Authorization").setParamOptional(true),
+                new HttpParameter().addInputParamClass(OTRestClasses.header()).setParamName("Policy").setParamOptional(true));
         delete.setProtectedResource(true);
 
         doc.addRestOperations(get, delete);

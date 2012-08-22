@@ -99,7 +99,7 @@ public class PLSPredictor extends AbstractPredictor {
         newData.renameAttribute(newData.attribute("Class"),target);        
         newData = Instances.mergeInstances(compounds, newData);
         try {
-            return DatasetFactory.createFromArff(newData);
+            return DatasetFactory.getInstance().createFromArff(newData);
         } catch (ToxOtisException ex) {
             Logger.getLogger(PLSPredictor.class.getName()).log(Level.SEVERE, null, ex);
             throw new JaqpotException(ex);
