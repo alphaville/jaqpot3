@@ -162,9 +162,6 @@ public class MlrRegression extends AbstractTrainer {
             }
 
             Instances trainingSet = preprocessInstances(data);
-            //trainingSet.deleteAttributeAt(0);
-            System.out.println("Training Set:");
-            System.out.println(trainingSet);
             getTask().getMeta().addComment("The downloaded dataset is now preprocessed");
             firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);

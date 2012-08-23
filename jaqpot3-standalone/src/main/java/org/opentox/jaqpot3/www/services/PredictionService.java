@@ -126,8 +126,6 @@ public class PredictionService extends RunnableTaskService {
             /* GET THE PREDICTIONS FROM THE PREDICTOR */
             Dataset output = predictor.predict(datasetURI);
             /* */
-            System.out.println(datasetServiceUri);
-            System.out.println(token);
             Future<VRI> future = output.publish(datasetServiceUri, token);
             float counter = 1;
             while (!future.isDone()) {

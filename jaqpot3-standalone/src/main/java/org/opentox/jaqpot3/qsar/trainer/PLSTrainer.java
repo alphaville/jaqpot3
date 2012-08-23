@@ -181,8 +181,7 @@ public class PLSTrainer extends AbstractTrainer {
                         "-A", pls_algorithm,
                         "-P", preprocessing,
                         "-U", doUpdateClass});
-            System.out.println(
-                    PLSFilter.useFilter(data, pls));
+            PLSFilter.useFilter(data, pls);
         } catch (Exception ex) {
             Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
         }

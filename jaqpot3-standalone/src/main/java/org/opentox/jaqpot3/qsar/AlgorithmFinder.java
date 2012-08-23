@@ -46,7 +46,7 @@ import org.opentox.jaqpot3.qsar.trainer.*;
  */
 public class AlgorithmFinder {
 
-    private static Map<String, Class<? extends IParametrizableAlgorithm>> map = new HashMap<String, Class<? extends IParametrizableAlgorithm>>();
+    private static final Map<String, Class<? extends IParametrizableAlgorithm>> map = new HashMap<String, Class<? extends IParametrizableAlgorithm>>();
 
     static {
 //        map.put("cleanup", CleanupFilter.class);
@@ -73,18 +73,16 @@ public class AlgorithmFinder {
             Constructor<? extends IParametrizableAlgorithm> c = clazz.getConstructor();
             IParametrizableAlgorithm algorithm = c.newInstance();
             return algorithm;
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException(ex);
-        } catch (InvocationTargetException ex) {
-            throw new RuntimeException(ex);
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException(ex);
-        } catch (SecurityException ex) {
-            throw new RuntimeException(ex);
+        } catch (final InstantiationException ex) {
+            throw new IllegalArgumentException("Instantiation Failed", ex);
+        } catch (final IllegalAccessException ex) {
+            throw new IllegalArgumentException("Access to object denied", ex);
+        } catch (final InvocationTargetException ex) {
+            throw new IllegalArgumentException("Invocation exception", ex);
+        } catch (final NoSuchMethodException ex) {
+            throw new IllegalArgumentException("Method not found", ex);
+        } catch (final SecurityException ex) {
+            throw new IllegalArgumentException("Security Issue", ex);
         }
     }
 }

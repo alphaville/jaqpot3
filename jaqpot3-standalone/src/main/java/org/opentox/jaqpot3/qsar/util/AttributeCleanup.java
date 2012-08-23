@@ -124,7 +124,6 @@ public class AttributeCleanup {
 
         for (int i = 0; i < input.numAttributes(); i++) {
             Attribute attribute = input.attribute(i);
-            System.out.println(attribute.name());
             if ((attribute.name().equals("compound_uri")
                     || attribute.name().equalsIgnoreCase("uri")) && isKeepCompoundURI()) {
                 continue;

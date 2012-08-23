@@ -36,8 +36,6 @@
 package org.opentox.jaqpot3.resources;
 
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.DbListStreamPublisher;
 import org.opentox.jaqpot3.util.Configuration;
@@ -49,16 +47,13 @@ import org.opentox.toxotis.core.component.HttpParameter;
 import org.opentox.toxotis.core.component.HttpStatus;
 import org.opentox.toxotis.core.component.RestOperation;
 import org.opentox.toxotis.core.component.ServiceRestDocumentation;
-import org.opentox.toxotis.database.IDbIterator;
 import org.opentox.toxotis.database.engine.model.ListModel;
-import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 

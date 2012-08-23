@@ -202,7 +202,6 @@ public class Configuration {
             }
             properties.setProperty("log4j.useDefaultFile", "true");
         } catch (final IOException ex) {
-            ex.printStackTrace();
             logger.warn("IOException while trying to access configuration file.", ex);
             backupProperties();
         } finally {

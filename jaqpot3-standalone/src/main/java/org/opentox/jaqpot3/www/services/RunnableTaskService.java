@@ -31,7 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.www.services;
 
 import java.io.PrintWriter;

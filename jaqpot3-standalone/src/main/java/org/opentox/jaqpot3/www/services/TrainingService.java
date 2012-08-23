@@ -42,7 +42,6 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.ErrorReport;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Task.Status;
@@ -55,7 +54,6 @@ import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.aa.policy.IPolicyWrapper;
 import org.opentox.toxotis.util.aa.policy.PolicyManager;
-import org.opentox.toxotis.util.arff.RemoteArffRertiever;
 
 /**
  *
@@ -92,7 +90,6 @@ public class TrainingService extends RunnableTaskService {
         try {
             updater.update();// update the task
         } catch (DbException ex) {
-            ex.printStackTrace();
             logger.error("Cannot update task to RUNNING", ex);
         } finally {
             if (updater != null) {
@@ -152,14 +149,12 @@ public class TrainingService extends RunnableTaskService {
             logger.trace(null, ex);
         } catch (JaqpotException ex) {//FROM NODE_03
             logger.info(null, ex);
-            ex.printStackTrace();
             updateFailedTask(trainer.getTask(), ex, "", 500, Configuration.BASE_URI);
         } catch (ServiceInvocationException ex) {
             ErrorReport er = ex.asErrorReport();
             er.setErrorCode(ex.getClass().getSimpleName());
             updateFailedTask(trainer.getTask(), er);
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
             logger.error(null, throwable);
             updateFailedTask(trainer.getTask(), throwable, "", 500, Configuration.BASE_URI);
         }

@@ -77,7 +77,6 @@ public class WekaPredictor extends AbstractPredictor {
         try {
             /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
             Instances newData = InstancesUtil.sortForModel(model, inputSet, -1);
-            System.out.println(newData);
             /* ADD TO THE NEW DATA THE PREDICTION FEATURE*/
             Add attributeAdder = new Add();
             attributeAdder.setAttributeIndex("last");
@@ -114,8 +113,6 @@ public class WekaPredictor extends AbstractPredictor {
             } catch (QSARException ex) {
                 logger.debug(null, ex);
             }
-
-            System.out.println(compounds);
             Instances result = Instances.mergeInstances(compounds, predictions);
             Dataset ds = DatasetFactory.getInstance().createFromArff(result);
 

@@ -39,7 +39,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.Publisher;
-import org.opentox.jaqpot3.resources.publish.Representer;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.core.component.User;
 import org.opentox.toxotis.database.IDbIterator;
@@ -90,10 +89,8 @@ public class UserResource extends JaqpotResource {
             Publisher p = new Publisher(variant.getMediaType());
             return p.createRepresentation(u, true);
         } catch (JaqpotException ex) {
-            ex.printStackTrace();
             Logger.getLogger(UserResource.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DbException ex) {
-            ex.printStackTrace();
         } finally {
         }
         return super.get(variant);

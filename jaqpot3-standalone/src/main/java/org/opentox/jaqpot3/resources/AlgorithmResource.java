@@ -120,7 +120,6 @@ public class AlgorithmResource extends JaqpotResource {
             }
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
         }
     }
@@ -264,7 +263,6 @@ public class AlgorithmResource extends JaqpotResource {
         try {
             taskAdder.write();
         } catch (DbException ex) {
-            ex.printStackTrace();
             String msg = "Task cannot be added in the database due to connectivity reasons";
             logger.error(msg, ex);
             toggleServerError();
@@ -273,7 +271,6 @@ public class AlgorithmResource extends JaqpotResource {
             try {
                 taskAdder.close();
             } catch (DbException ex) {
-                ex.printStackTrace();
                 String msg = "Task DB writer is uncloseable";
                 logger.error(msg, ex);
                 toggleServerError();

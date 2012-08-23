@@ -264,7 +264,6 @@ public class SvmRegression extends AbstractTrainer {
                     predictedFeature.setUri(resultUri);
                     getTask().getMeta().addComment("Prediction Feature created: " + resultUri);
                     UpdateTask taskUpdater = new UpdateTask(getTask());
-                    System.out.println(getTask().getUri());
                     taskUpdater.setUpdateMeta(true);
                     try {
                         taskUpdater.update();

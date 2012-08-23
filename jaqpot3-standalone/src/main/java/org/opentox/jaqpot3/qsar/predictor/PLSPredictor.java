@@ -91,7 +91,6 @@ public class PLSPredictor extends AbstractPredictor {
         }
         String target = null;
         for (Parameter p : model.getParameters()){
-            System.out.println(p.getName().getValueAsString());
             if ("target".equals(p.getName().getValueAsString())){
                 target = p.getValue().toString();
             }

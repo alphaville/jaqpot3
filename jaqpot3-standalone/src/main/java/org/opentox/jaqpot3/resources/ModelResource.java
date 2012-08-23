@@ -195,7 +195,6 @@ public class ModelResource extends JaqpotResource {
             Publisher p = new Publisher(variant.getMediaType());
             return p.createRepresentation(mdl, true);
         } catch (Exception ex) {
-            ex.printStackTrace();
             logger.error(null, ex);
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
         } finally {

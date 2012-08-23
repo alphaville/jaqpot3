@@ -97,7 +97,7 @@ public abstract class JaqpotResource extends WadlServerResource {
     protected String page = null;
     protected String primaryId;
     protected String secondaryId;
-    private static Set<MediaType> RDF_RELATED_MEDIATYPES;
+    private static final Set<MediaType> RDF_RELATED_MEDIATYPES;
 
     static {
         RDF_RELATED_MEDIATYPES = new HashSet<MediaType>();
@@ -504,7 +504,6 @@ public abstract class JaqpotResource extends WadlServerResource {
             toggleServerError();
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return errorReport("PublicationError", ex.getMessage(), null, variant.getMediaType(), false);
         }
     }

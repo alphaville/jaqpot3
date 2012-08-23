@@ -54,7 +54,6 @@ public class ModelBundlerTrainer extends AbstractTrainer {
             Parameter p = new Parameter(Configuration.getBaseUri().augment("parameter", RANDOM.nextLong()),
                     "model", new LiteralValue(modelUri, XSDDatatype.XSDanyURI)).setScope(Parameter.ParameterScope.MANDATORY);
             model.getParameters().add(p);
-            System.out.println("*");
         }
         return model;
     }
