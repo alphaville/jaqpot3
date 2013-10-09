@@ -91,6 +91,17 @@
             <url>http://download.java.net/maven/2</url>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
+        
+         <repository>
+            <id>opentox-ntua-gr</id>
+            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
+            <!--arxika eixe toy PLOVDIV http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty-->
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+                
+        
         <!-- AMBIT PLOVDIV REPO -->
         <repository>
             <id>ambit-plovdiv</id>
@@ -99,13 +110,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>opentox-ntua-gr</id>
-            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+        
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
@@ -137,6 +142,15 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+        <repository>
+            <id>opentox-snapshots</id>
+
+                <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
+
+        </repository>
+              
+        
     </repositories>
 
 

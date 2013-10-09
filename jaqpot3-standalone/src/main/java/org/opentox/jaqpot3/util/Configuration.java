@@ -177,6 +177,7 @@ public class Configuration {
                 backupProperties();
             }
         }
+     System.out.println(properties.getProperty("server.port"));   
         return properties;
     }
 

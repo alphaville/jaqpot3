@@ -50,6 +50,19 @@
     </distributionManagement>
 
     <repositories>
+         <repository>
+            <id>opentox-snapshots</id>
+                <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
+        </repository>
+         <repository>
+            <id>opentox-ntua-gr</id>
+            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        
+        
+        
+        
+        
         <repository>
             <id>javanet-for-grizzly</id>
             <url>http://download.java.net/maven/2</url>

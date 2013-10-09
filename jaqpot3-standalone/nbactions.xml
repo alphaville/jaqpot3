@@ -10,6 +10,17 @@
                 <exec.classpathScope>runtime</exec.classpathScope>
                 <exec.args>-classpath %classpath org.opentox.jaqpot3.www.WebApplecation</exec.args>
                 <exec.executable>java</exec.executable>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>rebuild</actionName>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
             </properties>
         </action>
     </actions>
