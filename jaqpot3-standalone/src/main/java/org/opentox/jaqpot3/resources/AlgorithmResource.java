@@ -170,10 +170,17 @@ public class AlgorithmResource extends JaqpotResource {
                 VRI resourceToProtect = Configuration.getBaseUri().augment("user", creator.getUid());
                 String policyOwner = PolicyManager.getPolicyOwner(resourceToProtect, null, getUserToken());
                 if (policyOwner == null) {
-                    PolicyManager.defaultSignleUserPolicy(org.opentox.jaqpot3.util.Configuration.BASE_URI+"_user_" + 
-			    		creator.getUid(),
-                            resourceToProtect, getUserToken()).
+                    /*PolicyManager.defaultSignleUserPolicy(org.opentox.jaqpot3.util.Configuration.BASE_URI+"_user_" + 
+			*    		creator.getUid(),
+                        *   resourceToProtect, getUserToken()).
                             publish(null, getUserToken());
+                    */
+                    
+                    /*alt way to signing */
+                     PolicyManager.defaultSignleUserPolicy(org.opentox.jaqpot3.util.Configuration.getProperties().getProperty("server.domainName")+
+	org.opentox.jaqpot3.util.Configuration.getProperties().getProperty("server.port")+"_user_" + creator.getUid(),
+        resourceToProtect, getUserToken()).
+        publish(null, getUserToken());
                 }
             } catch (ToxOtisException ex) {
                 toggleServerError();
