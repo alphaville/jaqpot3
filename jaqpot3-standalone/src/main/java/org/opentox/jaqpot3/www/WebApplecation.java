@@ -31,12 +31,13 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.www;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -113,6 +114,26 @@ final public class WebApplecation extends JaqpotWebApplication {
 
         //TODO: Cleanup database
 
+
+        Connection connection = null;
+        try {
+            connection = f.getConnection();
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("DELETE FROM Task WHERE status='QUEUED' OR status='RUNNING'");
+
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DbException ex) {
+            java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
         System.out.print(keyOut_normal + "Database Janitor is in place and started working ");
         DatabaseJanitor.work();
         System.out.print(done + "\n");
@@ -142,7 +163,7 @@ final public class WebApplecation extends JaqpotWebApplication {
         router.attach(ErrorsResource.template.toString(), ErrorsResource.class);
         router.attach(DbStatisticsResource.template.toString(), DbStatisticsResource.class);
         router.attach(RescueResource.template.toString(), RescueResource.class);
-        router.attach(LoginResource.template.toString(), LoginResource.class);        
+        router.attach(LoginResource.template.toString(), LoginResource.class);
         router.attach(UserQuotaResource.template.toString(), UserQuotaResource.class);
         router.attach(ParametersResource.template.toString(), ParametersResource.class);
         router.attach(ParameterResource.template.toString(), ParameterResource.class);
@@ -158,7 +179,7 @@ final public class WebApplecation extends JaqpotWebApplication {
 
         protectResource(router, BibTexAllResource.class, false, true);
         protectResource(router, ModelResource.class, true, true);
-        protectResource(router, ShutDownResource.class, true, true);        
+        protectResource(router, ShutDownResource.class, true, true);
         protectResource(router, UserResource.class, true, true);
         protectResource(router, UsersResource.class, true, true);
 
@@ -186,7 +207,6 @@ final public class WebApplecation extends JaqpotWebApplication {
         new WebApplecation();
         SSLConfiguration.initializeSSLConnection();
         Thread shutDownHook = new Thread("shut-down-hook-jaqpot") {
-
             @Override
             public void run() {
                 System.out.print(keyOut_strange + "Stopping web server ");

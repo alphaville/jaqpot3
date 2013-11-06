@@ -167,6 +167,7 @@ public class AlgorithmResource extends JaqpotResource {
          */
         if (newUser) {
             try {
+                System.out.println("1.");
                 VRI resourceToProtect = Configuration.getBaseUri().augment("user", creator.getUid());
                 String policyOwner = PolicyManager.getPolicyOwner(resourceToProtect, null, getUserToken());
                 if (policyOwner == null) {
