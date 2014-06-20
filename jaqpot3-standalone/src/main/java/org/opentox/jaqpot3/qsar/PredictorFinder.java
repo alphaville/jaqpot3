@@ -56,6 +56,7 @@ public class PredictorFinder {
         map.put("scaling", ScalingPredictor.class);
         map.put("mvh", MissingValueFilterPredictor.class);
         map.put("pls", PLSPredictor.class);
+        map.put("absValCalculator", AbsoluteValuePredictor.class);
     }
 
     public static Map<String, Class<? extends IPredictor>> getMapping() {

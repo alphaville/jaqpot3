@@ -199,6 +199,9 @@ public class Configuration {
             } else if (System.getProperty("os.name").contains("Mac OS")) {
                 inStr = Configuration.class.getClassLoader().getResourceAsStream("macos.server.properties");
                 properties.load(inStr);
+            } else if (System.getProperty("os.name").contains("Windows")) {
+                inStr = Configuration.class.getClassLoader().getResourceAsStream("server.properties");
+                properties.load(inStr);
             }
             properties.setProperty("log4j.useDefaultFile", "true");
         } catch (final IOException ex) {

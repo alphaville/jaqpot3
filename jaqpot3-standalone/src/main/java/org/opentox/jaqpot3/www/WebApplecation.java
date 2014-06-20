@@ -211,6 +211,7 @@ final public class WebApplecation extends JaqpotWebApplication {
         Runtime.getRuntime().addShutdownHook(shutDownHook);
         component = new JaqpotComponent();
         final Server server = component.getServers().add(Protocol.HTTP, Configuration.SERVER_PORT);
+        
         component.start();
         System.out.println(keyOut_happy + "Server started on port " + server.getPort());
 

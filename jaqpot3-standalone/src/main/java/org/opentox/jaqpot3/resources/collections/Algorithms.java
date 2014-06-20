@@ -71,6 +71,7 @@ public class Algorithms {
     private static Algorithm fastRbfNn;
     private static Algorithm scaling;
     private static Algorithm modelBundler;
+    private static Algorithm absValFilter;
 //    private static Algorithm fcbf;
 //    private static Algorithm multifilter;
     private static Set<Algorithm> repository;
@@ -236,6 +237,48 @@ public class Algorithms {
             }
         }
         return scaling;
+    }
+    
+    
+    public static Algorithm absValCalculator() {
+        if (absValFilter == null) {
+            try {
+                absValFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "absValCalculator"));
+                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("absValCalculator").
+                        addSubject("Filter", "Data Preprocessing", "Absolute Values Calculator", "Data Preparation").
+                        addContributor("Lampovas Nikolaos").
+                        addDescription("This web service is intended to calculate the absolute values on the numeric values of an OpenTox dataset's descriptor").
+                        addPublisher(Configuration.BASE_URI).
+                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
+                        addIdentifier(absValFilter.getUri().toString());
+                absValFilter.setMeta(algorithmMeta);
+                absValFilter.setOntologies(new HashSet<OntologicalClass>());
+                absValFilter.getOntologies().add(OTAlgorithmTypes.preprocessing());
+
+                absValFilter.setParameters(new HashSet<Parameter>());
+
+                Parameter descriptor1 =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "descriptor1"), "descriptor1", new LiteralValue("", XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                descriptor1.getMeta().addDescription("The number of the first descriptor");
+                absValFilter.getParameters().add(descriptor1);
+                
+                
+                Parameter descriptor2=
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "descriptor2"), "descriptor2", new LiteralValue("", XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                descriptor2.getMeta().addDescription("The number of the second descriptor");
+                absValFilter.getParameters().add(descriptor2);
+
+                absValFilter.getMeta().addRights(_LICENSE);
+                absValFilter.setEnabled(true);
+            } catch (ToxOtisException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return absValFilter;
     }
 
     public static Algorithm mlr() {

@@ -57,7 +57,9 @@ public class AlgorithmFinder {
         map.put("pls", PLSTrainer.class);
         map.put("fastRbfNn", FastRbfNnTrainer.class);
         map.put("scaling", ScalingFilter.class);
+        map.put("absValCalculator", AbsoluteValueFilter.class);
         map.put("modelBundler", ModelBundlerTrainer.class);
+        map.put("scaling", ScalingFilter.class);
     }
 
     public static Map<String, Class<? extends IParametrizableAlgorithm>> getMapping() {
