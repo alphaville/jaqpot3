@@ -34,9 +34,7 @@ import weka.filters.unsupervised.attribute.Remove;
  * @author philip
  */
 public class CustomAlgorithmPredictor extends AbstractPredictor {
-    
-    private Map<String,String> featureToAbsValue = new HashMap();
-    
+        
     @Override
     public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
         return this;
