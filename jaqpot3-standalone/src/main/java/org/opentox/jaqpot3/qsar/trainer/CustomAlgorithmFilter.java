@@ -39,7 +39,7 @@ import weka.core.Instances;
  *
  * @author philip
  */
-public class CustomizedAlgFilter extends AbstractTrainer {
+public class CustomAlgorithmFilter extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
     private VRI featureService;
     private VRI datasetUri;
