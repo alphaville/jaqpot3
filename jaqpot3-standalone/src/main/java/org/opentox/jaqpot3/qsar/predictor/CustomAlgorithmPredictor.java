@@ -52,9 +52,8 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
         CustomAlgorithmModel actualModel = (CustomAlgorithmModel) model.getActualModel();
 
         //delete data
-        Feature nextFeature = null;
+        Feature nextFeature;
         Iterator<Feature> features;
-        int NAttr = inputData.numAttributes();
         
         
         List<Integer> indexArray = getDescriptorsIndexArray(inputData);
