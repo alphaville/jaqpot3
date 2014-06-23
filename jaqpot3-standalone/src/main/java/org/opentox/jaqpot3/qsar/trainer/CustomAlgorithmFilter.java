@@ -53,7 +53,7 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
         Model absoluteValueModel = new Model(newModelUri);
         CustomAlgorithmModel actualModel = new CustomAlgorithmModel();
         int nAttr = dataInst.numAttributes();
-        Map attrMap = new HashMap();
+        
         String descriptor1UriStr =  descriptor1Uri.toString();
         String descriptor2UriStr =  descriptor2Uri.toString();
         
@@ -64,18 +64,14 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
                     VRI featureVri = new VRI(attribute.name());
                     String featureVriStr = featureVri.toString();
                     
+                    
                     if (StringUtils.equals(featureVriStr, descriptor1UriStr) ||
                         StringUtils.equals(featureVriStr, descriptor2UriStr) ||
                         StringUtils.equals(featureVriStr, predictionfeatureUri.toString())    ) {
                         
                         Feature f = new Feature(featureVri);
                         absoluteValueModel.addIndependentFeatures(f);
-                        
-                        if (StringUtils.equals(featureVriStr, descriptor1UriStr) ||
-                            StringUtils.equals(featureVriStr, descriptor2UriStr)) {
-                            attrMap.put(featureVriStr, attribute.name());
-                        }
-                        
+                                                
                         getTask().getMeta().addComment("Independent feature " + f.getUri().toString());
                         //getTask().getMeta().setComments(new HashSet<LiteralValue>());
                         taskUpdater();
@@ -89,7 +85,7 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
             }
         }
 
-        if (attrMap.size()==2) {
+        if (absoluteValueModel.getIndependentFeatures().size() ==3) {
             try {
                 String title = "Difference ("+descriptor2UriStr+" - "+descriptor1UriStr+")";
                 Feature feature_diff = FeatureFactory.createAndPublishFeature(title,"",
@@ -137,7 +133,6 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
                 actualModel.setMagn2VRI(feature2_magnitude.getUri());
                 
                 getTask().getMeta().addComment("Dependent features ");
-                        //getTask().getMeta().setComments(new HashSet<LiteralValue>());
 
                 taskUpdater();
             } catch (ServiceInvocationException ex) {
