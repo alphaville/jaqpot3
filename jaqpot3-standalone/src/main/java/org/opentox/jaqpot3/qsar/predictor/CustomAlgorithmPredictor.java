@@ -34,7 +34,13 @@ import weka.filters.unsupervised.attribute.Remove;
  * @author philip
  */
 public class CustomAlgorithmPredictor extends AbstractPredictor {
-        
+    private int descr1Index = -1;
+    private int descr2Index = -1;    
+    private int minuendIndex = -1;
+    private int subtrahendIndex = -1;
+    private int dividendIndex = -1;
+    private int divisorIndex = -1;
+    
     @Override
     public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
         return this;
@@ -47,157 +53,68 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
 
         //delete data
         Feature nextFeature = null;
-
-        List<Integer> indexArray = new ArrayList();
+        Iterator<Feature> features;
         int NAttr = inputData.numAttributes();
+        
+        
+        List<Integer> indexArray = getDescriptorsIndexArray(inputData);
 
+        Instances filteredData = getFilteredInstances(indexArray,inputData);
 
-
-        Iterator<Feature> features = model.getIndependentFeatures().iterator();
-        //get the index of the uri to be kept
-        for(int i=0;i<NAttr;++i) {
-            if(StringUtils.equals( inputData.attribute(i).name().toString() , "URI" )) {
-                indexArray.add(i);
-                break;
-            }
-        }
-        //get the index of the descriptors to be kept
-        while (features.hasNext()) {
-            nextFeature = features.next();
-            for(int i=0;i<NAttr;++i) {
-                if(StringUtils.equals( inputData.attribute(i).name().toString() , nextFeature.getUri().toString() )) {
-                    indexArray.add(i);
-                }
-            }
-        }
-
-        //apply filter for deleting the attributes other than these descriptors 
-        int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
-        int m=1;
-        Remove rm = new Remove();
-        rm.setOptions(new String[]{"-V"});
-        rm.setAttributeIndicesArray(intArray);
-        rm.setInputFormat(inputData);
-        Instances deletedData = Filter.useFilter(inputData, rm);
-
-        int descr1Index = -1;
-        int descr2Index = -1;
-
-        NAttr = deletedData.numAttributes();
-         //get the index of the descriptors again because of indexing changes
-        features = model.getIndependentFeatures().iterator();
-        while (features.hasNext()) {
-            nextFeature = features.next();
-            for(int i=0;i<NAttr;++i) {
-                if(StringUtils.equals( deletedData.attribute(i).name().toString() , nextFeature.getUri().toString() )) {
-                    if(StringUtils.equals( actualModel.getModelDescr1VRI().toString() , nextFeature.getUri().toString() )) {
-                        descr1Index =i;
-                    } else if (StringUtils.equals( actualModel.getModelDescr2VRI().toString() , nextFeature.getUri().toString() )) {
-                        descr2Index =i;
-                    }
-                }
-            }
-        }
-
+        getDescriptorsNewIndexes(filteredData, actualModel);
+        
         if (descr1Index>0 && descr2Index>0) {
-
-            int minuendIndex = -1;
-            int subtrahendIndex = -1;
-            int dividendIndex = -1;
-            int divisorIndex = -1;
             
-            // find the indexes for the minuend and subtrahend for the 2 descriptors
-            if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
-                                   actualModel.getDiffVRI().get("minuend").toString()) && 
-                StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
-                                   actualModel.getDiffVRI().get("subtrahend").toString())) {
-                minuendIndex = descr1Index;
-                subtrahendIndex = descr2Index;
-            } else if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
-                                   actualModel.getDiffVRI().get("subtrahend").toString()) && 
-                StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
-                                   actualModel.getDiffVRI().get("minuend").toString())) {
-                minuendIndex = descr2Index;
-                subtrahendIndex = descr1Index;
-            }
-            
-            // find the indexes for the dividend and divisor for the 2 descriptors
-            if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
-                                   actualModel.getDivisionVRI().get("dividend").toString()) && 
-                StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
-                                   actualModel.getDivisionVRI().get("divisor").toString())) {
-                dividendIndex = descr1Index;
-                divisorIndex = descr2Index;
-            } else if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
-                                   actualModel.getDivisionVRI().get("divisor").toString()) && 
-                StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
-                                   actualModel.getDivisionVRI().get("dividend").toString())) {
-                dividendIndex = descr2Index;
-                divisorIndex = descr1Index;
-            }
+            assignCalculationIndexes(actualModel);
 
-            Add attributeAdder;
             features = model.getPredictedFeatures().iterator();
             while(features.hasNext()) {
                 nextFeature = features.next();
                 String nextFeatureUri = nextFeature.getUri().toString();
-                attributeAdder = new Add();
-                attributeAdder.setAttributeIndex("last");
-                attributeAdder.setAttributeName(nextFeatureUri);
-                try {
-                    attributeAdder.setInputFormat(deletedData);
-                    deletedData = Filter.useFilter(deletedData, attributeAdder);
-                } catch (Exception ex) {
-                    String message = "Exception while trying to add prediction feature to Instances";
-                        throw new JaqpotException(message, ex);
-                }
-                int num = deletedData.instance(0).numValues()-1;
-
-                if (deletedData != null) {            
-
-                    double val1,val2,res;
-                    String resSign;
-                    int numInstances = deletedData.numInstances();
-                    for (int i = 0; i < numInstances; i++) {
-                            val1 = deletedData.instance(i).value(descr1Index);
-                            val2 = deletedData.instance(i).value(descr2Index);
-                            res = Double.MIN_VALUE;
-                            if (StringUtils.equals(nextFeatureUri,actualModel.getDiffVRI().get("VRI").toString())) {
-                                if(minuendIndex>0 && subtrahendIndex>0) {
-                                    res = deletedData.instance(i).value(minuendIndex) - deletedData.instance(i).value(subtrahendIndex);
-                                    deletedData.instance(i).setValue(num, res);
-                                }
-                            } else if (StringUtils.equals(nextFeatureUri,actualModel.getDivisionVRI().get("VRI").toString())) {
-                                if(dividendIndex>0 && divisorIndex>0) {
-                                    res = ((double) deletedData.instance(i).value(dividendIndex)) / ((double)  deletedData.instance(i).value(divisorIndex));
-                                    deletedData.instance(i).setValue(num, res);
-                                }
-                            } else if (StringUtils.equals(nextFeatureUri,actualModel.getSign1VRI().toString())) {
-                                if (val1 >0) {
-                                    deletedData.instance(i).setValue(num, 1);
-                                } else if (val1 <0) {
-                                    deletedData.instance(i).setValue(num, -1);
-                                }
-                            } else if (StringUtils.equals(nextFeatureUri,actualModel.getSign2VRI().toString())) {
-                                if (val2 >0) {
-                                    deletedData.instance(i).setValue(num, 1);
-                                } else if (val2 <0) {
-                                    deletedData.instance(i).setValue(num, -1);
-                                }
-                            } else if (StringUtils.equals(nextFeatureUri,actualModel.getMagn1VRI().toString())) {
-                                res = abs(val1);
-                                deletedData.instance(i).setValue(num, res);
-                            } else if (StringUtils.equals(nextFeatureUri,actualModel.getMagn2VRI().toString())) {
-                                res = abs(val2);
-                                deletedData.instance(i).setValue(num, res);
-                            }
+            
+                addNewAttribute(filteredData,nextFeatureUri);
                         
+                int num = filteredData.instance(0).numValues()-1;
+
+                double val1,val2,res;
+                
+                int numInstances = filteredData.numInstances();
+                for (int i = 0; i < numInstances; i++) {
+                    val1 = filteredData.instance(i).value(descr1Index);
+                    val2 = filteredData.instance(i).value(descr2Index);
+                    res = Double.MIN_VALUE;
+                    Boolean isCalculated = true;
+
+                    if (StringUtils.equals(nextFeatureUri,actualModel.getDiffVRI().get("VRI").toString()) &&
+                        minuendIndex>0 && subtrahendIndex>0) {
+                            res = filteredData.instance(i).value(minuendIndex) - filteredData.instance(i).value(subtrahendIndex);
+
+                    } else if (StringUtils.equals(nextFeatureUri,actualModel.getDivisionVRI().get("VRI").toString()) &&
+                               dividendIndex>0 && divisorIndex>0) {
+                            res = ((double) filteredData.instance(i).value(dividendIndex)) / ((double)  filteredData.instance(i).value(divisorIndex));
+
+                    } else if (StringUtils.equals(nextFeatureUri,actualModel.getSign1VRI().toString())) {
+                            res = (val1 >0) ? 1 : (val1 <0)? -1 :0;
+
+                    } else if (StringUtils.equals(nextFeatureUri,actualModel.getSign2VRI().toString())) {
+                            res = (val2 >0) ? 1 : (val2 <0)? -1 :0;
+
+                    } else if (StringUtils.equals(nextFeatureUri,actualModel.getMagn1VRI().toString())) {
+                            res = abs(val1);
+
+                    } else if (StringUtils.equals(nextFeatureUri,actualModel.getMagn2VRI().toString())) {
+                            res = abs(val2);
+
+                    } else {
+                            isCalculated = false;
                     }
+
+                    if (isCalculated)  filteredData.instance(i).setValue(num, res);
                 }
             }
 
             try {
-                return DatasetFactory.getInstance().createFromArff(deletedData);
+                return DatasetFactory.getInstance().createFromArff(filteredData);
             } catch (ToxOtisException ex) {
                 throw new JaqpotException(ex);
             }
@@ -210,5 +127,117 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
 
         }
         return null;
+    }
+    
+    private List<Integer> getDescriptorsIndexArray(Instances inputData) {
+        Feature nextFeature;
+        List<Integer> tempArray = new ArrayList();
+        int NAttr = inputData.numAttributes();
+        
+        //get the index of the uri to be kept
+        for(int i=0;i<NAttr;++i) {
+            if(StringUtils.equals( inputData.attribute(i).name().toString() , "URI" )) {
+                tempArray.add(i);
+                break;
+            }
+        }
+        Iterator<Feature> features = model.getIndependentFeatures().iterator();
+        //get the index of the descriptors to be kept
+        while (features.hasNext()) {
+            nextFeature = features.next();
+            for(int i=0;i<NAttr;++i) {
+                if(StringUtils.equals( inputData.attribute(i).name().toString() , nextFeature.getUri().toString() )) {
+                    tempArray.add(i);
+                }
+            }
+        }
+        
+        return tempArray;
+    }
+            
+    private Instances getFilteredInstances(List<Integer> indexArray, Instances inputData) throws JaqpotException {
+        try {
+            //apply filter for deleting the attributes other than these descriptors 
+            int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
+            int m=1;
+            Remove rm = new Remove();
+            rm.setOptions(new String[]{"-V"});
+            rm.setAttributeIndicesArray(intArray);
+            rm.setInputFormat(inputData);
+            Instances filteredData = Filter.useFilter(inputData, rm);
+            
+            return filteredData;
+
+        } catch (Exception ex) {
+            throw new JaqpotException(ex);
+        }
+    }
+    
+    private void getDescriptorsNewIndexes(Instances filteredData,CustomAlgorithmModel actualModel) {
+        int NAttr = filteredData.numAttributes();
+         //get the index of the descriptors again because of indexing changes
+        Iterator<Feature> features = model.getIndependentFeatures().iterator();
+        Feature nextFeature;
+        while (features.hasNext()) {
+            nextFeature = features.next();
+            for(int i=0;i<NAttr;++i) {
+                if(StringUtils.equals( filteredData.attribute(i).name().toString() , nextFeature.getUri().toString() )) {
+                    if(StringUtils.equals( actualModel.getModelDescr1VRI().toString() , nextFeature.getUri().toString() )) {
+                        descr1Index =i;
+                    } else if (StringUtils.equals( actualModel.getModelDescr2VRI().toString() , nextFeature.getUri().toString() )) {
+                        descr2Index =i;
+                    }
+                }
+            }
+        }
+    }
+   
+    private void assignCalculationIndexes(CustomAlgorithmModel actualModel) {
+                   
+        // find the indexes for the minuend and subtrahend for the 2 descriptors
+        if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
+                               actualModel.getDiffVRI().get("minuend").toString()) && 
+            StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
+                               actualModel.getDiffVRI().get("subtrahend").toString())) {
+            minuendIndex = descr1Index;
+            subtrahendIndex = descr2Index;
+        } else if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
+                               actualModel.getDiffVRI().get("subtrahend").toString()) && 
+            StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
+                               actualModel.getDiffVRI().get("minuend").toString())) {
+            minuendIndex = descr2Index;
+            subtrahendIndex = descr1Index;
+        }
+
+        // find the indexes for the dividend and divisor for the 2 descriptors
+        if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
+                               actualModel.getDivisionVRI().get("dividend").toString()) && 
+            StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
+                               actualModel.getDivisionVRI().get("divisor").toString())) {
+            dividendIndex = descr1Index;
+            divisorIndex = descr2Index;
+        } else if (StringUtils.equals(actualModel.getModelDescr1VRI().toString(),
+                               actualModel.getDivisionVRI().get("divisor").toString()) && 
+            StringUtils.equals(actualModel.getModelDescr2VRI().toString(),
+                               actualModel.getDivisionVRI().get("dividend").toString())) {
+            dividendIndex = descr2Index;
+            divisorIndex = descr1Index;
+        }
+    }
+        
+    private Instances addNewAttribute(Instances filteredData,String nextFeatureUri) throws JaqpotException{
+        Add attributeAdder = new Add();
+        attributeAdder.setAttributeIndex("last");
+        attributeAdder.setAttributeName(nextFeatureUri);
+        try {
+            attributeAdder.setInputFormat(filteredData);
+            filteredData = Filter.useFilter(filteredData, attributeAdder);
+            
+            if (filteredData == null) throw new JaqpotException("no instances data");
+        } catch (Exception ex) {
+            String message = "Exception while trying to add prediction feature to Instances";
+                throw new JaqpotException(message, ex);
+        }
+        return filteredData;
     }
 }
