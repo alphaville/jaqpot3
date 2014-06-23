@@ -15,7 +15,7 @@ import org.opentox.toxotis.client.VRI;
  *
  * @author philip
  */
-public class AbsoluteValueModel implements Serializable{
+public class CustomAlgorithmModel implements Serializable{
     
     private VRI datasetReference;
     VRI modelDescr1VRI = null;
@@ -29,7 +29,7 @@ public class AbsoluteValueModel implements Serializable{
     VRI magn2VRI = null;
 
     
-    public AbsoluteValueModel() {
+    public CustomAlgorithmModel() {
         diffVRI = new HashMap();
     }
 

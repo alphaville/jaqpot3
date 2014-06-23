@@ -19,7 +19,7 @@ import org.opentox.jaqpot3.qsar.AbstractPredictor;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.jaqpot3.qsar.serializable.AbsoluteValueModel;
+import org.opentox.jaqpot3.qsar.serializable.CustomAlgorithmModel;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
@@ -33,7 +33,7 @@ import weka.filters.unsupervised.attribute.Remove;
  *
  * @author philip
  */
-public class AbsoluteValuePredictor extends AbstractPredictor {
+public class CustomAlgorithmPredictor extends AbstractPredictor {
     
     private Map<String,String> featureToAbsValue = new HashMap();
     
@@ -45,7 +45,7 @@ public class AbsoluteValuePredictor extends AbstractPredictor {
     @Override
     public Dataset predict(Instances inputData) throws JaqpotException {
         try {
-        AbsoluteValueModel actualModel = (AbsoluteValueModel) model.getActualModel();
+        CustomAlgorithmModel actualModel = (CustomAlgorithmModel) model.getActualModel();
 
         //delete data
         Feature nextFeature = null;

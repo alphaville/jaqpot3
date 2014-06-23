@@ -18,7 +18,7 @@ import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.jaqpot3.qsar.serializable.AbsoluteValueModel;
+import org.opentox.jaqpot3.qsar.serializable.CustomAlgorithmModel;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -39,7 +39,7 @@ import weka.core.Instances;
  *
  * @author philip
  */
-public class AbsoluteValueFilter extends AbstractTrainer {
+public class CustomizedAlgFilter extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
     private VRI featureService;
     private VRI datasetUri;
@@ -51,7 +51,7 @@ public class AbsoluteValueFilter extends AbstractTrainer {
     private Model processAbsoluteValuesFeatures(Instances dataInst) throws JaqpotException {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model absoluteValueModel = new Model(newModelUri);
-        AbsoluteValueModel actualModel = new AbsoluteValueModel();
+        CustomAlgorithmModel actualModel = new CustomAlgorithmModel();
         int nAttr = dataInst.numAttributes();
         Map attrMap = new HashMap();
         String descriptor1UriStr =  descriptor1Uri.toString();
@@ -227,7 +227,7 @@ public class AbsoluteValueFilter extends AbstractTrainer {
 
     @Override
     public Algorithm getAlgorithm() {
-        return Algorithms.absValCalculator();
+        return Algorithms.customizedAlgorithm();
     }
     
     private void taskUpdater() throws JaqpotException {

@@ -79,12 +79,7 @@ public class AlgorithmsResource extends JaqpotResource {
     private static List<String> algorithmUris = null;
 
     private List<String> getAlgorithmUris() {
-        Boolean isEmpty = true;
-        if(algorithmUris != null)
-            if(algorithmUris.size()>0)
-                isEmpty = false;
-        
-        if (isEmpty) {
+        if (algorithmUris == null) {
             algorithmUris = new ArrayList<String>();
             Set<Algorithm> all = Algorithms.getAll();
             for (Object algorithm : all) {
