@@ -227,7 +227,7 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
 
     @Override
     public Algorithm getAlgorithm() {
-        return Algorithms.customizedAlgorithm();
+        return Algorithms.customAlgorithm();
     }
     
     private void taskUpdater() throws JaqpotException {

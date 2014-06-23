@@ -240,7 +240,7 @@ public class Algorithms {
     }
     
     
-    public static Algorithm customizedAlgorithm() {
+    public static Algorithm customAlgorithm() {
         if (customAlgFilter == null) {
             try {
                 customAlgFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "customAlgorithm"));
