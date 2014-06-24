@@ -31,7 +31,7 @@ import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *
- * @author philip
+ * @author lampovas
  */
 public class CustomAlgorithmPredictor extends AbstractPredictor {
     private int descr1Index = -1;
@@ -55,6 +55,10 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
         Feature nextFeature;
         Iterator<Feature> features;
         
+        //from the given dataset we need only the 3 independent features of the model
+        //thus we get their indexes from 'getDescriptorsIndexArray'
+        //we filter the dataset so that only the 3 of them remain 'getFilteredInstances'
+        //and we get again the new indexes of the 3 independent features 'getDescriptorsNewIndexes'
         
         List<Integer> indexArray = getDescriptorsIndexArray(inputData);
 
@@ -64,6 +68,7 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
         
         if (descr1Index>0 && descr2Index>0) {
             
+            //based on the model we get the indexes of the features of the divident,minuendIndex ...
             assignCalculationIndexes(actualModel);
 
             features = model.getPredictedFeatures().iterator();
@@ -71,6 +76,7 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
                 nextFeature = features.next();
                 String nextFeatureUri = nextFeature.getUri().toString();
             
+                //we add the new predicted feature
                 filteredData = addNewAttribute(filteredData,nextFeatureUri);
                         
                 int num = filteredData.instance(0).numValues()-1;
@@ -78,6 +84,9 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
                 double val1,val2,res;
                 
                 int numInstances = filteredData.numInstances();
+                
+                //the type of calculation is selected based on the feature and upon selection each calculation
+                //result is stored in its instance 
                 for (int i = 0; i < numInstances; i++) {
                     val1 = filteredData.instance(i).value(descr1Index);
                     val2 = filteredData.instance(i).value(descr2Index);
@@ -133,7 +142,7 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
         List<Integer> tempArray = new ArrayList();
         int NAttr = inputData.numAttributes();
         
-        //get the index of the uri to be kept
+        //get the index of the uri to be kept, this URI must be first and preceedes the independent features 
         for(int i=0;i<NAttr;++i) {
             if(StringUtils.equals( inputData.attribute(i).name().toString() , "URI" )) {
                 tempArray.add(i);

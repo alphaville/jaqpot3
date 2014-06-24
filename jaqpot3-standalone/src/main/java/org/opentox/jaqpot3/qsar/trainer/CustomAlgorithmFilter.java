@@ -37,8 +37,13 @@ import weka.core.Instances;
 
 /**
  *
- * @author philip
+ * @author lampovas
  */
+
+//this is the trainer for the custom algorithm. Through this class its model is created.
+//The model has the 3 descriptors of the form as independent features and 6 predicted features
+//that are calculated based on them.
+
 public class CustomAlgorithmFilter extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ScalingFilter.class);
     private VRI featureService;
@@ -57,6 +62,8 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
         String descriptor1UriStr =  descriptor1Uri.toString();
         String descriptor2UriStr =  descriptor2Uri.toString();
         
+        //search all the descriptors and find those selected in the form.
+        //upon selection add them as independent features in the model
         for (int i = 0; i < nAttr; i++) {
             Attribute attribute = dataInst.attribute(i);
             if (attribute.isNumeric()) {
@@ -87,6 +94,10 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
 
         if (absoluteValueModel.getIndependentFeatures().size() ==3) {
             try {
+                //Here the predicted features are created. 
+                //The URIs of them are stored in the model in order for them to be found by the predictor,
+                //when the predictor traverses the dataset
+                
                 String title = "Difference ("+descriptor2UriStr+" - "+descriptor1UriStr+")";
                 Feature feature_diff = FeatureFactory.createAndPublishFeature(title,"",
                                 new ResourceValue(newModelUri, OTClasses.model()), featureService, token);                    
