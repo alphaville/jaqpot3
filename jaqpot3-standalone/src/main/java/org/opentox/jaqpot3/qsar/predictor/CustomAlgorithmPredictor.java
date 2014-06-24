@@ -71,7 +71,7 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
                 nextFeature = features.next();
                 String nextFeatureUri = nextFeature.getUri().toString();
             
-                addNewAttribute(filteredData,nextFeatureUri);
+                filteredData = addNewAttribute(filteredData,nextFeatureUri);
                         
                 int num = filteredData.instance(0).numValues()-1;
 
