@@ -57,7 +57,6 @@ public class AlgorithmFinder {
         map.put("pls", PLSTrainer.class);
         map.put("fastRbfNn", FastRbfNnTrainer.class);
         map.put("scaling", ScalingFilter.class);
-        map.put("scaling", ScalingFilter.class);
         map.put("modelBundler", ModelBundlerTrainer.class);
         map.put("customAlgorithm", CustomAlgorithmFilter.class);
     }
