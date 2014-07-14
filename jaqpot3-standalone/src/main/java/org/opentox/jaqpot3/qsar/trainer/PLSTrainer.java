@@ -83,7 +83,7 @@ public class PLSTrainer extends AbstractTrainer {
     private String target;
 
     @Override
-    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+    public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String datasetUriString = clientParameters.getFirstValue("dataset_uri");
         if (datasetUriString == null) {
             throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");

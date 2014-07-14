@@ -47,7 +47,7 @@ import weka.core.Instances;
  */
 public interface ITrainer extends IParametrizableAlgorithm {
 
-    Dataset preprocessDataset(Dataset dataset);
+    Instances preprocessDataset(Instances inst);
 
     Model train(Dataset data) throws JaqpotException;
 

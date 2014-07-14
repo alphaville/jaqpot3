@@ -174,7 +174,7 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
     }
 
     @Override
-    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+    public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String descriptor1String = clientParameters.getFirstValue("descriptor1");
         
         if (descriptor1String == null) {

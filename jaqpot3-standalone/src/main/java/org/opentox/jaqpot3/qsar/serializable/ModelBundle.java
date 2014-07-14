@@ -37,12 +37,13 @@ package org.opentox.jaqpot3.qsar.serializable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.opentox.toxotis.core.component.ActualModel;
 
 /**
  *
  * @author Pantelis Sopasakis
  */
-public class ModelBundle implements Serializable {
+public class ModelBundle extends ActualModel {
 
     private static final long serialVersionUID = 77274120800111457L;
     private ArrayList<String> modelUris = new ArrayList<String>();

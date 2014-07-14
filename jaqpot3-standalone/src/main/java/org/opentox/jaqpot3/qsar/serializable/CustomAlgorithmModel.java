@@ -9,13 +9,14 @@ package org.opentox.jaqpot3.qsar.serializable;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.client.VRI;
 
 /**
  *
  * @author philip
  */
-public class CustomAlgorithmModel implements Serializable{
+public class CustomAlgorithmModel extends ActualModel{
     
     private VRI datasetReference;
     VRI modelDescr1VRI = null;

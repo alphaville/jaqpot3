@@ -89,10 +89,6 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FastRbfNnModel.class);
     private static final Random RANDOM = new Random(3 * System.currentTimeMillis() + 71);
 
-    @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
-    }
 
     private static double squaredNormDifference(Instance a, Instance b) {
         int numAttributes = a.numAttributes();
@@ -331,7 +327,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     }
 
     @Override
-    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
+    public ITrainer doParametrize(IClientInput clientParameters) throws BadParameterException {
         String targetString = clientParameters.getFirstValue("prediction_feature");
         if (targetString == null) {
             throw new BadParameterException("The parameter 'prediction_feaure' is mandatory for this algorithm.");

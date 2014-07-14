@@ -126,7 +126,7 @@ public class ScalingFilter extends AbstractTrainer {
     }
 
     @Override
-    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+    public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String minString = clientParameters.getFirstValue("min");
         if (minString != null) {
             try {

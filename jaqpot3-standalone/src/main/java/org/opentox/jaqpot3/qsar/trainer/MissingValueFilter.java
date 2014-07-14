@@ -50,8 +50,8 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
@@ -82,7 +82,7 @@ public class MissingValueFilter extends AbstractTrainer {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model mvh = new Model(newModelUri);
         try {
-            mvh.setActualModel(ignored);
+            mvh.setActualModel(new ActualModel(ignored));
         } catch (NotSerializableException ex) {
             throw new RuntimeException(ex);
         }
@@ -146,7 +146,7 @@ public class MissingValueFilter extends AbstractTrainer {
     }
 
     @Override
-    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+    public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String[] ignoredUris = clientParameters.getValuesArray("ignore_uri");
         for (String s : ignoredUris) {
             ignored.add(s);

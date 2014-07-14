@@ -46,7 +46,7 @@ import org.restlet.representation.Representation;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class ClientInput extends Form implements IClientInput {
+public class ClientInput extends ClientUploadInput {
 
     public ClientInput(String parametersString, CharacterSet characterSet, char separator) {
         super(parametersString, characterSet, separator);
@@ -78,11 +78,5 @@ public class ClientInput extends Form implements IClientInput {
 
     public ClientInput() {
     }
-
-    @Override
-    public String getFirstValue(String name) {
-        return super.getFirstValue(name);
-    }
-
 
 }

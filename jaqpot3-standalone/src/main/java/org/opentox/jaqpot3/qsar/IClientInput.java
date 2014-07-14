@@ -63,4 +63,8 @@ public interface IClientInput {
     String[] getValuesArray(String name);
 
     String[] getValuesArray(String name, boolean ignoreCase);
+    
+    byte[] getUploadBytes();
+    
+    String getUploadFilename();
 }

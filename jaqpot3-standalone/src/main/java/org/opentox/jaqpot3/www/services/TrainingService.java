@@ -104,6 +104,7 @@ public class TrainingService extends RunnableTaskService {
         String datasetUri = clientInput.getFirstValue("dataset_uri");
         try {
             trainer.parametrize(clientInput); // #NODE_01
+            
             VRI datasetURI = datasetUri != null ? new VRI(datasetUri) : null;// #NODE_02
 
             Model resultModel = trainer.train(datasetURI);// #NODE_03_b

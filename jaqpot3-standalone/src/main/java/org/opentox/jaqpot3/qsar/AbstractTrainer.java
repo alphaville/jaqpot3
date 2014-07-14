@@ -35,6 +35,7 @@ package org.opentox.jaqpot3.qsar;
 
 import java.util.UUID;
 import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Model;
@@ -52,13 +53,31 @@ import weka.core.Instances;
  */
 public abstract class AbstractTrainer implements ITrainer {
 
+    protected byte[] pmml;
     private Task task;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();
 
+    private Instances doPreprocessing(Instances inst) {
+        inst = transformDataset(inst);
+        return preprocessDataset(inst);
+    }
+    
+    private Model postProcessModel(Model model) {
+        if(pmml!=null) {
+            model.getActualModel().setPmml(pmml);
+        }
+        return model;
+    }
+    
     @Override
-    public Dataset preprocessDataset(Dataset dataset) {
-        return dataset;
+    public Instances preprocessDataset(Instances inst) {
+        return inst;
+    }    
+    
+    private Instances transformDataset(Instances inst) {
+        //Todo evaluate pmml
+        return inst;
     }
 
     @Override
@@ -81,10 +100,19 @@ public abstract class AbstractTrainer implements ITrainer {
     protected UUID getUuid() {
         return this.uuid;
     }
-
+    
     @Override
     public boolean needsDataset() {
         return true;
+    }
+
+    public abstract IParametrizableAlgorithm doParametrize (IClientInput clientParameters) throws BadParameterException;
+    
+    @Override
+    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+        
+        pmml = clientParameters.getUploadBytes();
+        return doParametrize(clientParameters);
     }
 
     @Override
@@ -97,18 +125,25 @@ public abstract class AbstractTrainer implements ITrainer {
         if (!needsDataset()) {
             return train((Instances) null);
         }
+        
         ArffDownloader downloader = new ArffDownloader(data);
         Instances inst = downloader.getInstances();
+        inst = doPreprocessing(inst);
+        Model resultModel;
+        
+        
         if (inst != null) {
-            return train(inst);
+            resultModel =  train(inst);
         } else {
             try {
-                return train(new Dataset(data).loadFromRemote());
+                resultModel = train(new Dataset(data).loadFromRemote());
             } catch (ToxOtisException ex) {
                 throw new JaqpotException(ex);
             } catch (ServiceInvocationException ex) {
                 throw new JaqpotException(ex);
             }
         }
+        resultModel = postProcessModel(resultModel);
+        return resultModel;
     }
 }

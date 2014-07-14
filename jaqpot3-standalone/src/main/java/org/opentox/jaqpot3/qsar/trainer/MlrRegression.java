@@ -38,7 +38,6 @@ import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -55,6 +54,7 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
@@ -102,7 +102,7 @@ public class MlrRegression extends AbstractTrainer {
     
 
     @Override
-    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
+    public ITrainer doParametrize(IClientInput clientParameters) throws BadParameterException {
         String targetString = clientParameters.getFirstValue("prediction_feature");
         if (targetString == null) {
             throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
@@ -294,7 +294,7 @@ public class MlrRegression extends AbstractTrainer {
                 throw new JaqpotException(message, ex);
             }
             try {
-                m.setActualModel(linreg);
+                m.setActualModel(new ActualModel(linreg));
             } catch (NotSerializableException ex) {
                 String message = "Model is not serializable";
                 logger.error(message, ex);

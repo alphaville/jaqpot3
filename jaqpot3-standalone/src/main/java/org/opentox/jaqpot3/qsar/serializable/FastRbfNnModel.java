@@ -35,6 +35,7 @@
 package org.opentox.jaqpot3.qsar.serializable;
 
 import java.io.Serializable;
+import org.opentox.toxotis.core.component.ActualModel;
 import weka.core.Instances;
 
 /**
@@ -42,7 +43,7 @@ import weka.core.Instances;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class FastRbfNnModel implements Serializable {
+public class FastRbfNnModel extends ActualModel {
 
     private static final long serialVersionUID = 9211084530133014L;
     private double alpha;

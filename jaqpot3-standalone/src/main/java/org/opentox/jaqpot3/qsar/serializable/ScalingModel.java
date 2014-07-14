@@ -34,11 +34,11 @@
 
 package org.opentox.jaqpot3.qsar.serializable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.client.VRI;
 
 /**
@@ -46,7 +46,7 @@ import org.opentox.toxotis.client.VRI;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class ScalingModel implements Serializable {
+public class ScalingModel extends ActualModel {
 
     // NOTE: HashMap, VRI and Double are all Serializable!    
     private HashMap<VRI, Double> minVals = new HashMap<VRI, Double>();

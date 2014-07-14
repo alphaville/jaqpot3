@@ -36,6 +36,7 @@ package org.opentox.jaqpot3.qsar.serializable;
 
 import Jama.Matrix;
 import java.io.Serializable;
+import org.opentox.toxotis.core.component.ActualModel;
 
 /**
  * A class encapsulating 'actual' models as these are defined in ToxOtis models.
@@ -46,7 +47,8 @@ import java.io.Serializable;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class LeveragesModel implements Serializable {
+
+public class LeveragesModel extends ActualModel {
 
     private static final long serialVersionUID = 165610711007992L;
     private Matrix dataMatrix = null;

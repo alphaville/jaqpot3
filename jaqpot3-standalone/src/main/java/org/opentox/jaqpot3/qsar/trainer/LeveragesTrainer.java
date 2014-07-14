@@ -163,7 +163,7 @@ public class LeveragesTrainer extends AbstractTrainer {
     }
 
     @Override
-    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
+    public ITrainer doParametrize(IClientInput clientParameters) throws BadParameterException {
         String targetString = clientParameters.getFirstValue("prediction_feature");
         if (targetString == null) {
             throw new BadParameterException("The parameter 'prediction_feaure' is mandatory for this algorithm.");

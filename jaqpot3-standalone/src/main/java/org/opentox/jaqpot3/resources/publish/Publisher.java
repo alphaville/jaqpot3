@@ -79,6 +79,12 @@ public class Publisher {
                 return p;
             }
             return null;
+        } else if (MediaType.MULTIPART_FORM_DATA.equals(m_mediaType)) {
+            if (data instanceof IHTMLSupport) {
+                p = new HTMLPublishable(((IHTMLSupport) data).inHtml(), MediaType.MULTIPART_FORM_DATA);
+                return p;
+            }
+            return null;
         } else if (MediaType.TEXT_PLAIN.equals(m_mediaType)) {
             return new PlainTextPublishable(data.toString());
         }

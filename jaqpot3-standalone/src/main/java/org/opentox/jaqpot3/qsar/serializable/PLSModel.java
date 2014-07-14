@@ -35,6 +35,7 @@
 package org.opentox.jaqpot3.qsar.serializable;
 
 import java.io.Serializable;
+import org.opentox.toxotis.core.component.ActualModel;
 import weka.filters.supervised.attribute.PLSFilter;
 
 /**
@@ -42,7 +43,7 @@ import weka.filters.supervised.attribute.PLSFilter;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class PLSModel implements Serializable {
+public class PLSModel extends ActualModel {
 
     private static final long serialVersionUID = 941376210178L;
 

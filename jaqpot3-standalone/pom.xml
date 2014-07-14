@@ -69,7 +69,27 @@
         <dependency>
             <groupId>org.opentox.toxotis</groupId>
             <artifactId>ToxOtis-core</artifactId>
-            <version>0.8.8-SNAPSHOT</version>
+            <version>0.8.9-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opentox.toxotis.database</groupId>
+            <artifactId>ToxOtis-db</artifactId>
+            <version>0.4.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.commons.io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.fileupload</artifactId>
+            <version>2.2.1</version>
+          </dependency>
+          <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
         </dependency>
     </dependencies>
 
@@ -126,6 +146,10 @@
 
 
     <repositories>
+         <repository>
+            <id>sonatype-forge</id>
+            <url>https://repository.sonatype.org/content/groups/forge/</url>
+          </repository>
         <repository>
             <id>javanet-for-grizzly</id>
             <url>http://download.java.net/maven/2</url>

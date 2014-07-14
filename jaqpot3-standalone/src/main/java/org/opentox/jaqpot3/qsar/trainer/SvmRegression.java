@@ -55,8 +55,8 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
-import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
@@ -215,7 +215,7 @@ public class SvmRegression extends AbstractTrainer {
 
 
             try {
-                m.setActualModel(regressor);
+                m.setActualModel(new ActualModel(regressor));
             } catch (NotSerializableException ex) {
                 logger.error("Serialization error!", ex);
             }
@@ -358,7 +358,7 @@ public class SvmRegression extends AbstractTrainer {
     }
 
     @Override
-    public ITrainer parametrize(IClientInput clientParameters) throws BadParameterException {
+    public ITrainer doParametrize(IClientInput clientParameters) throws BadParameterException {
         String predictionFeatureUriString = clientParameters.getFirstValue("prediction_feature");
         if (predictionFeatureUriString == null) {
             throw new BadParameterException("The parameter 'prediction_feaure' is mandatory for this algorithm.");

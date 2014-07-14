@@ -33,9 +33,14 @@
  */
 package org.opentox.jaqpot3.resources;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.pool.ExecutionPool;
 import org.opentox.jaqpot3.qsar.AlgorithmFinder;
@@ -47,6 +52,7 @@ import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.util.TaskFactory;
 import org.opentox.jaqpot3.www.ClientInput;
+import org.opentox.jaqpot3.www.ClientUploadInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.TrainingService;
 import org.opentox.toxotis.client.VRI;
@@ -63,8 +69,10 @@ import org.opentox.toxotis.database.engine.user.FindUser;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.policy.PolicyManager;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
@@ -85,6 +93,7 @@ public class AlgorithmResource extends JaqpotResource {
         super.doInit();
         setAutoCommitting(false);
         initialize(
+                MediaType.MULTIPART_FORM_DATA,
                 MediaType.TEXT_HTML,
                 MediaType.APPLICATION_RDF_XML,
                 MediaType.register("application/rdf+xml-abbrev", NEWLINE),
@@ -99,6 +108,7 @@ public class AlgorithmResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
+        
         if (acceptString != null) {
             variant.setMediaType(MediaType.valueOf(acceptString));
         }
@@ -126,6 +136,7 @@ public class AlgorithmResource extends JaqpotResource {
 
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
+       
         /*
          * The user that triggered the training procedure
          */
@@ -222,6 +233,8 @@ public class AlgorithmResource extends JaqpotResource {
         //TODO: This should become user-specific
         int maxModels = creator.getMaxModels();
         int maxTasks = creator.getMaxParallelTasks();
+       
+        maxTasks=1000; //DEBUG
         if (numModels >= maxModels) {
             toggleInsufficientStorage();
             return errorReport("UserQuotaExceeded",
@@ -280,10 +293,36 @@ public class AlgorithmResource extends JaqpotResource {
 
         IParametrizableAlgorithm algorithm = AlgorithmFinder.getAlgorithm(primaryId);
         if (algorithm != null) {// algorithm found!
-            IClientInput clientInput = new ClientInput(entity);
+         
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setSizeThreshold(1000240);
+            
+            ClientUploadInput multiInput = new ClientUploadInput(new Form());
+
+            RestletFileUpload upload = new RestletFileUpload(factory);
+            
+            try {
+                List<FileItem> items = upload.parseRequest(getRequest());
+                if (!items.isEmpty()) {
+                    for(int i=0;i<items.size();++i) {
+                        if(items.get(i).isFormField()) {
+                            multiInput.add(items.get(i).getFieldName(), items.get(i).getString());
+                        } else {
+                            if (StringUtils.equals(items.get(i).getFieldName(),"upload")) {
+                                multiInput.setUploadContent(items.get(i).getName(), items.get(i).get());
+                            }
+                        }
+                    }
+                }
+            } catch (FileUploadException ex) {
+                
+            } catch(Exception ex) {
+                
+            }
+
             algorithm.setTask(task);
             ITrainer trainer = (ITrainer) algorithm;
-            TrainingService ts = new TrainingService(trainer, clientInput, getUserToken());
+            TrainingService ts = new TrainingService(trainer, multiInput, getUserToken());
             ExecutionPool.POOL.run(uuid.toString(), ts);
         } else {
             toggleNotFound();

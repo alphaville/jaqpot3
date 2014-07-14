@@ -59,7 +59,7 @@ public class ModelBundlerTrainer extends AbstractTrainer {
     }
 
     @Override
-    public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
+    public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String[] models = clientParameters.getValuesArray("model");
         for (String model : models) {
             modelUris.add(model);

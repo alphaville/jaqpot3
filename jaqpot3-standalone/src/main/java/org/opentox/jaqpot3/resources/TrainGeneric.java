@@ -34,26 +34,31 @@
 package org.opentox.jaqpot3.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.qsar.IClientInput;
-import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.www.ClientInput;
-import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.client.ClientFactory;
 import org.opentox.toxotis.client.IPostClient;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Media;
-import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
@@ -70,6 +75,7 @@ public class TrainGeneric extends JaqpotResource {
         super.doInit();
         setAutoCommitting(false);
         initialize(
+                MediaType.MULTIPART_FORM_DATA,
                 MediaType.TEXT_HTML);
     }
 
@@ -126,6 +132,7 @@ public class TrainGeneric extends JaqpotResource {
         formBuilder.append("</tr>");
 
         formBuilder.append("</table>");
+        formBuilder.append("<input type=\"file\" name=\"upload\">");
         formBuilder.append("<input type=\"submit\" value=\"Train\">");
 
         formBuilder.append("</form><br/>");
@@ -137,17 +144,47 @@ public class TrainGeneric extends JaqpotResource {
 
     @Override
     protected Representation post(Representation entity, Variant variant) throws ResourceException {
+       
         AuthenticationToken userToken = getUserToken();
         if (userToken == null) {
             toggleSeeOther("/login?redirect=" + getCurrentVRI());
             return new StringRepresentation("You must login first!!!");
         }
-        IClientInput input = new ClientInput(entity);
-        String ds = input.getFirstValue("dataset_uri");
-        String pf = input.getFirstValue("prediction_feature");
-        String alg = input.getFirstValue("algorithm_uri");
-        String params = input.getFirstValue("params");
+        
+        String ds="",pf="",alg="",params="",uploadFilename="";
+        InputStream ist = null;
+        
 
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setSizeThreshold(1000240);
+        ClientInput multiInput = new ClientInput(new Form());
+
+        RestletFileUpload upload = new RestletFileUpload(factory);
+        
+        try {
+            List<FileItem> items = upload.parseRequest(getRequest());
+            if (!items.isEmpty()) {
+                for(int i=0;i<items.size();++i) {
+                    if(items.get(i).isFormField()) {
+                        multiInput.add(items.get(i).getFieldName(), items.get(i).getString());
+                    } else {
+                        if (StringUtils.equals(items.get(i).getFieldName(),"upload")) {
+                            ist = items.get(i).getInputStream();
+                            uploadFilename = items.get(i).getName();
+                        }
+                    }
+                }
+
+                ds = multiInput.getFirstValue("dataset_uri");
+                pf = multiInput.getFirstValue("prediction_feature");
+                alg = multiInput.getFirstValue("algorithm_uri");
+                params = multiInput.getFirstValue("params");
+
+            }
+        } catch (FileUploadException ex) {       
+        } catch(Exception ex) { 
+        }
+            
         Map<String, String> map = new HashMap<String, String>();
         if (params != null && !params.isEmpty()) {
             String paramTokens[] = params.split(" ");
@@ -163,6 +200,14 @@ public class TrainGeneric extends JaqpotResource {
         } catch (URISyntaxException ex) {
             Logger.getLogger(TrainGeneric.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        if (ist!=null) {
+                client.setPostableFilename("upload", uploadFilename);
+                client.setPostable(ist);
+                client.setContentType(Media.MEDIA_MULTIPART_FORM_DATA);
+                client.addHeaderParameter("content-type", "multipart/form-data");
+        } 
+            
         client.setMediaType(Media.TEXT_URI_LIST);
         client.addPostParameter("dataset_uri", ds);
         client.addPostParameter("prediction_feature", pf);
