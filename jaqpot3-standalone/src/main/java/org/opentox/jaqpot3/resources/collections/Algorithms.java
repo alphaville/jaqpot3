@@ -180,6 +180,14 @@ public class Algorithms {
                 e.getMeta().addDescription("Parameter used to implicitly determine the number of iterations and therefore the number hidden nodes the "
                         + "algorithm will find. The algorithm terminates when max_{i}P(i) is less than or equal to e*P*(L)");
                 fastRbfNn.getParameters().add(e);
+                
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                fastRbfNn.getParameters().add(scalingParam);
+                
                 fastRbfNn.getMeta().addRights(_LICENSE);
                 fastRbfNn.setEnabled(true);
 
@@ -231,6 +239,14 @@ public class Algorithms {
                 ignore_uri.getMeta().addDescription("If a dataset URI is provided, then the scaling is carried out with respect to the minimum and maximum "
                         + "values of the features in that dataset. Used for applying a dataset on a model that requires scaled data.");
                 scaling.getParameters().add(ignore_uri);
+                
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "scaling_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                scaling.getParameters().add(scalingParam);
+                
                 scaling.getMeta().addRights(_LICENSE);
                 scaling.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -273,6 +289,14 @@ public class Algorithms {
                 descriptor2.getMeta().addDescription("The URI of the second descriptor.When the 2 descriptors are divided, this descriptor acts as the divident");
                 customAlgFilter.getParameters().add(descriptor2);
 
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "custom_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                customAlgFilter.getParameters().add(scalingParam);
+                
+                
                 customAlgFilter.getMeta().addRights(_LICENSE);
                 customAlgFilter.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -306,6 +330,16 @@ public class Algorithms {
                 mlr.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 mlr.getMeta().addRights(_LICENSE);
                 mlr.setEnabled(true);
+                mlr.setParameters(new HashSet<Parameter>());
+                
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                mlr.getParameters().add(scalingParam);
+                
+                
             } catch (ToxOtisException ex) {
                 throw new RuntimeException(ex);
             }

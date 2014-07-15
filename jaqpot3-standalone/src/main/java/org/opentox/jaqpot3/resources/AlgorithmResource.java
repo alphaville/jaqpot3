@@ -44,14 +44,12 @@ import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.pool.ExecutionPool;
 import org.opentox.jaqpot3.qsar.AlgorithmFinder;
-import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.util.TaskFactory;
-import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.ClientUploadInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.TrainingService;
@@ -76,6 +74,7 @@ import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
+import static sun.net.www.ParseUtil.decode;
 
 /**
  *
@@ -234,7 +233,6 @@ public class AlgorithmResource extends JaqpotResource {
         int maxModels = creator.getMaxModels();
         int maxTasks = creator.getMaxParallelTasks();
        
-        maxTasks=1000; //DEBUG
         if (numModels >= maxModels) {
             toggleInsufficientStorage();
             return errorReport("UserQuotaExceeded",
@@ -300,13 +298,15 @@ public class AlgorithmResource extends JaqpotResource {
             ClientUploadInput multiInput = new ClientUploadInput(new Form());
 
             RestletFileUpload upload = new RestletFileUpload(factory);
-            
             try {
                 List<FileItem> items = upload.parseRequest(getRequest());
+                String fieldVal;
                 if (!items.isEmpty()) {
                     for(int i=0;i<items.size();++i) {
                         if(items.get(i).isFormField()) {
-                            multiInput.add(items.get(i).getFieldName(), items.get(i).getString());
+                            fieldVal = items.get(i).getString();
+                            fieldVal = decode(fieldVal);
+                            multiInput.add(items.get(i).getFieldName(), fieldVal);
                         } else {
                             if (StringUtils.equals(items.get(i).getFieldName(),"upload")) {
                                 multiInput.setUploadContent(items.get(i).getName(), items.get(i).get());
