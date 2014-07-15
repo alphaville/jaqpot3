@@ -62,12 +62,12 @@ public class Algorithms {
     private static Algorithm mlr;
     private static Algorithm consensus;
     private static Algorithm svm;
-    private static Algorithm svc;
+    //private static Algorithm svc;
     private static Algorithm leverages;
     private static Algorithm mvh;
     private static Algorithm cleanup;
     private static Algorithm plsFilter;
-    private static Algorithm svmFilter;
+    //private static Algorithm svmFilter;
     private static Algorithm fastRbfNn;
     private static Algorithm scaling;
     private static Algorithm modelBundler;
@@ -325,7 +325,7 @@ public class Algorithms {
                         addDescription("Training algorithm for Consensus Models").
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(mlr.getUri().toString());
+                        addIdentifier(consensus.getUri().toString());
                 consensus.setMeta(algorithmMeta);
                 consensus.setOntologies(new HashSet<OntologicalClass>());
                 consensus.getOntologies().add(OTAlgorithmTypes.regression());
@@ -388,7 +388,7 @@ public class Algorithms {
                         + "supervised algorithm for dimension reduction on datasets.").
                         addPublisher(Configuration.BASE_URI).
                         setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(mvh.getUri().toString());
+                        addIdentifier(plsFilter.getUri().toString());
                 plsFilter.setParameters(new HashSet<Parameter>());
 
                 Parameter numComponents =
@@ -493,7 +493,7 @@ public class Algorithms {
                 MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("svm", "Support Vector Machine Training Algorithm").
                         addComment("Support Vector Machine Algorithm").
                         addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Regression", "Linear", "Training", "Multiple Linear Regression", "Machine Learning", "Single Target", "Eager Learning", "Weka").
+                        addSubject("Regression", "Training", "Machine Learning", "Single Target", "Eager Learning", "Weka", "SVM").
                         addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
                         addDescription("Algorithm for training regression models using the Support Vector Machine Learning Algorithm. "
                         + "The training is based on the Weka implementation of SVM and specifically the class weka.classifiers.functions.SVMreg. "

@@ -31,7 +31,6 @@
  * tel. +30 210 7723236
  *
  */
-
 package org.opentox.jaqpot3.util;
 
 import java.net.URISyntaxException;
@@ -56,7 +55,7 @@ public class Configuration {
     public static final String BASE_URI = "http://" + getProperties().getProperty("server.domainName")
             + ":" + getProperties().getProperty("server.port") + "/" + getProperties().getProperty("url.suffix", "jaqpot");
     public static final int SERVER_PORT = Integer.parseInt(getProperties().getProperty("server.port"));
-    
+
     private static String version = null;
 
     public static String getVersion() {
@@ -102,9 +101,9 @@ public class Configuration {
     public static String getStringProperty(String key, String defaultValue) {
         try {
             String val = properties.getProperty(key);
-            if (val!=null && !val.isEmpty()){
+            if (val != null && !val.isEmpty()) {
                 return val;
-            }else{
+            } else {
                 return defaultValue;
             }
         } catch (RuntimeException ex) {
@@ -193,16 +192,8 @@ public class Configuration {
         java.io.InputStream inStr = null;
         try {
             properties = new Properties();
-            if (System.getProperty("os.name").contains("Linux")) {
-                inStr = Configuration.class.getClassLoader().getResourceAsStream("server.properties");
-                properties.load(inStr);
-            } else if (System.getProperty("os.name").contains("Mac OS")) {
-                inStr = Configuration.class.getClassLoader().getResourceAsStream("macos.server.properties");
-                properties.load(inStr);
-            } else if (System.getProperty("os.name").contains("Windows")) {
-                inStr = Configuration.class.getClassLoader().getResourceAsStream("server.properties");
-                properties.load(inStr);
-            }
+            inStr = Configuration.class.getClassLoader().getResourceAsStream("server.properties");
+            properties.load(inStr);
             properties.setProperty("log4j.useDefaultFile", "true");
         } catch (final IOException ex) {
             logger.warn("IOException while trying to access configuration file.", ex);
