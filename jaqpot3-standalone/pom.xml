@@ -91,6 +91,11 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.jpmml</groupId>
+            <artifactId>pmml-evaluator</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <profiles>
