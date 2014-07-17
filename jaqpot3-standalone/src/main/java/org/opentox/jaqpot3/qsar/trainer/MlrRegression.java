@@ -81,11 +81,18 @@ public class MlrRegression extends AbstractTrainer {
     private VRI featureService;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MlrRegression.class);
 
+    @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return false; }
+    
     public MlrRegression() {
     }
 
 
-    private Instances preprocessInstances(Instances in) throws QSARException {
+    /*private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {
             Instances filt1 = cleanup.filter(in);
@@ -97,7 +104,7 @@ public class MlrRegression extends AbstractTrainer {
         } catch (QSARException ex) {
             throw new QSARException(ex);
         }
-    }
+    }*/
 
     
 
@@ -161,7 +168,7 @@ public class MlrRegression extends AbstractTrainer {
                 }
             }
 
-            Instances trainingSet = preprocessInstances(data);
+            Instances trainingSet = data;
             getTask().getMeta().addComment("The downloaded dataset is now preprocessed");
             firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);
@@ -212,7 +219,6 @@ public class MlrRegression extends AbstractTrainer {
             m.setAlgorithm(getAlgorithm());
             m.setCreatedBy(getTask().getCreatedBy());
             m.setDataset(datasetUri);
-            Feature dependentFeature = new Feature(targetUri);
             m.addDependentFeatures(dependentFeature);
             try {
                 dependentFeature.loadFromRemote();
@@ -236,18 +242,6 @@ public class MlrRegression extends AbstractTrainer {
              * COMPILE THE LIST OF INDEPENDENT FEATURES with the exact order in which
              * these appear in the Instances object (training set).
              */
-            List<Feature> independentFeatures = new ArrayList<Feature>();
-            for (int i = 0; i < orderedTrainingSet.numAttributes(); i++) {
-                Feature f;
-                try {
-                    f = new Feature(new VRI(orderedTrainingSet.attribute(i).name()));
-                    if (orderedTrainingSet.classIndex() != i) {
-                        independentFeatures.add(f);
-                    }
-                } catch (URISyntaxException ex) {
-                    throw new QSARException("The URI: " + orderedTrainingSet.attribute(i).name() + " is not valid", ex);
-                }
-            }
             m.setIndependentFeatures(independentFeatures);
 
 

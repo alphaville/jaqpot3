@@ -32,6 +32,13 @@ public class ModelBundlerTrainer extends AbstractTrainer {
     private static final Random RANDOM = new Random(78 * System.currentTimeMillis() + 131);
 
     @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+    
+    @Override
     public boolean needsDataset() {
         return false;
     }

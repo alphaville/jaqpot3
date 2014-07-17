@@ -89,6 +89,13 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FastRbfNnModel.class);
     private static final Random RANDOM = new Random(3 * System.currentTimeMillis() + 71);
 
+    @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+
 
     private static double squaredNormDifference(Instance a, Instance b) {
         int numAttributes = a.numAttributes();
@@ -301,6 +308,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         for (int i = 0; i < rbfNnNodes.numAttributes(); i++) {
             try {
                 independentFeatures.add(new Feature(new VRI(rbfNnNodes.attribute(i).name())));
+                //endpoint
             } catch (URISyntaxException ex) {
                 throw new JaqpotException(new QSARException("The URI: " + rbfNnNodes.attribute(i).name() + " is not valid", ex));
             }

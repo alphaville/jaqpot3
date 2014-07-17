@@ -36,9 +36,9 @@ package org.opentox.jaqpot3.qsar;
 import com.sun.org.apache.bcel.internal.util.ByteSequence;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -51,12 +51,15 @@ import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.LocalEvaluationContext;
-import org.jpmml.evaluator.ExpressionUtilExtended;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
+import org.opentox.jaqpot3.qsar.exceptions.QSARException;
+import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.util.ExpressionUtilExtended;
+import org.opentox.jaqpot3.qsar.util.LocalEvaluationContext;
+import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
@@ -73,7 +76,7 @@ import weka.core.converters.CSVSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
 import weka.filters.unsupervised.attribute.Remove;
-
+import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 /**
  *
  * @author Pantelis Sopasakis
@@ -81,15 +84,53 @@ import weka.filters.unsupervised.attribute.Remove;
  */
 public abstract class AbstractTrainer implements ITrainer {
 
-    protected byte[] pmml;
+    protected byte[] pmml =null;
+    protected PMML pmmlObject;
     private IClientInput ClientParams;
     private Task task;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();
+    protected List<Feature> independentFeatures = new ArrayList<Feature>();
+    protected Feature dependentFeature;
 
+    protected abstract boolean keepNumeric();
+    protected abstract boolean keepNominal();
+    protected abstract boolean keepString();
+    
+    
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
+        //todo cleanup
+        //missing value
+        if (!keepNominal()){
+            
+        }
+        if (!keepString()){
+            AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
+            try {
+                inst = cleanup.filter(inst);
+            }catch(QSARException ex) {
+                String message = "Exception while trying to cleanup strings in instances";
+                throw new JaqpotException(message, ex);
+            }
+        }
+        if (!keepNumeric()){
+            
+        }
+        
         if(pmml!=null) {
-            // TODO : validate pmml
+            loadPMMObject();
+        }
+            
+        setIndepNDependentFeatures(inst);
+        
+        if(pmml!=null) {
+            inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures, dependentFeature);
+        }
+        
+        //TODO check Spot for MVH
+            inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
+            
+        if(pmml!=null) {
             inst = transformDataset(inst);
         }
         
@@ -115,127 +156,99 @@ public abstract class AbstractTrainer implements ITrainer {
         return inst;
     }    
     
-    private Map<String,Double> getInstanceAttributeValues(Instance inst,int numAttributes) {
-        //numAttributes need to be set before adding the new attributes
-        Map<String,Double> featureMap = new HashMap(); 
-        if (numAttributes > 0) {
-            double res;
-            for (int i=0;i < numAttributes;++i) {
-                res = (!Double.isNaN(inst.value(i))) ? inst.value(i) : 0;
-                res = (!Double.isInfinite(res)) ? res : 0;
-                featureMap.put(inst.attribute(i).name(), res);
-            }
-        }
-        return featureMap;
-    }
-    
-    private List<Integer> getDescriptorsIndexArray(Instances inputData,List<String> attrList) {
-        List<Integer> tempArray = new ArrayList();
-        int NAttr = inputData.numAttributes();
-        
-        if (!attrList.isEmpty()) {
-            //get the index of the uri to be kept, this URI must be first and preceedes the independent features 
-            for(int i=0;i<NAttr;++i) {
-                if(StringUtils.equals( inputData.attribute(i).name().toString() , "URI" )) {
-                    tempArray.add(i);
-                    break;
-                }
-            }
-
-            for(int j=0;j<attrList.size();++j) {
-                for(int i=0;i<NAttr;++i) {
-                    if(StringUtils.equals( inputData.attribute(i).name().toString() , attrList.get(j) )) {
-                        tempArray.add(i);
-                    }
-                }
-            }
-        }
-        
-        return tempArray;
-    }
-    
-    private Instances getFilteredInstances(List<Integer> indexArray, Instances inputData) throws JaqpotException {
-        try {
-            //apply filter for deleting the attributes other than these descriptors 
-            int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
-            int m=1;
-            Remove rm = new Remove();
-            rm.setOptions(new String[]{"-V"});
-            rm.setAttributeIndicesArray(intArray);
-            rm.setInputFormat(inputData);
-            Instances filteredData = Filter.useFilter(inputData, rm);
-            
-            return filteredData;
-
-        } catch (Exception ex) {
-            throw new JaqpotException(ex);
-        }
-    }
-    
-    private Instances addNewAttribute(Instances filteredData,String nextFeatureUri) throws JaqpotException{
-        Add attributeAdder = new Add();
-        attributeAdder.setAttributeIndex("last");
-        attributeAdder.setAttributeName(nextFeatureUri);
-        try {
-            attributeAdder.setInputFormat(filteredData);
-            filteredData = Filter.useFilter(filteredData, attributeAdder);
-            
-            if (filteredData == null) throw new JaqpotException("no instances data");
-        } catch (Exception ex) {
-            String message = "Exception while trying to add prediction feature to Instances";
-                throw new JaqpotException(message, ex);
-        }
-        return filteredData;
-    }
-    
-    private Instances transformDataset(Instances inst) throws JaqpotException{
-        //Todo evaluate pmml
-        //Convert the String to PMML object
-        try {     
-
+    private void loadPMMObject() throws JaqpotException{
+        try {    
             InputStream is = new ByteSequence(pmml);
             InputSource source = new InputSource(is);
 
             SAXSource transformedSource = ImportFilter.apply(source);
-            PMML pmml = JAXBUtil.unmarshalPMML(transformedSource);
-
-            DataDictionary dtDir = pmml.getDataDictionary();
-            if (dtDir!=null) {
-                List<DataField> dtfVar = dtDir.getDataFields();
-                if (!dtfVar.isEmpty()) {
-
-                    //List<Integer> indexArray = getDescriptorsIndexArray(inst);
-                    //inst = getFilteredInstances(indexArray,inst);
+            pmmlObject = JAXBUtil.unmarshalPMML(transformedSource);
+        } catch (Exception ex) {
+            String message = "Exception while loading PMML to object";
+            throw new JaqpotException(message, ex);
+        }
+    }
+    
+    private void setIndepNDependentFeatures(Instances inst) throws JaqpotException{
+        if (pmmlObject!=null) {
+                List<String> indepFeaturesPMML = new ArrayList<String>();
+                DataDictionary dtDir = pmmlObject.getDataDictionary();
+                if (dtDir!=null) {
+                    List<DataField> dtfVar = dtDir.getDataFields();
+                    if (!dtfVar.isEmpty()) {
+                        for(int j=0;j<dtfVar.size();++j) {
+                           indepFeaturesPMML.add(dtfVar.get(j).getName().getValue());
+                        }
+                        
+                        for (int i = 0; i < inst.numAttributes(); i++) {
+                            if(indepFeaturesPMML.contains(inst.attribute(i).name())){
+                                Feature f;
+                                try {
+                                    f = new Feature(new VRI(inst.attribute(i).name()));
+                                    independentFeatures.add(f);
+                                } catch (URISyntaxException ex) {
+                                    throw new JaqpotException("The URI: " + inst.attribute(i).name() + " is not valid", ex);
+                                }
+                            }
+                        }
+                    }
+                }
+        } else {
+            for (int i = 0; i < inst.numAttributes(); i++) {
+                Feature f;
+                try {
+                    f = new Feature(new VRI(inst.attribute(i).name()));
+                    independentFeatures.add(f);
+                } catch (URISyntaxException ex) {
+                    throw new JaqpotException("The URI: " + inst.attribute(i).name() + " is not valid", ex);
                 }
             }
-            
-            //Get the Derived fields (math formulas) of the PMML file
-            TransformationDictionary trDir = pmml.getTransformationDictionary();
-            if (trDir!=null) {
-                List<DerivedField> dfVar = trDir.getDerivedFields();
+        }
+        
+        String targetString = ClientParams.getFirstValue("prediction_feature");
 
-                if (!dfVar.isEmpty()) {
-                    int numAttributes = inst.numAttributes();
-                    int targetAttributeIndex = numAttributes;
-                    Map<String,Double> featureMap = new HashMap(); 
-                    for(int i=0;i<dfVar.size();++i) {
+        try {
+            VRI  targetUri = new VRI(targetString);
+            dependentFeature = new Feature(targetUri);
+        } catch (URISyntaxException ex) {
+            //already validated
+        }
+    }
+    
+    private Instances transformDataset(Instances inst) throws JaqpotException{
+        //TODO add new features when uris missing
+        try {     
 
-                        String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
-                        inst = addNewAttribute(inst,attrName);
+            if (pmmlObject!=null) {
+                //Get the Derived fields (math formulas) of the PMML file
+                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
+                if (trDir!=null) {
+                    List<DerivedField> dfVar = trDir.getDerivedFields();
 
+                    if (!dfVar.isEmpty()) {
+                        int numAttributes = inst.numAttributes();
                         int numInstances = inst.numInstances();
-                        Double res;
-                        for (int j = 0; j < numInstances; j++) {
 
-                            featureMap = getInstanceAttributeValues(inst.instance(j),numAttributes);
+                        int targetAttributeIndex = numAttributes;
+                        Map<String,Double> featureMap; 
+                        for(int i=0;i<dfVar.size();++i) {
 
-                            FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
+                            String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
+                            inst = WekaInstancesProcess.addNewAttribute(inst, attrName);
 
-                            res = (Double) val.getValue();
-                            res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
-                            inst.instance(j).setValue(targetAttributeIndex, res);
+                            Double res;
+                            for (int j = 0; j < numInstances; j++) {
+
+                                featureMap = WekaInstancesProcess.getInstanceAttributeValues(inst.instance(j),numAttributes);
+
+                                FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
+
+                                res = (Double) val.getValue();
+                                res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
+                                inst.instance(j).setValue(targetAttributeIndex, res);
+                            }
+                            ++targetAttributeIndex;
                         }
-                        ++targetAttributeIndex;
                     }
                 }
             }
@@ -298,9 +311,7 @@ public abstract class AbstractTrainer implements ITrainer {
         
         
         if (inst != null) {
-            toCSV(inst,"C:\\Users\\philip\\Downloads\\TrainNoProcess.csv");
             inst = doPreprocessing(inst);
-            toCSV(inst,"C:\\Users\\philip\\Downloads\\TrainPreProcess.csv");
             resultModel =  train(inst);
         } else {
             try {
@@ -315,17 +326,4 @@ public abstract class AbstractTrainer implements ITrainer {
         return resultModel;
     }
     
-    private void toCSV(Instances inst,String Filename){
-        
-        File file = new File(Filename);
-        CSVSaver cs = new CSVSaver();
-        
-        try {
-            cs.setRetrieval(1);
-            cs.setFile(file);
-            cs.setInstances(inst);
-            cs.writeBatch();
-        } catch (Exception ex) {}
-    }
-            
 }

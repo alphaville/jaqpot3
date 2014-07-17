@@ -110,13 +110,6 @@ public class FastRbfNnPredictor extends AbstractPredictor {
         } catch (JaqpotException ex) {
             logger.error(null, ex);
         }
-        AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
-        Instances compounds = null;
-        try {
-            compounds = justCompounds.filter(inputSet);
-        } catch (QSARException ex) {
-            logger.debug(null, ex);
-        }
 
         Instances predictions = new Instances(orderedDataset);
         Add attributeAdder = new Add();
@@ -146,7 +139,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
         }
 
         try {
-            Instances resultSet = Instances.mergeInstances(compounds, predictions);
+            Instances resultSet = Instances.mergeInstances(justCompounds, predictions);
             Dataset output = DatasetFactory.getInstance().createFromArff(resultSet);
             return output;
         } catch (ToxOtisException ex) {

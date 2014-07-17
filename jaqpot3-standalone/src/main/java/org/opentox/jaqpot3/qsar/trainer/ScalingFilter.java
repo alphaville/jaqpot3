@@ -42,6 +42,14 @@ public class ScalingFilter extends AbstractTrainer {
     private VRI datasetUri;
     Set<String> ignored = new HashSet<String>();
 
+    
+    @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+    
     private double minValue(Instances dataInst, int attributeIndex) {
         return dataInst.kthSmallestValue(attributeIndex, 1);
     }

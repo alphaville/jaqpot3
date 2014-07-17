@@ -43,6 +43,13 @@ public class LeveragesTrainer extends AbstractTrainer {
     private UUID uuid = UUID.randomUUID();
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesTrainer.class);
 
+    @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+    
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
         try {

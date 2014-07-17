@@ -93,7 +93,7 @@ public class WekaPredictor extends AbstractPredictor {
             }
 
             if (predictions != null) {
-                Classifier classifier = (Classifier) model.getActualModel();                
+                Classifier classifier = (Classifier) model.getActualModel().getSerializableActualModel();
 
                 int numInstances = predictions.numInstances();
                 for (int i = 0; i < numInstances; i++) {
@@ -106,14 +106,7 @@ public class WekaPredictor extends AbstractPredictor {
                 }
             }
 
-            AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
-            Instances compounds = null;
-            try {
-                compounds = justCompounds.filter(inputSet);
-            } catch (QSARException ex) {
-                logger.debug(null, ex);
-            }
-            Instances result = Instances.mergeInstances(compounds, predictions);
+            Instances result = Instances.mergeInstances(justCompounds, predictions);
             Dataset ds = DatasetFactory.getInstance().createFromArff(result);
 
             return ds;

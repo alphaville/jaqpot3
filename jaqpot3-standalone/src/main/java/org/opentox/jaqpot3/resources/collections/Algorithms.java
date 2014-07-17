@@ -183,10 +183,47 @@ public class Algorithms {
                 
                 Parameter scalingParam =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
                         Parameter.ParameterScope.OPTIONAL);
                 scalingParam.getMeta().addDescription("Set scaling enabled");
                 fastRbfNn.getParameters().add(scalingParam);
+                
+                Parameter scalingMinParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMinParam.getMeta().addDescription("Set scaling min");
+                fastRbfNn.getParameters().add(scalingMinParam);
+                
+                Parameter scalingMaxParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMaxParam.getMeta().addDescription("Set scaling max");
+                fastRbfNn.getParameters().add(scalingMaxParam);
+                
+                Parameter normalizationParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                normalizationParam.getMeta().addDescription("Set normalization enabled");
+                fastRbfNn.getParameters().add(normalizationParam);
+                                
+                Parameter missingValHandlingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
+                fastRbfNn.getParameters().add(missingValHandlingParam);
+                
+                
+                Parameter missingValHandlingIgnoreUriParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_mvh_ignore_uri"), "mvh_ignore_uri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
+                fastRbfNn.getParameters().add(missingValHandlingIgnoreUriParam);
+                
                 
                 fastRbfNn.getMeta().addRights(_LICENSE);
                 fastRbfNn.setEnabled(true);
@@ -328,17 +365,54 @@ public class Algorithms {
                 mlr.getOntologies().add(OTAlgorithmTypes.regression());
                 mlr.getOntologies().add(OTAlgorithmTypes.singleTarget());
                 mlr.getOntologies().add(OTAlgorithmTypes.eagerLearning());
-                mlr.getMeta().addRights(_LICENSE);
-                mlr.setEnabled(true);
                 mlr.setParameters(new HashSet<Parameter>());
+                
                 
                 Parameter scalingParam =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "mlr_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
+                        Configuration.getBaseUri().augment("prm", "mlr_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
                         Parameter.ParameterScope.OPTIONAL);
                 scalingParam.getMeta().addDescription("Set scaling enabled");
                 mlr.getParameters().add(scalingParam);
                 
+                Parameter scalingMinParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMinParam.getMeta().addDescription("Set scaling min");
+                mlr.getParameters().add(scalingMinParam);
+                
+                Parameter scalingMaxParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMaxParam.getMeta().addDescription("Set scaling max");
+                mlr.getParameters().add(scalingMaxParam);
+                
+                Parameter normalizationParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                normalizationParam.getMeta().addDescription("Set normalization enabled");
+                mlr.getParameters().add(normalizationParam);
+                
+                Parameter missingValHandlingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
+                mlr.getParameters().add(missingValHandlingParam);
+                
+                
+                Parameter missingValHandlingIgnoreUriParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "mlr_mvh_ignore_uri"), "mvh_ignore_uri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
+                mlr.getParameters().add(missingValHandlingIgnoreUriParam);
+                
+                mlr.getMeta().addRights(_LICENSE);
+                mlr.setEnabled(true);
                 
             } catch (ToxOtisException ex) {
                 throw new RuntimeException(ex);
@@ -365,6 +439,53 @@ public class Algorithms {
                 consensus.getOntologies().add(OTAlgorithmTypes.regression());
                 consensus.getOntologies().add(OTAlgorithmTypes.singleTarget());
                 consensus.getOntologies().add(OTAlgorithmTypes.eagerLearning());
+                consensus.setParameters(new HashSet<Parameter>());
+                
+                
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                consensus.getParameters().add(scalingParam);
+                
+                Parameter scalingMinParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMinParam.getMeta().addDescription("Set scaling min");
+                consensus.getParameters().add(scalingMinParam);
+                
+                Parameter scalingMaxParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMaxParam.getMeta().addDescription("Set scaling max");
+                consensus.getParameters().add(scalingMaxParam);
+                
+                Parameter normalizationParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                normalizationParam.getMeta().addDescription("Set normalization enabled");
+                consensus.getParameters().add(normalizationParam);
+                
+                
+                Parameter missingValHandlingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
+                consensus.getParameters().add(missingValHandlingParam);
+                
+                
+                Parameter missingValHandlingIgnoreUriParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "consensus_mvh_ignore_uri"), "mvh_ignore_uri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
+                consensus.getParameters().add(missingValHandlingIgnoreUriParam);
+                
                 consensus.getMeta().addRights(_LICENSE);
                 consensus.setEnabled(true);
             } catch (ToxOtisException ex) {
@@ -583,8 +704,51 @@ public class Algorithms {
                         addComment("To be used in combination with the polynomial kernel").
                         addIdentifier(degree.getUri().toString());
                 svm.getParameters().add(degree);
-
-
+                
+                Parameter scalingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingParam.getMeta().addDescription("Set scaling enabled");
+                svm.getParameters().add(scalingParam);
+                
+                Parameter scalingMinParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMinParam.getMeta().addDescription("Set scaling min");
+                svm.getParameters().add(scalingMinParam);
+                
+                Parameter scalingMaxParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                scalingMaxParam.getMeta().addDescription("Set scaling max");
+                svm.getParameters().add(scalingMaxParam);
+                
+                Parameter normalizationParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                normalizationParam.getMeta().addDescription("Set normalization enabled");
+                svm.getParameters().add(normalizationParam);
+                
+                
+                Parameter missingValHandlingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
+                svm.getParameters().add(missingValHandlingParam);
+                
+                Parameter missingValHandlingIgnoreUriParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "svm_mvh_ignore_uri"), "mvh_ignore_uri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
+                svm.getParameters().add(missingValHandlingIgnoreUriParam);
+                
+                
                 svm.setMeta(algorithmMeta);
                 svm.setOntologies(new HashSet<OntologicalClass>());
                 svm.getOntologies().add(OTAlgorithmTypes.regression());

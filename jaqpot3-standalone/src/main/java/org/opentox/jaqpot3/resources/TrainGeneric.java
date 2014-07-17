@@ -201,12 +201,10 @@ public class TrainGeneric extends JaqpotResource {
             Logger.getLogger(TrainGeneric.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        if (ist!=null) {
-                client.setPostableFilename("upload", uploadFilename);
-                client.setPostable(ist);
-                client.setContentType(Media.MEDIA_MULTIPART_FORM_DATA);
-                client.addHeaderParameter("content-type", "multipart/form-data");
-        } 
+        client.setPostableFilename("upload", uploadFilename);
+        client.setPostable(ist);
+        client.setContentType(Media.MEDIA_MULTIPART_FORM_DATA);
+        client.addHeaderParameter("content-type", "multipart/form-data");
             
         client.setMediaType(Media.TEXT_URI_LIST);
         client.addPostParameter("dataset_uri", ds);

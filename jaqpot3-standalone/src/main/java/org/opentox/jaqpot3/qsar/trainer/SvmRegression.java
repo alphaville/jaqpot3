@@ -88,6 +88,13 @@ public class SvmRegression extends AbstractTrainer {
     private static final Random RANDOM = new Random(19 * System.currentTimeMillis() + 53);
 
     @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+    
+    @Override
     public Algorithm getAlgorithm() {
         return Algorithms.svm();
     }

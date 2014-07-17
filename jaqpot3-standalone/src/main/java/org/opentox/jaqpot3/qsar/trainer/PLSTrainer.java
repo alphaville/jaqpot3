@@ -83,6 +83,13 @@ public class PLSTrainer extends AbstractTrainer {
     private String target;
 
     @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
+    
+    @Override
     public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
         String datasetUriString = clientParameters.getFirstValue("dataset_uri");
         if (datasetUriString == null) {

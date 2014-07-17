@@ -76,6 +76,12 @@ public class MissingValueFilter extends AbstractTrainer {
     private VRI datasetUri;
     private VRI featureService;
 
+    @Override
+    protected boolean keepNumeric() { return true; }
+    @Override
+    protected boolean keepNominal() { return true; }
+    @Override
+    protected boolean keepString()  { return true; }
 
     @Override
     public Model train(Instances data) throws JaqpotException {

@@ -91,6 +91,11 @@ public class SimpleMVHFilter {
             String ignoreClassIN = clientParameters.getFirstValue("ignoreClass");
             if (ignoreClassIN != null) {
                 ignoreClass = Boolean.parseBoolean(ignoreClassIN.trim());
+            } else {
+                ignoreClassIN = clientParameters.getFirstValue("mvh_ignore_uri");
+                if (ignoreClassIN != null) {
+                    ignoreClass = Boolean.parseBoolean(ignoreClassIN.trim());
+                }
             }
         }
         /* No parameters needed here */
