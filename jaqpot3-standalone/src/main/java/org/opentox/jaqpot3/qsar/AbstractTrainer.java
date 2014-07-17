@@ -122,7 +122,7 @@ public abstract class AbstractTrainer implements ITrainer {
         setIndepNDependentFeatures(inst);
         
         if(pmml!=null) {
-            inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures);
+            inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures,dependentFeature);
         }
         
         if( isMvhEnabled || performMVH() ) {
@@ -182,7 +182,6 @@ public abstract class AbstractTrainer implements ITrainer {
                         for(int j=0;j<dtfVar.size();++j) {
                            featuresList.add(dtfVar.get(j).getName().getValue());
                         }
-                        featuresList.add(targetString);
                         
                         for (int i = 0; i < inst.numAttributes(); i++) {
                             if(featuresList.contains(inst.attribute(i).name())){
@@ -199,12 +198,15 @@ public abstract class AbstractTrainer implements ITrainer {
                 }
         } else {
             for (int i = 0; i < inst.numAttributes(); i++) {
-                Feature f;
-                try {
-                    f = new Feature(new VRI(inst.attribute(i).name()));
-                    independentFeatures.add(f);
-                } catch (URISyntaxException ex) {
-                    throw new JaqpotException("The URI: " + inst.attribute(i).name() + " is not valid", ex);
+                //if not the endpoint
+                if(!StringUtils.equals(inst.attribute(i).name().trim(),targetString.trim())){
+                    Feature f;
+                    try {
+                        f = new Feature(new VRI(inst.attribute(i).name()));
+                        independentFeatures.add(f);
+                    } catch (URISyntaxException ex) {
+                        throw new JaqpotException("The URI: " + inst.attribute(i).name() + " is not valid", ex);
+                    }
                 }
             }
         }

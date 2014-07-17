@@ -180,7 +180,7 @@ public class Algorithms {
                 e.getMeta().addDescription("Parameter used to implicitly determine the number of iterations and therefore the number hidden nodes the "
                         + "algorithm will find. The algorithm terminates when max_{i}P(i) is less than or equal to e*P*(L)");
                 fastRbfNn.getParameters().add(e);
-                
+                /*
                 Parameter scalingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
@@ -208,7 +208,7 @@ public class Algorithms {
                         Parameter.ParameterScope.OPTIONAL);
                 normalizationParam.getMeta().addDescription("Set normalization enabled");
                 fastRbfNn.getParameters().add(normalizationParam);
-                                
+                 */               
                 Parameter missingValHandlingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "fast_rbf_nn_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
@@ -367,7 +367,7 @@ public class Algorithms {
                 mlr.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 mlr.setParameters(new HashSet<Parameter>());
                 
-                
+                /*
                 Parameter scalingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "mlr_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
@@ -395,7 +395,7 @@ public class Algorithms {
                         Parameter.ParameterScope.OPTIONAL);
                 normalizationParam.getMeta().addDescription("Set normalization enabled");
                 mlr.getParameters().add(normalizationParam);
-                
+                */
                 Parameter missingValHandlingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "mlr_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
@@ -440,7 +440,7 @@ public class Algorithms {
                 consensus.getOntologies().add(OTAlgorithmTypes.singleTarget());
                 consensus.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 consensus.setParameters(new HashSet<Parameter>());
-                
+                /*
                 
                 Parameter scalingParam =
                         new Parameter(
@@ -469,7 +469,7 @@ public class Algorithms {
                         Parameter.ParameterScope.OPTIONAL);
                 normalizationParam.getMeta().addDescription("Set normalization enabled");
                 consensus.getParameters().add(normalizationParam);
-                
+                */
                 
                 Parameter missingValHandlingParam =
                         new Parameter(
@@ -704,7 +704,7 @@ public class Algorithms {
                         addComment("To be used in combination with the polynomial kernel").
                         addIdentifier(degree.getUri().toString());
                 svm.getParameters().add(degree);
-                
+                /*
                 Parameter scalingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "svm_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
@@ -732,7 +732,7 @@ public class Algorithms {
                         Parameter.ParameterScope.OPTIONAL);
                 normalizationParam.getMeta().addDescription("Set normalization enabled");
                 svm.getParameters().add(normalizationParam);
-                
+                */
                 
                 Parameter missingValHandlingParam =
                         new Parameter(

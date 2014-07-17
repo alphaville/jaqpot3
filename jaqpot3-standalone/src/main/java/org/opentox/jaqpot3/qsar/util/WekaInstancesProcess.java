@@ -91,7 +91,7 @@ public class WekaInstancesProcess {
         return featureMap;
     }
     
-    public static List<Integer> getDescriptorsIndexArray(Instances inputData,List<Feature> independentFeatures) {
+    public static List<Integer> getDescriptorsIndexArray(Instances inputData,List<Feature> independentFeatures,Feature dependentFeature) {
         List<Integer> tempArray = new ArrayList();
         int NAttr = inputData.numAttributes();
         
@@ -107,12 +107,21 @@ public class WekaInstancesProcess {
                 }
             }
         }
+        if (StringUtils.isNotEmpty(dependentFeature.getUri().toString())) {
+            for(int i=0;i<NAttr;++i) {
+                if(StringUtils.equals( inputData.attribute(i).name().toString() , dependentFeature.getUri().toString() )) {
+                    tempArray.add(i);
+                    break;
+                }
+            }
+        }
+        
         return tempArray;
     }
     
-    public static Instances getFilteredInstances(Instances inputData,List<Feature> independentFeatures) throws JaqpotException {
+    public static Instances getFilteredInstances(Instances inputData,List<Feature> independentFeatures,Feature dependentFeature) throws JaqpotException {
         try {
-            List<Integer> indexArray = getDescriptorsIndexArray(inputData,independentFeatures);
+            List<Integer> indexArray = getDescriptorsIndexArray(inputData,independentFeatures,dependentFeature);
             //apply filter for deleting the attributes other than these descriptors 
             int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
             int m=1;
