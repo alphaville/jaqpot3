@@ -49,6 +49,8 @@ public class ScalingFilter extends AbstractTrainer {
     protected boolean keepNominal() { return true; }
     @Override
     protected boolean keepString()  { return true; }
+    @Override
+    protected boolean performMVH()  { return false; }
     
     private double minValue(Instances dataInst, int attributeIndex) {
         return dataInst.kthSmallestValue(attributeIndex, 1);

@@ -78,6 +78,7 @@ public class WekaPredictor extends AbstractPredictor {
         try {
             /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
             Instances newData = InstancesUtil.sortForModel(model, inputSet, -1);
+            WekaInstancesProcess.toCSV(newData, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewAfterInstancesUtil.sortForModel.csv");
             /* ADD TO THE NEW DATA THE PREDICTION FEATURE*/
             Add attributeAdder = new Add();
             attributeAdder.setAttributeIndex("last");
@@ -86,6 +87,7 @@ public class WekaPredictor extends AbstractPredictor {
             try {
                 attributeAdder.setInputFormat(newData);
                 predictions = Filter.useFilter(newData, attributeAdder);
+                WekaInstancesProcess.toCSV(predictions, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewFilter.useFilterPredictions.csv");
                 predictions.setClass(predictions.attribute(model.getPredictedFeatures().iterator().next().getUri().toString()));
             } catch (Exception ex) {
                 String message = "Exception while trying to add prediction feature to Instances";
@@ -106,8 +108,10 @@ public class WekaPredictor extends AbstractPredictor {
                     }
                 }
             }
+            WekaInstancesProcess.toCSV(predictions, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewAfterSettingPredictions.csv");
 
             Instances result = Instances.mergeInstances(justCompounds, predictions);
+            WekaInstancesProcess.toCSV(result, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewInstances.mergeInstances.csv");
             Dataset ds = DatasetFactory.getInstance().createFromArff(result);
 
             return ds;

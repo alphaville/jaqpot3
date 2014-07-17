@@ -98,6 +98,8 @@ public abstract class AbstractPredictor implements IPredictor {
         independentFeatures = model.getIndependentFeatures();
         dependentFeature = model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
+        
+        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewOriginal.csv");
                 
         if(model.getActualModel()!=null) {
             pmml = model.getActualModel().getPmml();
@@ -111,7 +113,6 @@ public abstract class AbstractPredictor implements IPredictor {
                 inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
             }
         }
-        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\pred.csv");
         return inst;
     }    
     

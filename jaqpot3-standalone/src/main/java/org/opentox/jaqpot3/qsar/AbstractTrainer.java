@@ -89,11 +89,17 @@ public abstract class AbstractTrainer implements ITrainer {
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
     protected abstract boolean keepString();
+    protected abstract boolean performMVH();
     
     
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
+        
+        String isMvh = ClientParams.getFirstValue("mvh");
+        Boolean isMvhEnabled = (isMvh.trim().equals("1")) ? true : false;
+
         //todo cleanup
         //missing value
+        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewOriginal.csv");
         if (!keepNominal()){
             
         }
@@ -109,7 +115,6 @@ public abstract class AbstractTrainer implements ITrainer {
         if (!keepNumeric()){
             
         }
-        
         if(pmml!=null) {
             loadPMMObject();
         }
@@ -117,12 +122,15 @@ public abstract class AbstractTrainer implements ITrainer {
         setIndepNDependentFeatures(inst);
         
         if(pmml!=null) {
-            inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures, dependentFeature);
+            inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures);
         }
         
-        //TODO check Spot for MVH
+        if( isMvhEnabled || performMVH() ) {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
-            
+        }
+           
+        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewAfterPreprocessInstances.csv");
+         
         if(pmml!=null) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
         }
@@ -163,18 +171,21 @@ public abstract class AbstractTrainer implements ITrainer {
     }
     
     private void setIndepNDependentFeatures(Instances inst) throws JaqpotException{
+        String targetString = ClientParams.getFirstValue("prediction_feature");
+        
         if (pmmlObject!=null) {
-                List<String> indepFeaturesPMML = new ArrayList<String>();
+                List<String> featuresList = new ArrayList<String>();
                 DataDictionary dtDir = pmmlObject.getDataDictionary();
                 if (dtDir!=null) {
                     List<DataField> dtfVar = dtDir.getDataFields();
                     if (!dtfVar.isEmpty()) {
                         for(int j=0;j<dtfVar.size();++j) {
-                           indepFeaturesPMML.add(dtfVar.get(j).getName().getValue());
+                           featuresList.add(dtfVar.get(j).getName().getValue());
                         }
+                        featuresList.add(targetString);
                         
                         for (int i = 0; i < inst.numAttributes(); i++) {
-                            if(indepFeaturesPMML.contains(inst.attribute(i).name())){
+                            if(featuresList.contains(inst.attribute(i).name())){
                                 Feature f;
                                 try {
                                     f = new Feature(new VRI(inst.attribute(i).name()));
@@ -198,8 +209,6 @@ public abstract class AbstractTrainer implements ITrainer {
             }
         }
         
-        String targetString = ClientParams.getFirstValue("prediction_feature");
-
         try {
             VRI  targetUri = new VRI(targetString);
             dependentFeature = new Feature(targetUri);

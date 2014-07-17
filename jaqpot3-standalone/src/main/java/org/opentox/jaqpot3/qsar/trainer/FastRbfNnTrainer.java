@@ -95,6 +95,8 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     protected boolean keepNominal() { return true; }
     @Override
     protected boolean keepString()  { return true; }
+    @Override
+    protected boolean performMVH()  { return false; }
 
 
     private static double squaredNormDifference(Instance a, Instance b) {

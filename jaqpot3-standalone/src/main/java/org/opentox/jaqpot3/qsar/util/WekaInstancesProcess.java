@@ -91,7 +91,7 @@ public class WekaInstancesProcess {
         return featureMap;
     }
     
-    public static List<Integer> getDescriptorsIndexArray(Instances inputData,List<Feature> independentFeatures,Feature dependentFeature) {
+    public static List<Integer> getDescriptorsIndexArray(Instances inputData,List<Feature> independentFeatures) {
         List<Integer> tempArray = new ArrayList();
         int NAttr = inputData.numAttributes();
         
@@ -107,21 +107,12 @@ public class WekaInstancesProcess {
                 }
             }
         }
-        if (StringUtils.isNotEmpty(dependentFeature.getUri().toString())) {
-            for(int i=0;i<NAttr;++i) {
-                if(StringUtils.equals( inputData.attribute(i).name().toString() , dependentFeature.getUri().toString() )) {
-                    tempArray.add(i);
-                    break;
-                }
-            }
-        }
-        
         return tempArray;
     }
     
-    public static Instances getFilteredInstances(Instances inputData,List<Feature> independentFeatures,Feature dependentFeature) throws JaqpotException {
+    public static Instances getFilteredInstances(Instances inputData,List<Feature> independentFeatures) throws JaqpotException {
         try {
-            List<Integer> indexArray = getDescriptorsIndexArray(inputData,independentFeatures,dependentFeature);
+            List<Integer> indexArray = getDescriptorsIndexArray(inputData,independentFeatures);
             //apply filter for deleting the attributes other than these descriptors 
             int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
             int m=1;
@@ -170,19 +161,15 @@ public class WekaInstancesProcess {
     
     public static Instances handleMissingValues(Instances inst,IClientInput ClientParams) throws JaqpotException{
         Instances rv;
-        String isEnabled = ClientParams.getFirstValue("mvh");
-        int isTrue = Integer.parseInt(isEnabled);
-        if(isTrue==1) {
-            try {
-                SimpleMVHFilter mvh = new SimpleMVHFilter();
-                mvh.parametrize(ClientParams);
-                rv = mvh.filter(inst);
-            } catch ( JaqpotException ex) {
-                String message = "Exception while trying to handle missing values";
-                throw new JaqpotException(message, ex);
-            }
+        try {
+            SimpleMVHFilter mvh = new SimpleMVHFilter();
+            mvh.parametrize(ClientParams);
+            rv = mvh.filter(inst);
+        } catch ( JaqpotException ex) {
+            String message = "Exception while trying to handle missing values";
+            throw new JaqpotException(message, ex);
         }
-        return inst;
+        return rv;
     }
     
     public static void toCSV(Instances inst,String Filename){

@@ -93,6 +93,8 @@ public class SvmRegression extends AbstractTrainer {
     protected boolean keepNominal() { return true; }
     @Override
     protected boolean keepString()  { return true; }
+    @Override
+    protected boolean performMVH()  { return false; }
     
     @Override
     public Algorithm getAlgorithm() {

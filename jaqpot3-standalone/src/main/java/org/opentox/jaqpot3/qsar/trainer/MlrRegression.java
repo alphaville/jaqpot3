@@ -34,7 +34,6 @@
 
 package org.opentox.jaqpot3.qsar.trainer;
 
-import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
+import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -87,6 +86,8 @@ public class MlrRegression extends AbstractTrainer {
     protected boolean keepNominal() { return true; }
     @Override
     protected boolean keepString()  { return false; }
+    @Override
+    protected boolean performMVH()  { return true; }
     
     public MlrRegression() {
     }
@@ -282,6 +283,7 @@ public class MlrRegression extends AbstractTrainer {
             try {
                 linreg.setOptions(linRegOptions);
                 linreg.buildClassifier(orderedTrainingSet);
+                WekaInstancesProcess.toCSV(orderedTrainingSet, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewAfterLinreg.buildClassifier.csv");
             } catch (final Exception ex) {// illegal options or could not build the classifier!
                 String message = "MLR Model could not be trained";
                 logger.error(message, ex);

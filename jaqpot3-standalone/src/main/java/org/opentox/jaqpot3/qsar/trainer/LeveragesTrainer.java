@@ -49,6 +49,8 @@ public class LeveragesTrainer extends AbstractTrainer {
     protected boolean keepNominal() { return true; }
     @Override
     protected boolean keepString()  { return true; }
+    @Override
+    protected boolean performMVH()  { return false; }
     
     private Instances preprocessInstances(Instances in) throws QSARException {
         AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
