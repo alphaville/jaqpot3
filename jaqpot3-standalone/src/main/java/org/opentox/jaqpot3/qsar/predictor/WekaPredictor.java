@@ -52,6 +52,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
 
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
+import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 
 /**
  *

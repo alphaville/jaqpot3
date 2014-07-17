@@ -41,8 +41,16 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.TransformationDictionary;
+import org.jpmml.evaluator.FieldValue;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.qsar.exceptions.QSARException;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.nominal;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numeric;
+import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.string;
 import org.opentox.toxotis.core.component.Feature;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -147,6 +155,19 @@ public class WekaInstancesProcess {
     }
     
     
+    public static Instances loadJustCompounds(Instances inputSet) throws JaqpotException{
+        AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
+        Instances compounds = null;
+        try {
+            compounds = justCompounds.filter(inputSet);
+        } catch (QSARException ex) {
+            String message = "Exception while filtering compounds";
+            throw new JaqpotException(message, ex);
+        }
+        return compounds;
+    }
+    
+    
     public static Instances handleMissingValues(Instances inst,IClientInput ClientParams) throws JaqpotException{
         Instances rv;
         String isEnabled = ClientParams.getFirstValue("mvh");
@@ -175,5 +196,50 @@ public class WekaInstancesProcess {
             cs.setInstances(inst);
             cs.writeBatch();
         } catch (Exception ex) {}
+    }
+    
+    public static Instances transformDataset(Instances inst,PMML pmmlObject) throws JaqpotException{
+        //TODO add new features when uris missing
+        try {     
+
+            if (pmmlObject!=null) {
+                //Get the Derived fields (math formulas) of the PMML file
+                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
+                if (trDir!=null) {
+                    List<DerivedField> dfVar = trDir.getDerivedFields();
+
+                    if (!dfVar.isEmpty()) {
+                        int numAttributes = inst.numAttributes();
+                        int numInstances = inst.numInstances();
+
+                        int targetAttributeIndex = numAttributes;
+                        Map<String,Double> featureMap; 
+                        for(int i=0;i<dfVar.size();++i) {
+
+                            String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
+                            inst = WekaInstancesProcess.addNewAttribute(inst, attrName);
+
+                            Double res;
+                            for (int j = 0; j < numInstances; j++) {
+
+                                featureMap = WekaInstancesProcess.getInstanceAttributeValues(inst.instance(j),numAttributes);
+
+                                FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
+
+                                res = (Double) val.getValue();
+                                res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
+                                inst.instance(j).setValue(targetAttributeIndex, res);
+                            }
+                            ++targetAttributeIndex;
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            String message = "Exception while trying to transform Instances";
+            throw new JaqpotException(message, ex);
+        }
+                
+        return inst;
     }
 }

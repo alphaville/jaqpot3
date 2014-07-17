@@ -97,19 +97,21 @@ public abstract class AbstractPredictor implements IPredictor {
         
         independentFeatures = model.getIndependentFeatures();
         dependentFeature = model.getDependentFeatures().get(0);
-        justCompounds = loadJustCompounds(inst);
+        justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
                 
         if(model.getActualModel()!=null) {
             pmml = model.getActualModel().getPmml();
             if(pmml!=null) {
                 
                 loadPMMObject();
-                inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures, dependentFeature);
+                //IMPORTANT!!!! WekaInstancesProcess.getFilteredInstances removes compound URI that is needed
+                
                 //TODO check Spot for MVH
                 //inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
-                inst = transformDataset(inst);
+                inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
             }
         }
+        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\pred.csv");
         return inst;
     }    
     
@@ -126,63 +128,6 @@ public abstract class AbstractPredictor implements IPredictor {
         }
     }
     
-    
-    private Instances loadJustCompounds(Instances inputSet) throws JaqpotException{
-        AttributeCleanup justCompounds = new AttributeCleanup(true, nominal, numeric, string);
-        Instances compounds = null;
-        try {
-            compounds = justCompounds.filter(inputSet);
-        } catch (QSARException ex) {
-            String message = "Exception while filtering compounds";
-            throw new JaqpotException(message, ex);
-        }
-        return compounds;
-    }
-    
-    private Instances transformDataset(Instances inst) throws JaqpotException {
-        //Todo evaluate pmml
-        //Convert the String to PMML object
-        try {     
-            if (pmmlObject!=null) {
-            
-                //Get the Derived fields (math formulas) of the PMML file
-                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
-                if (trDir!=null) {
-                    List<DerivedField> dfVar = trDir.getDerivedFields();
-
-                    if (!dfVar.isEmpty()) {
-                        int numAttributes = inst.numAttributes();
-                        int numInstances = inst.numInstances();
-                            
-                        int targetAttributeIndex = numAttributes;
-                        Map<String,Double> featureMap; 
-                        for(int i=0;i<dfVar.size();++i) {
-
-                            String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
-                            inst = addNewAttribute(inst,attrName);
-                            Double res;
-                            for (int j = 0; j < numInstances; j++) {
-
-                                featureMap = WekaInstancesProcess.getInstanceAttributeValues(inst.instance(j),numAttributes);
-
-                                FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
-
-                                res = (Double) val.getValue();
-                                res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
-                                inst.instance(j).setValue(targetAttributeIndex, res);
-                            }
-                            ++targetAttributeIndex;
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            String message = "Exception while trying to transform Instances";
-            throw new JaqpotException(message, ex);
-        }
-                
-        return inst;
-    }
     
     @Override
     public IPredictor setModel(Model model) {

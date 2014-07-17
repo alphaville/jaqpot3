@@ -34,16 +34,14 @@
 package org.opentox.jaqpot3.qsar;
 
 import com.sun.org.apache.bcel.internal.util.ByteSequence;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 import javax.xml.transform.sax.SAXSource;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
@@ -59,7 +57,6 @@ import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.jaqpot3.qsar.util.ExpressionUtilExtended;
 import org.opentox.jaqpot3.qsar.util.LocalEvaluationContext;
-import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
@@ -70,13 +67,9 @@ import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.arff.ArffDownloader;
 import org.xml.sax.InputSource;
-import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.CSVSaver;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Add;
-import weka.filters.unsupervised.attribute.Remove;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
+import org.opentox.jaqpot3.util.Configuration;
 /**
  *
  * @author Pantelis Sopasakis
@@ -131,7 +124,7 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
             
         if(pmml!=null) {
-            inst = transformDataset(inst);
+            inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
         }
         
         return preprocessDataset(inst);
@@ -213,51 +206,6 @@ public abstract class AbstractTrainer implements ITrainer {
         } catch (URISyntaxException ex) {
             //already validated
         }
-    }
-    
-    private Instances transformDataset(Instances inst) throws JaqpotException{
-        //TODO add new features when uris missing
-        try {     
-
-            if (pmmlObject!=null) {
-                //Get the Derived fields (math formulas) of the PMML file
-                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
-                if (trDir!=null) {
-                    List<DerivedField> dfVar = trDir.getDerivedFields();
-
-                    if (!dfVar.isEmpty()) {
-                        int numAttributes = inst.numAttributes();
-                        int numInstances = inst.numInstances();
-
-                        int targetAttributeIndex = numAttributes;
-                        Map<String,Double> featureMap; 
-                        for(int i=0;i<dfVar.size();++i) {
-
-                            String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
-                            inst = WekaInstancesProcess.addNewAttribute(inst, attrName);
-
-                            Double res;
-                            for (int j = 0; j < numInstances; j++) {
-
-                                featureMap = WekaInstancesProcess.getInstanceAttributeValues(inst.instance(j),numAttributes);
-
-                                FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
-
-                                res = (Double) val.getValue();
-                                res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
-                                inst.instance(j).setValue(targetAttributeIndex, res);
-                            }
-                            ++targetAttributeIndex;
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            String message = "Exception while trying to transform Instances";
-            throw new JaqpotException(message, ex);
-        }
-                
-        return inst;
     }
 
     @Override
