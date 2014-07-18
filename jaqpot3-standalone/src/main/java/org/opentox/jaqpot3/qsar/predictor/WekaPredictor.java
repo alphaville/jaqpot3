@@ -35,14 +35,13 @@
 
 package org.opentox.jaqpot3.qsar.predictor;
 
+import java.util.List;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractPredictor;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.DatasetFactory;
@@ -51,7 +50,6 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
 
-import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 
 /**
@@ -106,7 +104,9 @@ public class WekaPredictor extends AbstractPredictor {
                     }
                 }
             }
-            
+                
+            List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(predictions, pmmlObject);
+            predictions = WekaInstancesProcess.removeInstancesAttributes(predictions, trFieldsIndex);
             Instances result = Instances.mergeInstances(justCompounds, predictions);
             Dataset ds = DatasetFactory.getInstance().createFromArff(result);
 

@@ -138,6 +138,23 @@ public class WekaInstancesProcess {
         }
     }
     
+    public static Instances removeInstancesAttributes(Instances inputData,List<Integer> indexArray) throws JaqpotException {
+        try {
+            
+            int[] intArray = ArrayUtils.toPrimitive(indexArray.toArray(new Integer[indexArray.size()]));
+            Remove rm = new Remove();
+            rm.setInvertSelection(false);
+            rm.setAttributeIndicesArray(intArray);
+            rm.setInputFormat(inputData);
+            Instances filteredData = Filter.useFilter(inputData, rm);
+            
+            return filteredData;
+
+        } catch (Exception ex) {
+            throw new JaqpotException(ex);
+        }
+    }
+    
     public static Instances addNewAttribute(Instances filteredData,String nextFeatureUri) throws JaqpotException{
         Add attributeAdder = new Add();
         attributeAdder.setAttributeIndex("last");
