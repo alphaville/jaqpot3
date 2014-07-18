@@ -138,4 +138,49 @@ public class InstancesUtil {
 //        Instances newInst = InstancesUtil.sortByFeatureAttrList(list, initialDataset, -1);
 //        System.out.println(newInst);
 //    }
+    public static Instances sortForPMMLModel(List<Feature> list,List<Integer> trFieldsAttrIndex, final Instances data, int compoundURIposition) throws JaqpotException {
+        List<String> features = new ArrayList<String>();
+        for (Feature feature : list) {
+            features.add(feature.getUri().toString());
+        }
+        
+        int position = compoundURIposition > features.size() ? features.size() : compoundURIposition;
+        if (compoundURIposition != -1) {
+            features.add(position, "compound_uri");
+        }
+        FastVector vector = new FastVector(features.size());
+        for (int i = 0; i < features.size(); i++) {
+            String feature = features.get(i);
+            Attribute attribute = data.attribute(feature);
+            if (attribute == null) {
+                throw new JaqpotException("The Dataset you provided does not contain feature:" + feature);
+            }
+            vector.addElement(attribute.copy());
+        }
+        int attributeSize = features.size();
+        
+        if(trFieldsAttrIndex.size() > 0) {
+            for (int i = 0; i < trFieldsAttrIndex.size(); i++) {
+                Attribute attribute = data.attribute(trFieldsAttrIndex.get(i));
+                if (attribute == null) {
+                    throw new JaqpotException("The Dataset you provided does not contain this pmml feature");
+                }
+                vector.addElement(attribute.copy());
+            }
+            attributeSize+=trFieldsAttrIndex.size();
+        }
+        
+        Instances result = new Instances(data.relationName(), vector, 0);
+        Enumeration instances = data.enumerateInstances();
+        while (instances.hasMoreElements()) {
+            Instance instance = (Instance) instances.nextElement();
+            double[] vals = new double[attributeSize];
+            for (int i = 0; i < attributeSize; i++) {
+                vals[i] = instance.value(data.attribute(result.attribute(i).name()));
+            }
+            Instance in = new Instance(1.0, vals);
+            result.add(in);
+        }
+        return result;
+    }
 }

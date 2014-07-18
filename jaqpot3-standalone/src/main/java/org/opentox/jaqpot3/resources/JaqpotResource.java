@@ -42,11 +42,17 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
+import org.opentox.jaqpot3.www.ClientUploadInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.DummyComponent;
@@ -65,6 +71,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
+import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.ext.wadl.WadlServerResource;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -206,6 +213,28 @@ public abstract class JaqpotResource extends WadlServerResource {
                         throw new RuntimeException(ex);
                     }
                 }
+                if (token==null) {
+                    DiskFileItemFactory factory = new DiskFileItemFactory();
+                    factory.setSizeThreshold(1000240);
+
+                    ClientUploadInput multiInput = new ClientUploadInput(new Form());
+                    String tokenInFileUpload;
+                    RestletFileUpload upload = new RestletFileUpload(factory);
+                    try {
+                        List<FileItem> items = upload.parseRequest(getRequest());
+                        if (!items.isEmpty()) {
+                            for(int i=0;i<items.size();++i) {
+                                if (StringUtils.equals(items.get(i).getFieldName(),"subjectid")) {
+                                    token = items.get(i).getString();
+                                    break;
+                                }
+                            }
+                        }
+                    } catch(Exception ex) {
+
+                    }
+                }
+                
                 if (token == null) {
                     return null;
                 }

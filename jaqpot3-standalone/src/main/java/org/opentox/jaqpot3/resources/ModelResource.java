@@ -42,7 +42,7 @@ import org.opentox.jaqpot3.pool.ExecutionPool;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
 import org.opentox.jaqpot3.qsar.PredictorFinder;
-import org.opentox.jaqpot3.qsar.util.PMMLGenerator;
+import org.opentox.jaqpot3.qsar.util.PMMLProcess;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.util.TaskFactory;
@@ -184,7 +184,7 @@ public class ModelResource extends JaqpotResource {
             }
             if (variant.getMediaType().equals(MediaType.APPLICATION_XML)) {
                 try {
-                    return sendMessage(PMMLGenerator.generatePMML(mdl));
+                    return sendMessage(PMMLProcess.generatePMML(mdl));
                 } catch (UnsupportedOperationException ex) {
                     getResponse().setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
                     return errorReport("NotSupportedYet", ex.getMessage(),

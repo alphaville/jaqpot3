@@ -57,6 +57,7 @@ import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.jaqpot3.qsar.util.ExpressionUtilExtended;
 import org.opentox.jaqpot3.qsar.util.LocalEvaluationContext;
+import org.opentox.jaqpot3.qsar.util.PMMLProcess;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
@@ -99,7 +100,6 @@ public abstract class AbstractTrainer implements ITrainer {
 
         //todo cleanup
         //missing value
-        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewOriginal.csv");
         if (!keepNominal()){
             
         }
@@ -116,7 +116,7 @@ public abstract class AbstractTrainer implements ITrainer {
             
         }
         if(pmml!=null) {
-            loadPMMObject();
+            pmmlObject = PMMLProcess.loadPMMLObject(pmml);
         }
             
         setIndepNDependentFeatures(inst);
@@ -129,7 +129,6 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
-        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewAfterPreprocessInstances.csv");
          
         if(pmml!=null) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
@@ -156,19 +155,6 @@ public abstract class AbstractTrainer implements ITrainer {
     public Instances preprocessDataset(Instances inst) {
         return inst;
     }    
-    
-    private void loadPMMObject() throws JaqpotException{
-        try {    
-            InputStream is = new ByteSequence(pmml);
-            InputSource source = new InputSource(is);
-
-            SAXSource transformedSource = ImportFilter.apply(source);
-            pmmlObject = JAXBUtil.unmarshalPMML(transformedSource);
-        } catch (Exception ex) {
-            String message = "Exception while loading PMML to object";
-            throw new JaqpotException(message, ex);
-        }
-    }
     
     private void setIndepNDependentFeatures(Instances inst) throws JaqpotException{
         String targetString = ClientParams.getFirstValue("prediction_feature");

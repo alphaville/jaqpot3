@@ -34,11 +34,14 @@
 
 package org.opentox.jaqpot3.qsar.trainer;
 
+import com.google.common.collect.Sets.SetView;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -227,10 +230,14 @@ public class MlrRegression extends AbstractTrainer {
                 Logger.getLogger(MlrRegression.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            Set<LiteralValue> depFeatTitles = dependentFeature.getMeta().getTitles();
+            Set<LiteralValue> depFeatTitles = null;
+            if(dependentFeature.getMeta()!=null){
+                depFeatTitles = dependentFeature.getMeta().getTitles();
+            }
+                
 
             String depFeatTitle = dependentFeature.getUri().toString();
-            if (!depFeatTitles.isEmpty()) {
+            if (depFeatTitles!=null) {
                 depFeatTitle = depFeatTitles.iterator().next().getValueAsString();
                 m.getMeta().addTitle("MLR model for " + depFeatTitle).
                         addDescription("MLR model for the prediction of " + depFeatTitle + " (uri: " + dependentFeature.getUri() + " ).");
@@ -283,7 +290,6 @@ public class MlrRegression extends AbstractTrainer {
             try {
                 linreg.setOptions(linRegOptions);
                 linreg.buildClassifier(orderedTrainingSet);
-                WekaInstancesProcess.toCSV(orderedTrainingSet, "C:\\Users\\philip\\Downloads\\New MLR\\beforeTrainNewAfterLinreg.buildClassifier.csv");
             } catch (final Exception ex) {// illegal options or could not build the classifier!
                 String message = "MLR Model could not be trained";
                 logger.error(message, ex);

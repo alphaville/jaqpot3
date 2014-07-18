@@ -35,13 +35,35 @@
 
 package org.opentox.jaqpot3.qsar.util;
 
+import com.sun.org.apache.bcel.internal.util.ByteSequence;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import org.dmg.pmml.PMML;
+import org.jpmml.model.ImportFilter;
+import org.jpmml.model.JAXBUtil;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import weka.classifiers.functions.LinearRegression;
 
 /**
@@ -49,9 +71,9 @@ import weka.classifiers.functions.LinearRegression;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
-public class PMMLGenerator {
+public class PMMLProcess {
 
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PMMLGenerator.class);
+    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PMMLProcess.class);
 
     public static String generatePMML(Model model) throws JaqpotException{
         if(model.getAlgorithm().equals(Algorithms.mlr())){
@@ -62,7 +84,9 @@ public class PMMLGenerator {
     }
 
     private static String generateMLR(Model model) throws JaqpotException{
-        LinearRegression wekaModel = (LinearRegression) model.getActualModel();
+        LinearRegression wekaModel = (LinearRegression) model.getActualModel().getSerializableActualModel();
+        byte[] pmmlFile = model.getActualModel().getPmml();
+        
         String uuid = model.getUri().getId();
         String PMMLIntro = Configuration.getStringProperty("pmml.intro");
         StringBuilder pmml = new StringBuilder();
@@ -90,6 +114,12 @@ public class PMMLGenerator {
                 pmml.append("<DataField name=\"" + feature.getUri().toString() + "\" optype=\"continuous\" dataType=\"double\" />\n");
             }
             pmml.append("</DataDictionary>\n");
+            
+            if(pmmlFile.length>0) {
+                String TrDictionaryString = getTransformationDictionaryXML(pmmlFile);
+                pmml.append(TrDictionaryString+"\n");
+            }
+            
             // RegressionModel
             pmml.append("<RegressionModel modelName=\"" + uuid.toString() + "\"" + 
                     " functionName=\"regression\" modelType=\"linearRegression\"" +
@@ -105,6 +135,8 @@ public class PMMLGenerator {
             pmml.append("</MiningSchema>\n");
             // RegressionModel::RegressionTable
             pmml.append("<RegressionTable intercept=\"" + coefficients[coefficients.length - 1] + "\">\n");
+            
+            //TODO change coefficients
             for (int k = 0; k < model.getIndependentFeatures().size() ; k++) {
                     pmml.append("<NumericPredictor name=\"" + model.getIndependentFeatures().get(k).getUri().toString() + "\" " + " exponent=\"1\" " + "coefficient=\"" + coefficients[k] + "\"/>\n");
 
@@ -126,5 +158,69 @@ public class PMMLGenerator {
         return pmml.toString();
     }
     
+    public static PMML loadPMMLObject(byte[] pmml) throws JaqpotException{
+        PMML pmmlObject;
+        try {    
+            InputStream is = new ByteSequence(pmml);
+            InputSource source = new InputSource(is);
+
+            SAXSource transformedSource = ImportFilter.apply(source);
+            pmmlObject = JAXBUtil.unmarshalPMML(transformedSource);
+        } catch (Exception ex) {
+            String message = "Exception while loading PMML to object";
+            throw new JaqpotException(message, ex);
+        }
+        return pmmlObject;
+    }
+    
+    private static String getNodeFromXML(String xml) throws JaqpotException{
+        String res="";
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            ByteArrayInputStream bis = new ByteArrayInputStream(xml.getBytes());
+            Document doc = docBuilder.parse(bis);
+
+            // XPath to retrieve the content of the <FamilyAnnualDeductibleAmount> tag
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expression = "/PMML/TransformationDictionary";
+            Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
+            
+            StreamResult xmlOutput = new StreamResult(new StringWriter());
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(node), xmlOutput);
+            res =  xmlOutput.getWriter().toString();
+
+        } catch (Exception ex) {
+            String message = "Unexpected exception was caught while generating"
+                    + " the PMML representaition of a trained model.";
+            logger.error(message, ex);
+            throw new JaqpotException(message, ex);
+        }
+        
+        return res;
+    }
+    
+    private static String getTransformationDictionaryXML(byte[] pmmlFile) throws JaqpotException,IOException {
+        String res = "";
+        PMML pmmlObject = loadPMMLObject(pmmlFile);
+        PMML newPmmlObject = new PMML();
+        newPmmlObject.setTransformationDictionary(pmmlObject.getTransformationDictionary());
+        StringWriter outWriter = new StringWriter();
+        try { 
+            JAXBUtil.marshalPMML(newPmmlObject, new StreamResult(outWriter));
+            StringBuffer sb = outWriter.getBuffer(); 
+            res = getNodeFromXML(sb.toString());
+        } catch (Exception ex) {
+            String message = "Unexpected exception was caught while generating"
+            + " the PMML representation of a trained model.";
+            logger.error(message, ex);
+            throw new JaqpotException(message, ex);
+        } finally {
+            outWriter.close();
+        }
+        return res;
+    }
 }
 

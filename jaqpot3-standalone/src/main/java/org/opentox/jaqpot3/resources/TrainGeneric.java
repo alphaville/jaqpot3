@@ -151,7 +151,7 @@ public class TrainGeneric extends JaqpotResource {
             return new StringRepresentation("You must login first!!!");
         }
         
-        String ds="",pf="",alg="",params="",uploadFilename="";
+        String ds="",pf="",alg="",params="",uploadFilename="",feat_service="";
         InputStream ist = null;
         
 
@@ -178,6 +178,7 @@ public class TrainGeneric extends JaqpotResource {
                 ds = multiInput.getFirstValue("dataset_uri");
                 pf = multiInput.getFirstValue("prediction_feature");
                 alg = multiInput.getFirstValue("algorithm_uri");
+                feat_service = multiInput.getFirstValue("feature_service");
                 params = multiInput.getFirstValue("params");
 
             }
@@ -209,6 +210,7 @@ public class TrainGeneric extends JaqpotResource {
         client.setMediaType(Media.TEXT_URI_LIST);
         client.addPostParameter("dataset_uri", ds);
         client.addPostParameter("prediction_feature", pf);
+        client.addPostParameter("feature_service", feat_service);
         if (!map.isEmpty()) {
             Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
             while (iterator.hasNext()) {

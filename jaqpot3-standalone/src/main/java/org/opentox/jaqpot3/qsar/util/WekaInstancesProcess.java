@@ -238,4 +238,37 @@ public class WekaInstancesProcess {
                 
         return inst;
     }
+    
+    public static List<Integer> getTransformationFieldsAttrIndex(Instances inst,PMML pmmlObject) throws JaqpotException{
+        //TODO add new features when uris missing
+        List<Integer> res = new ArrayList<Integer>();
+        try {     
+
+            if (pmmlObject!=null) {
+                //Get the Derived fields (math formulas) of the PMML file
+                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
+                if (trDir!=null) {
+                    List<DerivedField> dfVar = trDir.getDerivedFields();
+
+                    if (!dfVar.isEmpty()) {
+                        int numAttributes = inst.numAttributes();
+                        for(int i=0;i<dfVar.size();++i) {
+                            
+                            for (int j = 0; j < numAttributes; j++) {
+                                if(StringUtils.equals(dfVar.get(i).getName().getValue(),inst.attribute(j).name())){
+                                    res.add(j);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            String message = "Exception while trying to transform Instances";
+            throw new JaqpotException(message, ex);
+        }
+                
+        return res;
+    }
 }

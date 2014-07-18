@@ -58,6 +58,7 @@ import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numer
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.string;
 import org.opentox.jaqpot3.qsar.util.ExpressionUtilExtended;
 import org.opentox.jaqpot3.qsar.util.LocalEvaluationContext;
+import org.opentox.jaqpot3.qsar.util.PMMLProcess;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import static org.opentox.jaqpot3.qsar.util.WekaInstancesProcess.addNewAttribute;
 import static org.opentox.jaqpot3.qsar.util.WekaInstancesProcess.getInstanceAttributeValues;
@@ -81,6 +82,7 @@ import weka.core.Instances;
 public abstract class AbstractPredictor implements IPredictor {
 
     protected byte[] pmml;
+    protected List<Integer> trFieldsAttrIndex;
     protected PMML pmmlObject;
     protected Instances justCompounds;
     private Task task;
@@ -99,35 +101,22 @@ public abstract class AbstractPredictor implements IPredictor {
         dependentFeature = model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
         
-        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\New MLR\\predict\\beforePredictNewOriginal.csv");
                 
         if(model.getActualModel()!=null) {
             pmml = model.getActualModel().getPmml();
             if(pmml!=null) {
                 
-                loadPMMObject();
+                pmmlObject = PMMLProcess.loadPMMLObject(pmml);
                 //IMPORTANT!!!! WekaInstancesProcess.getFilteredInstances removes compound URI that is needed
                 
                 //TODO check Spot for MVH
                 //inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
                 inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+                trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
             }
         }
         return inst;
     }    
-    
-    private void loadPMMObject() throws JaqpotException{
-        try {    
-            InputStream is = new ByteSequence(pmml);
-            InputSource source = new InputSource(is);
-
-            SAXSource transformedSource = ImportFilter.apply(source);
-            pmmlObject = JAXBUtil.unmarshalPMML(transformedSource);
-        } catch (Exception ex) {
-            String message = "Exception while loading PMML to object";
-            throw new JaqpotException(message, ex);
-        }
-    }
     
     
     @Override
