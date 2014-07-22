@@ -92,6 +92,7 @@ public abstract class AbstractPredictor implements IPredictor {
     protected Feature dependentFeature;
 
     public AbstractPredictor() {
+        trFieldsAttrIndex = new ArrayList<Integer>();
     }
 
     

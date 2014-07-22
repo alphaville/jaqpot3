@@ -50,6 +50,7 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.jaqpot3.util.TaskFactory;
+import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.ClientUploadInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.jaqpot3.www.services.TrainingService;
@@ -292,10 +293,15 @@ public class AlgorithmResource extends JaqpotResource {
         IParametrizableAlgorithm algorithm = AlgorithmFinder.getAlgorithm(primaryId);
         if (algorithm != null) {// algorithm found!
          
+            ClientUploadInput multiInput;
+            
+            if (StringUtils.equals(entity.getMediaType().toString(),"application/x-www-form-urlencoded")) {
+                 multiInput = new ClientInput(entity);
+            } else {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setSizeThreshold(1000240);
             
-            ClientUploadInput multiInput = new ClientUploadInput(new Form());
+            multiInput = new ClientUploadInput(new Form());
 
             RestletFileUpload upload = new RestletFileUpload(factory);
             try {
@@ -319,7 +325,7 @@ public class AlgorithmResource extends JaqpotResource {
             } catch(Exception ex) {
                 
             }
-
+            }
             algorithm.setTask(task);
             ITrainer trainer = (ITrainer) algorithm;
             TrainingService ts = new TrainingService(trainer, multiInput, getUserToken());

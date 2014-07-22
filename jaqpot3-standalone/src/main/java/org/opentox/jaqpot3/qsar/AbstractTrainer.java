@@ -96,7 +96,7 @@ public abstract class AbstractTrainer implements ITrainer {
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
         
         String isMvh = ClientParams.getFirstValue("mvh");
-        Boolean isMvhEnabled = (isMvh.trim().equals("1")) ? true : false;
+        Boolean isMvhEnabled = (StringUtils.equals(isMvh,"1")) ? true : false;
 
         //todo cleanup
         //missing value
