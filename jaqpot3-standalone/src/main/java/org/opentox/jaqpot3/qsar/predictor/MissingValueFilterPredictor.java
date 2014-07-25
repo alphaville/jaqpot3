@@ -79,7 +79,7 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances data) throws JaqpotException {
+    public Instances predict(Instances data) throws JaqpotException {
         HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();        
         for (String attribute2Bignored : ignoredUris) {
             Attribute attr = data.attribute(attribute2Bignored);
@@ -111,15 +111,7 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
             data.renameAttribute(currentAttribute, featureToMVH.get(nextFeature));
         }
         
-
-        try {
-            return DatasetFactory.getInstance().createFromArff(data);
-        } catch (ToxOtisException ex) {
-            Logger.getLogger(MissingValueFilterPredictor.class.getName()).log(Level.SEVERE, null, ex);
-            throw new JaqpotException(ex);
-        }
-
-
-
+        return data;
+        //TODO catch null
     }
 }

@@ -47,7 +47,7 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
     }
         
     @Override
-    public Dataset predict(Instances inputData) throws JaqpotException {
+    public Instances predict(Instances inputData) throws JaqpotException {
         try {
         CustomAlgorithmModel actualModel = (CustomAlgorithmModel) model.getActualModel();
 
@@ -120,12 +120,8 @@ public class CustomAlgorithmPredictor extends AbstractPredictor {
                     if (isCalculated)  filteredData.instance(i).setValue(num, res);
                 }
             }
-
-            try {
-                return DatasetFactory.getInstance().createFromArff(filteredData);
-            } catch (ToxOtisException ex) {
-                throw new JaqpotException(ex);
-            }
+            
+            return filteredData;
         } else {
             throw new JaqpotException("Independent features not found in Instances");
         }

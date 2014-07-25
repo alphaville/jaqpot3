@@ -54,6 +54,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -115,9 +116,11 @@ public class PMMLProcess {
             }
             pmml.append("</DataDictionary>\n");
             
-            if(pmmlFile.length>0) {
-                String TrDictionaryString = getTransformationDictionaryXML(pmmlFile);
-                pmml.append(TrDictionaryString+"\n");
+            if(pmmlFile!=null) {
+                if(pmmlFile.length>0) {
+                    String TrDictionaryString = getTransformationDictionaryXML(pmmlFile);
+                    pmml.append(TrDictionaryString+"\n");
+                }
             }
             
             // RegressionModel
@@ -131,15 +134,33 @@ public class PMMLProcess {
                     pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" />\n");
 
             }
+            
             pmml.append("<MiningField name=\"" + model.getDependentFeatures().iterator().next().getUri().toString() + "\" " + "usageType=\"predicted\"/>\n");
             pmml.append("</MiningSchema>\n");
             // RegressionModel::RegressionTable
             pmml.append("<RegressionTable intercept=\"" + coefficients[coefficients.length - 1] + "\">\n");
             
+            int k = 0;
             //TODO change coefficients
-            for (int k = 0; k < model.getIndependentFeatures().size() ; k++) {
+            for (k = 0; k < model.getIndependentFeatures().size() ; k++) {
                     pmml.append("<NumericPredictor name=\"" + model.getIndependentFeatures().get(k).getUri().toString() + "\" " + " exponent=\"1\" " + "coefficient=\"" + coefficients[k] + "\"/>\n");
 
+            }
+            
+            if(pmmlFile!=null) {
+                if(pmmlFile.length>0) {
+                    PMML pmmlObject = loadPMMLObject(pmmlFile);
+                    TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
+                    if(trDir!=null) {
+                        int trDirSize = trDir.getDerivedFields().size();
+                        int j=0;
+                        while(j<trDirSize) {
+                            pmml.append("<NumericPredictor name=\"" + trDir.getDerivedFields().get(j).getName().toString()+ "\" " + " exponent=\"1\" " + "coefficient=\"" + coefficients[k] + "\"/>\n");
+                            ++k;
+                            ++j;
+                        }
+                    }
+                }
             }
             pmml.append("</RegressionTable>\n");
             pmml.append("</RegressionModel>\n");

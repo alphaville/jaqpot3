@@ -102,7 +102,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances inputSet) throws JaqpotException {
+    public Instances predict(Instances inputSet) throws JaqpotException {
         FastRbfNnModel actualModel = (FastRbfNnModel) model.getActualModel();
         Instances orderedDataset = null;
         try {
@@ -138,14 +138,9 @@ public class FastRbfNnPredictor extends AbstractPredictor {
             predictions.instance(i).setClassValue(sum);
         }
 
-        try {
-            Instances resultSet = Instances.mergeInstances(justCompounds, predictions);
-            Dataset output = DatasetFactory.getInstance().createFromArff(resultSet);
-            return output;
-        } catch (ToxOtisException ex) {
-            logger.error(null, ex);
-            throw new JaqpotException(ex);
-        }
+        Instances resultSet = Instances.mergeInstances(justCompounds, predictions);
+        return resultSet;
+        //TODO catch null
 
     }
     

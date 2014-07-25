@@ -67,7 +67,7 @@ public class PLSPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances input) throws JaqpotException {
+    public Instances predict(Instances input) throws JaqpotException {
         PLSModel actual = (PLSModel) model.getActualModel();
         PLSFilter plsFilter = actual.getPls();
         Instances newData = InstancesUtil.sortForModel(model, input, -1);
@@ -97,12 +97,8 @@ public class PLSPredictor extends AbstractPredictor {
         }        
         newData.renameAttribute(newData.attribute("Class"),target);        
         newData = Instances.mergeInstances(compounds, newData);
-        try {
-            return DatasetFactory.getInstance().createFromArff(newData);
-        } catch (ToxOtisException ex) {
-            Logger.getLogger(PLSPredictor.class.getName()).log(Level.SEVERE, null, ex);
-            throw new JaqpotException(ex);
-        }
         
+        return newData;
+        //TODO catch null
     }
 }

@@ -41,10 +41,16 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
+import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.PMMLEvaluationContext;
+import org.jpmml.manager.PMMLManager;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
@@ -89,6 +95,22 @@ public class WekaInstancesProcess {
             }
         }
         return featureMap;
+    }
+    
+    public static PMMLEvaluationContext getInstanceAttributeFieldRefValues(Instance inst,int numAttributes,
+                                                                        PMMLEvaluationContext context, List<DataField> dataFields) {
+        //numAttributes need to be set before adding the new attributes
+        for(DataField dataField : dataFields){
+            for (int i=0;i < numAttributes;++i) {
+                if( StringUtils.equals(inst.attribute(i).name(),dataField.getName().toString())) {
+                    context.declare(dataField.getName(), inst.value(i));
+                    break;
+                }
+            }
+            
+        }
+
+        return context;
     }
     
     public static List<Integer> getDescriptorsIndexArray(Instances inputData,List<Feature> independentFeatures,Feature dependentFeature) {
@@ -216,9 +238,19 @@ public class WekaInstancesProcess {
         try {     
 
             if (pmmlObject!=null) {
+                
+                PMMLManager pmmlManager = new PMMLManager(pmmlObject);
+
+                PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
+
+                DataDictionary dataDictionary = pmmlManager.getDataDictionary();
+                List<DataField> dataFields = dataDictionary.getDataFields();
+
+                
                 //Get the Derived fields (math formulas) of the PMML file
-                TransformationDictionary trDir = pmmlObject.getTransformationDictionary();
+                TransformationDictionary trDir = pmmlManager.getTransformationDictionary();
                 if (trDir!=null) {
+                    
                     List<DerivedField> dfVar = trDir.getDerivedFields();
 
                     if (!dfVar.isEmpty()) {
@@ -226,19 +258,22 @@ public class WekaInstancesProcess {
                         int numInstances = inst.numInstances();
 
                         int targetAttributeIndex = numAttributes;
-                        Map<String,Double> featureMap; 
+                        //foreach transformation
                         for(int i=0;i<dfVar.size();++i) {
 
+                            //add a new attribute
                             String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
                             inst = WekaInstancesProcess.addNewAttribute(inst, attrName);
 
                             Double res;
+                            // foreach transformation's instances
                             for (int j = 0; j < numInstances; j++) {
 
-                                featureMap = WekaInstancesProcess.getInstanceAttributeValues(inst.instance(j),numAttributes);
-
-                                FieldValue val = ExpressionUtilExtended.evaluate(dfVar.get(i), new LocalEvaluationContext(),featureMap);
-
+                                context = new PMMLEvaluationContext(pmmlManager);
+                                context = getInstanceAttributeFieldRefValues(inst.instance(j),numAttributes,context,dataFields);
+                                
+                                FieldValue val = ExpressionUtil.evaluate(dfVar.get(i), context);
+                                
                                 res = (Double) val.getValue();
                                 res = (!Double.isNaN(res)) ? res : Double.MIN_VALUE;
                                 inst.instance(j).setValue(targetAttributeIndex, res);

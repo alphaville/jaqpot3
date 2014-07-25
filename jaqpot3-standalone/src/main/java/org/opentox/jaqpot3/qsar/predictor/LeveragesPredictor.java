@@ -50,7 +50,7 @@ public class LeveragesPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances inputSet) throws JaqpotException {
+    public Instances predict(Instances inputSet) throws JaqpotException {
         LeveragesModel actualModel = (LeveragesModel) model.getActualModel();
         Matrix matrix = actualModel.getDataMatrix();
         double gamma = actualModel.getGamma();
@@ -100,17 +100,9 @@ public class LeveragesPredictor extends AbstractPredictor {
             predictions.instance(i).setClassValue(indicator);
         }
 
-        try {
+        Instances result = Instances.mergeInstances(compounds, predictions);
 
-            Dataset output = DatasetFactory.getInstance().
-                    createFromArff(Instances.mergeInstances(compounds, predictions));
-
-            return output;
-        } catch (ToxOtisException ex) {
-            logger.error(null, ex);
-            throw new JaqpotException(ex);
-        }
-
-
+        return result;
+        //TODO catch null
     }
 }

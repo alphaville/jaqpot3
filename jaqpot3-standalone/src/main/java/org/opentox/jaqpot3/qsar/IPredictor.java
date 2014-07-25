@@ -120,9 +120,7 @@ public interface IPredictor {
      */
     IPredictor setToken(AuthenticationToken token);
 
-    Dataset predict(Dataset input) throws JaqpotException;
-
-    Dataset predict(Instances input) throws JaqpotException;
+    Instances predict(Instances input) throws JaqpotException;
     
     Dataset predict(VRI input) throws JaqpotException;
 }

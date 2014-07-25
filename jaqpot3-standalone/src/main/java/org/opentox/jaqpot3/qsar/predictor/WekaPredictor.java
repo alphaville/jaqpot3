@@ -72,49 +72,43 @@ public class WekaPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances inputSet) throws JaqpotException {
+    public Instances predict(Instances inputSet) throws JaqpotException {
+        
+        /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
+        Instances newData = InstancesUtil.sortForPMMLModel(model.getIndependentFeatures(),trFieldsAttrIndex, inputSet, -1);
+        /* ADD TO THE NEW DATA THE PREDICTION FEATURE*/
+        Add attributeAdder = new Add();
+        attributeAdder.setAttributeIndex("last");
+        attributeAdder.setAttributeName(model.getPredictedFeatures().iterator().next().getUri().toString());
+        Instances predictions = null;
         try {
-            /* THE OBJECT newData WILL HOST THE PREDICTIONS... */
-            Instances newData = InstancesUtil.sortForPMMLModel(model.getIndependentFeatures(),trFieldsAttrIndex, inputSet, -1);
-            /* ADD TO THE NEW DATA THE PREDICTION FEATURE*/
-            Add attributeAdder = new Add();
-            attributeAdder.setAttributeIndex("last");
-            attributeAdder.setAttributeName(model.getPredictedFeatures().iterator().next().getUri().toString());
-            Instances predictions = null;
-            try {
-                attributeAdder.setInputFormat(newData);
-                predictions = Filter.useFilter(newData, attributeAdder);
-                predictions.setClass(predictions.attribute(model.getPredictedFeatures().iterator().next().getUri().toString()));
-            } catch (Exception ex) {
-                String message = "Exception while trying to add prediction feature to Instances";
-                logger.debug(message, ex);
-                throw new JaqpotException(message, ex);
-            }
-
-            if (predictions != null) {
-                Classifier classifier = (Classifier) model.getActualModel().getSerializableActualModel();
-
-                int numInstances = predictions.numInstances();
-                for (int i = 0; i < numInstances; i++) {
-                    try {
-                        double predictionValue = classifier.distributionForInstance(predictions.instance(i))[0];
-                        predictions.instance(i).setClassValue(predictionValue);
-                    } catch (Exception ex) {
-                        logger.warn("Prediction failed :-(", ex);
-                    }
-                }
-            }
-                
-            List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(predictions, pmmlObject);
-            predictions = WekaInstancesProcess.removeInstancesAttributes(predictions, trFieldsIndex);
-            Instances result = Instances.mergeInstances(justCompounds, predictions);
-            Dataset ds = DatasetFactory.getInstance().createFromArff(result);
-
-            return ds;
-        } catch (ToxOtisException ex) {
-            logger.debug(null, ex);
-            throw new JaqpotException("Exception while performing prediction", ex);
+            attributeAdder.setInputFormat(newData);
+            predictions = Filter.useFilter(newData, attributeAdder);
+            predictions.setClass(predictions.attribute(model.getPredictedFeatures().iterator().next().getUri().toString()));
+        } catch (Exception ex) {
+            String message = "Exception while trying to add prediction feature to Instances";
+            logger.debug(message, ex);
+            throw new JaqpotException(message, ex);
         }
 
+        if (predictions != null) {
+            Classifier classifier = (Classifier) model.getActualModel().getSerializableActualModel();
+
+            int numInstances = predictions.numInstances();
+            for (int i = 0; i < numInstances; i++) {
+                try {
+                    double predictionValue = classifier.distributionForInstance(predictions.instance(i))[0];
+                    predictions.instance(i).setClassValue(predictionValue);
+                } catch (Exception ex) {
+                    logger.warn("Prediction failed :-(", ex);
+                }
+            }
+        }
+
+        List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(predictions, pmmlObject);
+        predictions = WekaInstancesProcess.removeInstancesAttributes(predictions, trFieldsIndex);
+        Instances result = Instances.mergeInstances(justCompounds, predictions);
+
+        return result;
     }
 }

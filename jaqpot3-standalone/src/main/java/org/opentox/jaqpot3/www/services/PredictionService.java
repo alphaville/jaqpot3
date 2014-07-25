@@ -38,6 +38,7 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
@@ -46,6 +47,7 @@ import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
@@ -121,12 +123,18 @@ public class PredictionService extends RunnableTaskService {
             this.parametrize(clientInput);
             predictor.parametrize(clientInput);
             VRI datasetURI = new VRI(datasetUri);
-            
-
-            /* GET THE PREDICTIONS FROM THE PREDICTOR */
-            Dataset output = predictor.predict(datasetURI);
+            Future<VRI> future;
+            if(datasetURI.getOpenToxType() == SubstanceDataset.class) {
+                /* GET THE PREDICTIONS FROM THE PREDICTOR */
+                Dataset output = predictor.predict(datasetURI);
+                future = output.publish(datasetServiceUri, token);
+            } else {
+                /* GET THE PREDICTIONS FROM THE PREDICTOR */
+                Dataset output = predictor.predict(datasetURI);
+                future = output.publish(datasetServiceUri, token);
+            }
             /* */
-            Future<VRI> future = output.publish(datasetServiceUri, token);
+            
             float counter = 1;
             while (!future.isDone()) {
                 try {

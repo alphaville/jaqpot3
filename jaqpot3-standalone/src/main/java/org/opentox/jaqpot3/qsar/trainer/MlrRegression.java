@@ -152,7 +152,6 @@ public class MlrRegression extends AbstractTrainer {
 
     @Override
     public Model train(Instances data) throws JaqpotException {
-        data.renameAttribute(0, "compound_uri");
         try {
 
             getTask().getMeta().addComment("Dataset successfully retrieved and converted "

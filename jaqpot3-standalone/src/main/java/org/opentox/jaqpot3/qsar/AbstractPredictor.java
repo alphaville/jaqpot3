@@ -33,45 +33,23 @@
  */
 package org.opentox.jaqpot3.qsar;
 
-import com.sun.org.apache.bcel.internal.util.ByteSequence;
-import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import javax.xml.transform.sax.SAXSource;
-import org.apache.commons.lang.StringUtils;
-import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataField;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.TransformationDictionary;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
 import org.opentox.jaqpot3.exception.JaqpotException;
-import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
-import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.nominal;
-import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numeric;
-import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.string;
-import org.opentox.jaqpot3.qsar.util.ExpressionUtilExtended;
-import org.opentox.jaqpot3.qsar.util.LocalEvaluationContext;
 import org.opentox.jaqpot3.qsar.util.PMMLProcess;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
-import static org.opentox.jaqpot3.qsar.util.WekaInstancesProcess.addNewAttribute;
-import static org.opentox.jaqpot3.qsar.util.WekaInstancesProcess.getInstanceAttributeValues;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
+import org.opentox.toxotis.factory.DatasetFactory;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.arff.ArffDownloader;
-import org.xml.sax.InputSource;
 import weka.core.Instances;
 
 /**
@@ -148,27 +126,38 @@ public abstract class AbstractPredictor implements IPredictor {
         return model;
     }
 
-    @Override
-    public Dataset predict(VRI input) throws JaqpotException {
-        ArffDownloader downloader = new ArffDownloader(input);
-        Instances inst = downloader.getInstances();
+    
+    private Instances predictInstances(VRI input) throws JaqpotException {
+        Instances inst;
         
-        if (inst != null) { // the dataset is available in text/x-arff directly
-            inst = preprocessDataset(inst);
-            return predict(inst);
-        } else { // The instances object has to be retrieved from the RDF format
+        ArffDownloader downloader = new ArffDownloader(input);
+        inst = downloader.getInstances();// the dataset is available in text/x-arff directly
+        
+        if (inst == null) { 
+             // The instances object has to be retrieved from the RDF format
             try {
-                return predict(new Dataset(input).loadFromRemote());
+                Dataset data = new Dataset(input).loadFromRemote();
+                inst = data.getInstances();
             } catch (ToxOtisException ex) {
                 throw new JaqpotException(ex);
             } catch (ServiceInvocationException ex) {
                 throw new JaqpotException(ex);
             }
         }
+        inst = preprocessDataset(inst);
+        inst = predict(inst);
+        return inst;
     }
-
+    
     @Override
-    public Dataset predict(Dataset data) throws JaqpotException {
-        return predict(data.getInstances());
+    public Dataset predict(VRI input) throws JaqpotException {
+        Instances inst = predictInstances(input);
+        try {
+            return DatasetFactory.getInstance().createFromArff(inst);
+        } catch (ToxOtisException ex) {
+            throw new JaqpotException(ex);
+        }
     }
+    
+    
 }

@@ -78,59 +78,55 @@ public class ScalingPredictor extends AbstractPredictor {
     }
 
     @Override
-    public Dataset predict(Instances inputData) throws JaqpotException {
+    public Instances predict(Instances inputData) throws JaqpotException {
         try{
-        ScalingModel actualModel = (ScalingModel) model.getActualModel();
-        
-        Map<String, Double> mins = actualModel.getMinVals2();
-        Map<String, Double> maxs = actualModel.getMaxVals2();
+            ScalingModel actualModel = (ScalingModel) model.getActualModel();
 
-        updateFeatureMap(model);
-        
+            Map<String, Double> mins = actualModel.getMinVals2();
+            Map<String, Double> maxs = actualModel.getMaxVals2();
+
+            updateFeatureMap(model);
 
 
-        //int Nattr = inputData.numAttributes();
-        int Ninst = inputData.numInstances();
 
-        Iterator<String> features = featureToScaled.keySet().iterator();
+            //int Nattr = inputData.numAttributes();
+            int Ninst = inputData.numInstances();
 
-        String nextFeature = null;
-        Attribute currentAttribute = null;
-        double currentMin = 0;
-        double currentMax = 1;
-        double currentValue = 0;
+            Iterator<String> features = featureToScaled.keySet().iterator();
 
-        while (features.hasNext()) {
-            nextFeature = features.next();
-            currentMin = mins.get(nextFeature);
-            currentMax = maxs.get(nextFeature);
-            currentAttribute = inputData.attribute(nextFeature);
-            for (int iInst = 0; iInst < Ninst; iInst++) {
-                currentValue = inputData.instance(iInst).value(currentAttribute);
-                currentValue = (currentValue - currentMin) / (currentMax - currentMin);
-                inputData.instance(iInst).setValue(currentAttribute, currentValue);
+            String nextFeature = null;
+            Attribute currentAttribute = null;
+            double currentMin = 0;
+            double currentMax = 1;
+            double currentValue = 0;
+
+            while (features.hasNext()) {
+                nextFeature = features.next();
+                currentMin = mins.get(nextFeature);
+                currentMax = maxs.get(nextFeature);
+                currentAttribute = inputData.attribute(nextFeature);
+                for (int iInst = 0; iInst < Ninst; iInst++) {
+                    currentValue = inputData.instance(iInst).value(currentAttribute);
+                    currentValue = (currentValue - currentMin) / (currentMax - currentMin);
+                    inputData.instance(iInst).setValue(currentAttribute, currentValue);
+                }
             }
-        }
 
 
-        /** Rename Attributes in `inputData` **/
-        features = featureToScaled.keySet().iterator();
-        while (features.hasNext()) {
-            nextFeature = features.next();
-            currentAttribute = inputData.attribute(nextFeature);
-            if (currentAttribute == null) {
-                throw new JaqpotException("The dataset you provided does not contain the necessary "
-                        + "feature : " + nextFeature);
+            /** Rename Attributes in `inputData` **/
+            features = featureToScaled.keySet().iterator();
+            while (features.hasNext()) {
+                nextFeature = features.next();
+                currentAttribute = inputData.attribute(nextFeature);
+                if (currentAttribute == null) {
+                    throw new JaqpotException("The dataset you provided does not contain the necessary "
+                            + "feature : " + nextFeature);
+                }
+                inputData.renameAttribute(currentAttribute, featureToScaled.get(nextFeature));
             }
-            inputData.renameAttribute(currentAttribute, featureToScaled.get(nextFeature));
-        }
-        try {
-            return DatasetFactory.getInstance().createFromArff(inputData);
-        } catch (ToxOtisException ex) {
-            throw new JaqpotException(ex);
-        }
 
-
+            return inputData;
+            
         } catch (Throwable thr){
             thr.printStackTrace();
 
