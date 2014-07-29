@@ -39,6 +39,7 @@ import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.core.component.Task;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import weka.core.Instances;
@@ -123,4 +124,6 @@ public interface IPredictor {
     Instances predict(Instances input) throws JaqpotException;
     
     Dataset predict(VRI input) throws JaqpotException;
+    
+    SubstanceDataset predictEnm(VRI input) throws JaqpotException;
 }

@@ -51,13 +51,16 @@ import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.PMMLEvaluationContext;
 import org.jpmml.manager.PMMLManager;
+import org.json.JSONObject;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.nominal;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numeric;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.string;
+import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Feature;
+import org.opentox.toxotis.util.json.DatasetJsonDownloader;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVSaver;
@@ -321,6 +324,64 @@ public class WekaInstancesProcess {
             throw new JaqpotException(message, ex);
         }
                 
+        return res;
+    }
+    
+    public static String getCSVOutput(Instances inst,VRI datasetURI,String VRIprefix) {
+        String res,temp,name,units,sameAs,medium;
+        double value=0;
+        Map<String,String> UUIDMap;
+        
+        
+        VRI input = new VRI(datasetURI);
+        DatasetJsonDownloader jsn = new DatasetJsonDownloader(input);
+        JSONObject obj = jsn.getJSON();
+        
+        UUIDMap = jsn.bindUUIDsToNames(obj,VRIprefix);
+        String attrName = inst.attribute(1).name();
+        List<String> keys = new ArrayList<String>();
+        keys.add("feature");
+        keys.add(attrName);
+        keys.add("units");
+        units = jsn.traverse(keys,obj);
+
+        keys = new ArrayList<String>();
+        keys.add("feature");
+        keys.add(attrName);
+        keys.add("annotation");
+        keys.add("o");
+        medium = jsn.traverse(keys,obj);
+
+
+        keys = new ArrayList<String>();
+        keys.add("feature");
+        keys.add(attrName);
+        keys.add("sameAs");
+        sameAs = jsn.traverse(keys,obj);
+                   
+        res =   "EndpointCategory,"+""+"\n" +
+                "Protocol,\n" +
+                "Guideline,\n" +
+                "type_of_study,\n" +
+                "type_of_method,"+""+"\n" +
+                "data_gathering_instruments,\n" +
+                "Endpoint,"+sameAs+"\n" +
+                "Cell,\n" +
+                "MEDIUM,"+medium+"\n" +
+                "Condition,\n" +
+                "Designation,\n" +
+                "Units,"+units+"\n";
+        int noInstances = inst.numInstances();
+        int classAttributeIndex = inst.numAttributes()-1;
+        
+        for(int i=0;i<noInstances-1;++i ) {
+            if(StringUtils.isNotEmpty(UUIDMap.get(inst.attribute(0).value(i)))) {
+                value = inst.instance(i).value(classAttributeIndex);
+                name = UUIDMap.get(inst.attribute(0).value(i));
+                temp = name+","+value+"\n";
+                res +=temp;
+            }
+        }
         return res;
     }
 }

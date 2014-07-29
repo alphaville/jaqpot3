@@ -126,7 +126,8 @@ public class PredictionService extends RunnableTaskService {
             Future<VRI> future;
             if(datasetURI.getOpenToxType() == SubstanceDataset.class) {
                 /* GET THE PREDICTIONS FROM THE PREDICTOR */
-                Dataset output = predictor.predict(datasetURI);
+                
+                SubstanceDataset output = predictor.predictEnm(datasetURI);
                 future = output.publish(datasetServiceUri, token);
             } else {
                 /* GET THE PREDICTIONS FROM THE PREDICTOR */
