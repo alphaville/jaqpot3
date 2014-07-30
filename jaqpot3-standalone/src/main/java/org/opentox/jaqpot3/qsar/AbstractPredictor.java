@@ -166,7 +166,7 @@ public abstract class AbstractPredictor implements IPredictor {
     public SubstanceDataset predictEnm(VRI input) throws JaqpotException {
         Instances inst = predictInstances(input);
         SubstanceDataset ds = new SubstanceDataset();
-        //TODO IMPORTANT!!! this is custom 
+        //TODO IMPORTANT!!! this is custom must be generic
         String csvData = WekaInstancesProcess.getCSVOutput(inst,input,"http://apps.ideaconsult.net:8080/enanomapper/");
         ds.setCsv(csvData);
         return ds;
