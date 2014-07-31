@@ -34,14 +34,11 @@
 
 package org.opentox.jaqpot3.qsar.trainer;
 
-import com.google.common.collect.Sets.SetView;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -60,10 +57,12 @@ import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.factory.FeatureFactory;
+import org.opentox.toxotis.factory.PropertyFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
 import org.opentox.toxotis.ontology.ResourceValue;
 import org.opentox.toxotis.ontology.collection.OTClasses;
@@ -121,7 +120,7 @@ public class MlrRegression extends AbstractTrainer {
         try {
             targetUri = new VRI(targetString);
         } catch (URISyntaxException ex) {
-            throw new BadParameterException("The parameter 'prediction_feaure' you provided is not a valid URI.", ex);
+            throw new BadParameterException("The parameter 'prediction_feature' you provided is not a valid URI.", ex);
         }
         String datasetUriString = clientParameters.getFirstValue("dataset_uri");
         if (datasetUriString == null) {
@@ -254,18 +253,12 @@ public class MlrRegression extends AbstractTrainer {
 
             /* CREATE PREDICTED FEATURE AND POST IT TO REMOTE SERVER */
             String predictionFeatureUri = null;
-            try {
-                Feature predictedFeature = FeatureFactory.createAndPublishFeature(
-                        "Predicted " + depFeatTitle + " by MLR model", dependentFeature.getUnits(),
-                        new ResourceValue(m.getUri(), OTClasses.model()), featureService, token);
-                m.addPredictedFeatures(predictedFeature);
-                predictionFeatureUri = predictedFeature.getUri().toString();
-            } catch (ServiceInvocationException ex) {
-                logger.warn(null, ex);
-                throw new JaqpotException(ex);
-            }
-
+            Feature predictedFeature = publishFeature(m,dependentFeature.getUnits(),"Predicted " + depFeatTitle + " by MLR model",datasetUri,featureService);
+            m.addPredictedFeatures(predictedFeature);
+            predictionFeatureUri = predictedFeature.getUri().toString();
+            
             getTask().getMeta().addComment("Prediction feature " + predictionFeatureUri + " was created.");
+            
             firstTaskUpdater = new UpdateTask(getTask());
             firstTaskUpdater.setUpdateMeta(true);
             firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
@@ -309,6 +302,9 @@ public class MlrRegression extends AbstractTrainer {
             throw new JaqpotException(message, ex);
         }
     }
+
+    
+   
 
     
 }

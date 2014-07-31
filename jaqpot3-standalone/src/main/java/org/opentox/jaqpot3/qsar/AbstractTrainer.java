@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -71,6 +72,11 @@ import org.xml.sax.InputSource;
 import weka.core.Instances;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.jaqpot3.util.Configuration;
+import org.opentox.toxotis.core.component.SubstanceDataset;
+import org.opentox.toxotis.factory.FeatureFactory;
+import org.opentox.toxotis.factory.PropertyFactory;
+import org.opentox.toxotis.ontology.ResourceValue;
+import org.opentox.toxotis.ontology.collection.OTClasses;
 /**
  *
  * @author Pantelis Sopasakis
@@ -82,6 +88,7 @@ public abstract class AbstractTrainer implements ITrainer {
     protected PMML pmmlObject;
     private IClientInput ClientParams;
     private Task task;
+    protected Instances nonProcessedInstances;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
@@ -95,6 +102,7 @@ public abstract class AbstractTrainer implements ITrainer {
     
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
         
+        nonProcessedInstances=inst;
         String isMvh = ClientParams.getFirstValue("mvh");
         Boolean isMvhEnabled = (StringUtils.equals(isMvh,"1")) ? true : false;
 
@@ -271,4 +279,38 @@ public abstract class AbstractTrainer implements ITrainer {
         return resultModel;
     }
     
+    /*
+        Publishes features or properties
+    */
+    protected Feature publishFeature(Model m,String units,String title,VRI datasetUri,VRI featureService) throws JaqpotException {
+        Feature predictedFeature = new Feature();
+        try {
+            if(datasetUri.getOpenToxType() == SubstanceDataset.class) {
+                
+                SubstanceDataset ds = new SubstanceDataset();
+                
+                String host = SubstanceDataset.getHostFromVRI(datasetUri.toString());
+                units = (units==null) ? "" : units;
+                //TODO custom enanomapper
+                //gets the csv data for publishing a property to enanomapper
+                String csvData = WekaInstancesProcess.getCSVOutputForProperty(token,nonProcessedInstances,units,title,datasetUri,host);
+                ds.setCsv(csvData);
+                //this csv name must be final in order to have only one dataset for the published properties
+                ds.setOwnerName("publishProperty.csv");
+                ds.setUri(datasetUri);
+                
+                predictedFeature = PropertyFactory.createAndPublishProperty(title, units,ds,featureService, token);
+                
+            } else {
+                predictedFeature = FeatureFactory.createAndPublishFeature(title, units,
+                            new ResourceValue(m.getUri(), OTClasses.model()), featureService, token);
+            }
+        } catch (ServiceInvocationException ex) {
+            String message = "QSAR Exception: cannot train MLR model";
+            throw new JaqpotException(message, ex);
+        }
+        
+            
+        return predictedFeature;   
+    }
 }

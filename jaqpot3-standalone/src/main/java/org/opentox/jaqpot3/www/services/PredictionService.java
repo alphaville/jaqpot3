@@ -47,6 +47,7 @@ import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
 import org.opentox.toxotis.core.component.Dataset;
+import org.opentox.toxotis.core.component.Substance;
 import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.core.component.Task.Status;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
@@ -64,6 +65,7 @@ import org.opentox.toxotis.util.aa.AuthenticationToken;
 public class PredictionService extends RunnableTaskService {
 
     private IPredictor predictor;
+    private Boolean isSubstanceDataset;
     private IClientInput clientInput;
     private AuthenticationToken token;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PredictionService.class);
@@ -123,10 +125,10 @@ public class PredictionService extends RunnableTaskService {
             this.parametrize(clientInput);
             predictor.parametrize(clientInput);
             VRI datasetURI = new VRI(datasetUri);
+            isSubstanceDataset = (datasetURI.getOpenToxType() == SubstanceDataset.class) ? true: false;
             Future<VRI> future;
-            if(datasetURI.getOpenToxType() == SubstanceDataset.class) {
+            if(isSubstanceDataset) {
                 /* GET THE PREDICTIONS FROM THE PREDICTOR */
-                
                 SubstanceDataset output = predictor.predictEnm(datasetURI);
                 future = output.publish(datasetServiceUri, token);
             } else {
@@ -155,6 +157,18 @@ public class PredictionService extends RunnableTaskService {
             }
             try {
                 VRI resultUri = future.get();
+                
+                if(isSubstanceDataset) {
+                    //TODO custom enanomapper
+                    //TODO fix this
+                    //In enanomapper publishing a dataset is available through posting to /substance
+                    //this returns a substance.
+                    //In order to get the dataset, the ownerUUID from the substance is retrieved 
+                    String host = SubstanceDataset.getHostFromVRI(datasetUri);
+                    String ownerName = Substance.getSubstanceKey(token,resultUri.getUri(),"ownerUUID");
+                    resultUri = new VRI(host+"/substanceowner/"+ownerName+"/dataset");
+                }
+                
                 predictor.getTask().setHttpStatus(200).setPercentageCompleted(100.0f).
                         setResultUri(resultUri).setStatus(Status.COMPLETED);
                 UpdateTask updateTask = new UpdateTask(predictor.getTask());

@@ -76,18 +76,18 @@ public class PLSTrainer extends AbstractTrainer {
     private static final Random RANDOM = new Random(11 * System.currentTimeMillis() + 21);
     private VRI featureService;
     private VRI datasetUri;
+    private VRI targetUri;
     private int numComponents;
     private String preprocessing;
     private String pls_algorithm;
     private String doUpdateClass;
-    private String target;
 
     @Override
     protected boolean keepNumeric() { return true; }
     @Override
     protected boolean keepNominal() { return true; }
     @Override
-    protected boolean keepString()  { return true; }
+    protected boolean keepString()  { return false; }
     @Override
     protected boolean performMVH()  { return false; }
     
@@ -142,11 +142,16 @@ public class PLSTrainer extends AbstractTrainer {
             throw new BadParameterException("Bad Parameter : '" + doUpdateClass + "'. Admissible values for the "
                     + "parameter doUpdateClass are only 'on' and 'off'.");
         }
-
-        /*
-         * This is a mandatory parameter:
-         */
-        target = clientParameters.getFirstValue("target");
+        
+        String targetString = clientParameters.getFirstValue("prediction_feature");
+        if (targetString == null) {
+            throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
+        }
+        try {
+            targetUri = new VRI(targetString);
+        } catch (URISyntaxException ex) {
+            throw new BadParameterException("The parameter 'prediction_feature' you provided is not a valid URI.", ex);
+        }
         return this;
     }
 
@@ -159,16 +164,7 @@ public class PLSTrainer extends AbstractTrainer {
     public Model train(Instances data) throws JaqpotException {
         Model model = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
 
-        /*
-         * Remove unnecessary (string) features
-         */
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
-        try {
-            data = cleanup.filter(data);
-        } catch (QSARException ex) {
-            throw new JaqpotException(ex);
-        }
-        data.setClass(data.attribute(target));
+        data.setClass(data.attribute(targetUri.toString()));
 
         model.setIndependentFeatures(new ArrayList<Feature>(data.numAttributes()));
         for (int i = 0; i < data.numAttributes(); i++) {
@@ -178,8 +174,6 @@ public class PLSTrainer extends AbstractTrainer {
                 throw new RuntimeException(ex);
             }
         }
-
-
         /*
          * Train the PLS filter
          */
@@ -208,7 +202,7 @@ public class PLSTrainer extends AbstractTrainer {
 
         Set<Parameter> parameters = new HashSet<Parameter>();
         Parameter targetPrm = new Parameter(Configuration.getBaseUri().augment("parameter", RANDOM.nextLong()),
-                "target", new LiteralValue(target, XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.MANDATORY);
+                "target", new LiteralValue(targetUri.toString(), XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.MANDATORY);
         Parameter nComponentsPrm = new Parameter(Configuration.getBaseUri().
                 augment("parameter", RANDOM.nextLong()), "numComponents",
                 new LiteralValue(numComponents, XSDDatatype.XSDpositiveInteger)).setScope(Parameter.ParameterScope.MANDATORY);
@@ -228,14 +222,8 @@ public class PLSTrainer extends AbstractTrainer {
 
 
         for (int i = 0; i < numComponents; i++) {
-            try {
-                Feature f = FeatureFactory.createAndPublishFeature("PLS-" + i, "",
-                        new ResourceValue(model.getUri(), OTClasses.model()),
-                        featureService, token);
-                model.addPredictedFeatures(f);
-            } catch (ServiceInvocationException ex) {
-                Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Feature f = publishFeature(model,"","PLS-" + i,datasetUri,featureService);
+            model.addPredictedFeatures(f);
         }
 
 

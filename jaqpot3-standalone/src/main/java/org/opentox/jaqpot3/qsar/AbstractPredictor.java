@@ -80,7 +80,7 @@ public abstract class AbstractPredictor implements IPredictor {
     public Instances preprocessDataset(Instances inst) throws JaqpotException {
         
         independentFeatures = model.getIndependentFeatures();
-        dependentFeature = model.getDependentFeatures().get(0);
+        dependentFeature = (model.getDependentFeatures().isEmpty()) ? null : model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
         
                 
@@ -162,13 +162,23 @@ public abstract class AbstractPredictor implements IPredictor {
         }
     }
     
+    /*
+        Perform prediction for enanomapper datasets
+    */
     @Override
     public SubstanceDataset predictEnm(VRI input) throws JaqpotException {
+        
         Instances inst = predictInstances(input);
         SubstanceDataset ds = new SubstanceDataset();
-        //TODO IMPORTANT!!! this is custom link must be retrieved generically
-        String csvData = WekaInstancesProcess.getCSVOutput(inst,input,"http://apps.ideaconsult.net:8080/enanomapper/");
+        
+        //TODO custom enanomapper
+        String host = SubstanceDataset.getHostFromVRI(input.toString());
+        //get the csv data and the owner for the dataset to be published
+        String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host);
+        String ownerName = WekaInstancesProcess.getSubstanceKeyFromInstances(token,inst,"ownerName");
+        
         ds.setCsv(csvData);
+        ds.setOwnerName(ownerName);
         return ds;
     }
     

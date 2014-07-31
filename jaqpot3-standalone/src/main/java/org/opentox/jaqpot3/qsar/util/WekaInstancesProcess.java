@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -60,6 +59,9 @@ import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numer
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.string;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.Feature;
+import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.Substance;
+import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.json.DatasetJsonDownloader;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -327,61 +329,174 @@ public class WekaInstancesProcess {
         return res;
     }
     
-    public static String getCSVOutput(Instances inst,VRI datasetURI,String VRIprefix) {
-        String res,temp,name,units,sameAs,medium;
-        double value=0;
+    
+    /*
+        Creates the csv data for a dataset to be published.
+    */
+    
+    public static String getCSVOutput(Model model,AuthenticationToken token,Instances inst,VRI datasetURI,String VRIprefix) {
+        
+        String res,name;
         Map<String,String> UUIDMap;
+        int noAttributes = inst.numAttributes();
+        int noInstances = inst.numInstances();
         
+        // make a list for predicted features
+        List<String> predictedFeaturesUris = new ArrayList<String>();
+        List<Feature> predictedFeatureList =  model.getPredictedFeatures();
+        for(Feature temp:predictedFeatureList) {
+            predictedFeaturesUris.add(temp.getUri().getUri());
+        }        
         
+        //get the json object of the dataset to retrieve info for the properties
         VRI input = new VRI(datasetURI);
         DatasetJsonDownloader jsn = new DatasetJsonDownloader(input);
-        JSONObject obj = jsn.getJSON();
+        JSONObject obj = jsn.getJSON(token);
         
+        //create the header of the csv
+        res = getCSVHeader(inst,jsn,obj,predictedFeaturesUris);
+        
+        //get a map for binding the substance uris to their names
         UUIDMap = jsn.bindUUIDsToNames(obj,VRIprefix);
-        String attrName = inst.attribute(1).name();
-        List<String> keys = new ArrayList<String>();
-        keys.add("feature");
-        keys.add(attrName);
-        keys.add("units");
-        units = jsn.traverse(keys,obj);
+        
+        //get the names of the substances and their values in the properties
+        for(int i=0;i<noInstances;++i ) {
+            if(StringUtils.isNotEmpty(UUIDMap.get(inst.attribute(0).value(i)))) {
+                name = UUIDMap.get(inst.attribute(0).value(i));
+                res +=name;
+                for(int k=1;k<noAttributes;++k ) {
+                    res += ","+inst.instance(i).value(k);
+                }
+                res += "\n";
+                
+            }
+        }
+        //if not trimmed then new empty substance will be created
+        res = StringUtils.removeEnd(res, "\n");
+        
+        return res;
+    }
+    
+    /*
+        Iterates through instances and searches for the first substance.
+        Then gets the value of the key in the info of the json object of GET /substance
+    */
+    public static String getSubstanceKeyFromInstances(AuthenticationToken token,Instances inst,String key) {
+        int noInstances = inst.numInstances();
+        String substance_uri,keyRes="";
+        
+        for(int i=0;i<noInstances-1;++i ) {
+            if(StringUtils.isNotEmpty(inst.attribute(0).value(i))) {
+                substance_uri = inst.attribute(0).value(i);
+                keyRes = Substance.getSubstanceKey(token,substance_uri,key);
+            }
+            if(StringUtils.isNotEmpty(keyRes)) {
+                break;
+            }
+        }
+        return keyRes;
+    }
+    
+    /*
+        Create the csv data for publishing a dataset.
+    */
+    public static String getCSVHeader(Instances inst,DatasetJsonDownloader jsn,JSONObject obj,List<String> featuresUris) {
+        
+        int noAttributes = inst.numAttributes();
+        
+        String headerStr="",enStr="",mStr="",condStr="",unStr="";
+        String units,sameAs,medium,attrName,res;
+        
+        for(int k=1;k<noAttributes;++k ) {
+            attrName = inst.attribute(k).name();
+            List<String> keys = new ArrayList<String>();
+            keys.add("feature");
+            keys.add(attrName);
+            keys.add("units");
+            units = jsn.traverse(keys,obj);
 
-        keys = new ArrayList<String>();
+            keys = new ArrayList<String>();
+            keys.add("feature");
+            keys.add(attrName);
+            keys.add("annotation");
+            keys.add("o");
+            medium = jsn.traverse(keys,obj);
+
+
+            keys = new ArrayList<String>();
+            keys.add("feature");
+            keys.add(attrName);
+            keys.add("sameAs");
+            sameAs = jsn.traverse(keys,obj);
+            
+            // if feature uri not in dataset then search in features list
+            if(StringUtils.isEmpty(sameAs) ) {
+                if(featuresUris.contains(attrName)) {
+                    sameAs = attrName;
+                }
+            }
+            
+            headerStr += ",";
+            enStr += ","+sameAs;
+            mStr += ","+medium;
+            //todo place algorithm
+            condStr += ",";
+            unStr +=","+units;
+        }
+        
+        res = "EndpointCategory"+headerStr+"\n"+
+              "Protocol"+headerStr+"\n"+
+              "Guideline"+headerStr+"\n"+
+              "type_of_study"+headerStr+"\n"+
+              "type_of_method"+headerStr+"\n"+
+              "data_gathering_instruments"+headerStr+"\n"+
+              "Endpoint"+enStr+"\n"+
+              "Cell"+headerStr+"\n"+
+              "MEDIUM"+mStr+"\n"+
+              "Condition"+condStr+"\n"+
+              "Designation"+headerStr+"\n"+
+              "Units"+unStr+"\n";
+        
+        return res;
+    }
+    
+    /*
+        Create the csv data for publishing a property
+        When posting to /substance all values of the substances being posted are removed.
+        Thus the substance name is SubstancePredicted.
+    */
+    public static String getCSVOutputForProperty(AuthenticationToken token,Instances inst,String units,String title,VRI datasetURI,String VRIprefix) {
+        
+        String res,attrName,medium;
+        
+        List<String> keys = new ArrayList<String>();
+        VRI input = new VRI(datasetURI);
+        DatasetJsonDownloader jsn = new DatasetJsonDownloader(input);
+        
+        JSONObject obj = jsn.getJSON(token);        
+        attrName = inst.attribute(1).name();
+
         keys.add("feature");
         keys.add(attrName);
         keys.add("annotation");
         keys.add("o");
         medium = jsn.traverse(keys,obj);
-
-
-        keys = new ArrayList<String>();
-        keys.add("feature");
-        keys.add(attrName);
-        keys.add("sameAs");
-        sameAs = jsn.traverse(keys,obj);
-                   
-        res =   "EndpointCategory,"+""+"\n" +
-                "Protocol,\n" +
-                "Guideline,\n" +
-                "type_of_study,\n" +
-                "type_of_method,"+""+"\n" +
-                "data_gathering_instruments,\n" +
-                "Endpoint,"+sameAs+"\n" +
-                "Cell,\n" +
-                "MEDIUM,"+medium+"\n" +
-                "Condition,\n" +
-                "Designation,\n" +
-                "Units,"+units+"\n";
-        int noInstances = inst.numInstances();
-        int classAttributeIndex = inst.numAttributes()-1;
         
-        for(int i=0;i<noInstances-1;++i ) {
-            if(StringUtils.isNotEmpty(UUIDMap.get(inst.attribute(0).value(i)))) {
-                value = inst.instance(i).value(classAttributeIndex);
-                name = UUIDMap.get(inst.attribute(0).value(i));
-                temp = name+","+value+"\n";
-                res +=temp;
-            }
-        }
+        res =   "EndpointCategory,\n"+
+                "Protocol,\n"+
+                "Guideline,\n"+
+                "type_of_study,\n"+
+                "type_of_method,\n"+
+                "data_gathering_instruments,\n"+
+                "Endpoint,Predicted " + title+"\n"+
+                "Cell,\n"+
+                "MEDIUM,"+medium+"\n"+
+                "Condition,\n"+
+                "Designation,\n"+
+                "Units,"+units+"\n"+
+                "SubstancePredicted,0\n";
+        
         return res;
     }
+    
 }
