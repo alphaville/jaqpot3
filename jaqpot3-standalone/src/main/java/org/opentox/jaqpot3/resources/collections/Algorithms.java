@@ -548,7 +548,7 @@ public class Algorithms {
 
                 Parameter numComponents =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "numComponents"), "numComponents", null).setScope(
+                        Configuration.getBaseUri().augment("prm", "numComponents"), "numComponents", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
                         Parameter.ParameterScope.MANDATORY);
                 numComponents.getMeta().addDescription("The maximum number of attributes(features) to use").
                         addComment("The number of components must be less than the number of independent features in the dataset");
@@ -583,7 +583,7 @@ public class Algorithms {
 
                 Parameter target =
                         new Parameter(
-                        Configuration.getBaseUri().augment("prm", "plsTarget"), "target", null).setScope(
+                        Configuration.getBaseUri().augment("prm", "plsTarget"), "target", new LiteralValue<String>("")).setScope(
                         Parameter.ParameterScope.MANDATORY);
                 target.getMeta().addDescription("URI of the target/class feature of the dataset with the respect to which PLS runs").
                         addComment("This is different from the parameter prediction_feature. This is not stort of a dependent feature "

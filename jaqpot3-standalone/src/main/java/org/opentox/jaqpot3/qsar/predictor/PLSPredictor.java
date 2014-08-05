@@ -68,7 +68,7 @@ public class PLSPredictor extends AbstractPredictor {
 
     @Override
     public Instances predict(Instances input) throws JaqpotException {
-        PLSModel actual = (PLSModel) model.getActualModel();
+        PLSModel actual = (PLSModel) model.getActualModel().getSerializableActualModel();
         PLSFilter plsFilter = actual.getPls();
         Instances newData = InstancesUtil.sortForModel(model, input, -1);
         try {
@@ -99,6 +99,5 @@ public class PLSPredictor extends AbstractPredictor {
         newData = Instances.mergeInstances(compounds, newData);
         
         return newData;
-        //TODO catch null
     }
 }

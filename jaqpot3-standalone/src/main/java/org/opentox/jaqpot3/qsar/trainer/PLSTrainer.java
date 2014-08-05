@@ -47,22 +47,21 @@ import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IParametrizableAlgorithm;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
-import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import org.opentox.jaqpot3.qsar.serializable.PLSModel;
-import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
-import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
-import org.opentox.toxotis.factory.FeatureFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
-import org.opentox.toxotis.ontology.ResourceValue;
-import org.opentox.toxotis.ontology.collection.OTClasses;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.PLSClassifier;
 import weka.core.Instances;
 import weka.filters.supervised.attribute.PLSFilter;
 
@@ -188,14 +187,15 @@ public class PLSTrainer extends AbstractTrainer {
         } catch (Exception ex) {
             Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         PLSModel actualModel = new PLSModel(pls);
         try {
-            model.setActualModel(actualModel);
+            model.setActualModel(new ActualModel(actualModel));
         } catch (NotSerializableException ex) {
             Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
             throw new JaqpotException(ex);
         }
+       
         model.setDataset(datasetUri);
         model.setAlgorithm(Algorithms.plsFilter());
         model.getMeta().addTitle("PLS Model for " + datasetUri);
@@ -212,11 +212,14 @@ public class PLSTrainer extends AbstractTrainer {
         Parameter algorithmPrm = new Parameter(Configuration.getBaseUri().
                 augment("parameter", RANDOM.nextLong()), "algorithm",
                 new LiteralValue(pls_algorithm, XSDDatatype.XSDstring)).setScope(Parameter.ParameterScope.OPTIONAL);
-
+        Parameter doUpdatePrm = new Parameter(Configuration.getBaseUri().
+                augment("parameter", RANDOM.nextLong()), "doUpdateClass",
+                new LiteralValue(doUpdateClass, XSDDatatype.XSDboolean)).setScope(Parameter.ParameterScope.OPTIONAL);
 
         parameters.add(targetPrm);
         parameters.add(nComponentsPrm);
         parameters.add(preprocessingPrm);
+        parameters.add(doUpdatePrm);
         parameters.add(algorithmPrm);
         model.setParameters(parameters);
 

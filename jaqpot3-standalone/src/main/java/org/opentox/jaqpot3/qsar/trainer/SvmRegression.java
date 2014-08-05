@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -74,6 +76,7 @@ import weka.core.Attribute;
 import weka.core.Instances;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import weka.classifiers.Evaluation;
 
 /**
  *
@@ -92,9 +95,9 @@ public class SvmRegression extends AbstractTrainer {
     @Override
     protected boolean keepNominal() { return true; }
     @Override
-    protected boolean keepString()  { return true; }
+    protected boolean keepString()  { return false; }
     @Override
-    protected boolean performMVH()  { return false; }
+    protected boolean performMVH()  { return true; }
     
     @Override
     public Algorithm getAlgorithm() {
@@ -118,7 +121,7 @@ public class SvmRegression extends AbstractTrainer {
     private int cacheSize = 250007,
             degree = 3;
     private String kernel = "RBF";
-    private VRI predictionFeatureUri;
+    private VRI targetUri;
     private VRI datasetUri;
     private VRI featureService;
     private Logger logger = LoggerFactory.getLogger(SvmRegression.class);
@@ -128,10 +131,11 @@ public class SvmRegression extends AbstractTrainer {
 
     @Override
     public Model train(Instances data) throws JaqpotException {
+        //todo check compound_uri
         data.renameAttribute(0, "compound_uri");
         try {
-            Instances trainingSet = preprocessInstances(data);
-            Attribute target = trainingSet.attribute(predictionFeatureUri.toString());
+            //todo check target parameter
+            Attribute target = data.attribute(targetUri.toString());
             if (target == null) {
                 throw new QSARException("The prediction feature you provided was not found in the dataset");
             } else {
@@ -139,25 +143,25 @@ public class SvmRegression extends AbstractTrainer {
                     throw new QSARException("The prediction feature you provided is not numeric.");
                 }
             }
-            trainingSet.setClass(target);
-            //trainingSet.deleteAttributeAt(0);//remove the first attribute, i.e. 'compound_uri' or 'URI'
+            data.setClass(target);
+            //data.deleteAttributeAt(0);//remove the first attribute, i.e. 'compound_uri' or 'URI'
             /* Very important: place the target feature at the end! (target = last)*/
-            int numAttributes = trainingSet.numAttributes();
-            int classIndex = trainingSet.classIndex();
+            int numAttributes = data.numAttributes();
+            int classIndex = data.classIndex();
             Instances orderedTrainingSet = null;
             List<String> properOrder = new ArrayList<String>(numAttributes);
             for (int j = 0; j < numAttributes; j++) {
                 if (j != classIndex) {
-                    properOrder.add(trainingSet.attribute(j).name());
+                    properOrder.add(data.attribute(j).name());
                 }
             }
-            properOrder.add(trainingSet.attribute(classIndex).name());
+            properOrder.add(data.attribute(classIndex).name());
             try {
-                orderedTrainingSet = InstancesUtil.sortByFeatureAttrList(properOrder, trainingSet, -1);
+                orderedTrainingSet = InstancesUtil.sortByFeatureAttrList(properOrder, data, -1);
             } catch (JaqpotException ex) {
                 logger.error(null, ex);
             }
-            orderedTrainingSet.setClass(orderedTrainingSet.attribute(predictionFeatureUri.toString()));
+            orderedTrainingSet.setClass(orderedTrainingSet.attribute(targetUri.toString()));
 
             getTask().getMeta().addComment("Dataset successfully retrieved and converted into a weka.core.Instances object");
             UpdateTask firstTaskUpdater = new UpdateTask(getTask());
@@ -175,7 +179,8 @@ public class SvmRegression extends AbstractTrainer {
                 }
             }
 
-
+            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
+            
             // INITIALIZE THE REGRESSOR
             SVMreg regressor = new SVMreg();
             final String[] regressorOptions = {
@@ -209,20 +214,21 @@ public class SvmRegression extends AbstractTrainer {
                         + "tolerance = {" + tolerance + "}.", ex);
             }
             regressor.setKernel(svm_kernel);
-
             // START TRAINING
             try {
-                regressor.buildClassifier(trainingSet);
+                regressor.buildClassifier(data);
+                
+                // evaluate classifier and print some statistics
+                Evaluation eval = new Evaluation(data);
+                eval.evaluateModel(regressor, data);
+                String stats = eval.toSummaryString("", false);
+               // m.setStatistics(stats);
             } catch (final Exception ex) {
                 throw new QSARException("Unexpected condition while trying to train "
                         + "the model. Possible explanation : {" + ex.getMessage() + "}", ex);
             }
 
             //CREATE MODEL
-
-            Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
-
-
             try {
                 m.setActualModel(new ActualModel(regressor));
             } catch (NotSerializableException ex) {
@@ -231,72 +237,24 @@ public class SvmRegression extends AbstractTrainer {
             m.setAlgorithm(getAlgorithm());
             m.setCreatedBy(getTask().getCreatedBy());
             m.setDataset(datasetUri);
-            Feature dependentFeature = null;
+            m.addDependentFeatures(dependentFeature);
             try {
-                dependentFeature = new Feature(predictionFeatureUri).loadFromRemote();
+                dependentFeature.loadFromRemote();
             } catch (ServiceInvocationException ex) {
-                throw new QSARException("Feature with URI '" + predictionFeatureUri + "' could not be loaded from the remote location.", ex);
+                java.util.logging.Logger.getLogger(SvmRegression.class.getName()).log(Level.SEVERE, null, ex);
             }
             m.addDependentFeatures(dependentFeature);
 
-            List<Feature> independentFeatures = new ArrayList<Feature>();
-            for (int i = 0; i < trainingSet.numAttributes(); i++) {
-                Feature f;
-                try {
-                    f = new Feature(new VRI(trainingSet.attribute(i).name()));
-                    if (trainingSet.classIndex() != i) {
-                        independentFeatures.add(f);
-                    }
-                } catch (URISyntaxException ex) {
-                    throw new QSARException("The URI: " + trainingSet.attribute(i).name() + " is not valid", ex);
-                }
-            }
             m.setIndependentFeatures(independentFeatures);
 
-
-            /* CREATE PREDICTED FEATURE AND POST IT TO REMOTE SERVER */
-            Feature predictedFeature = new Feature();
-            predictedFeature.getMeta().addHasSource(new ResourceValue(m.getUri(), OTClasses.model())).
-                    addTitle("Feature created as prediction feature for SVM model " + m.getUri());
-            try {
-                Future<VRI> predictedFeatureUri = predictedFeature.publish(featureService, token);
-                /* Wait for remote server to respond */
-                while (!predictedFeatureUri.isDone()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        logger.error(null, ex);
-                    }
-                }
-                try {
-                    VRI resultUri = predictedFeatureUri.get();
-                    predictedFeature.setUri(resultUri);
-                    getTask().getMeta().addComment("Prediction Feature created: " + resultUri);
-                    UpdateTask taskUpdater = new UpdateTask(getTask());
-                    taskUpdater.setUpdateMeta(true);
-                    try {
-                        taskUpdater.update();
-                    } catch (DbException ex) {
-                        throw new JaqpotException(ex);
-                    } finally {
-                        try {
-                            taskUpdater.close();
-                        } catch (DbException ex) {
-                            throw new JaqpotException(ex);
-                        }
-                    }
-
-                } catch (InterruptedException ex) {
-                    logger.error(null, ex);
-                } catch (ExecutionException ex) {
-                    logger.error(null, ex);
-                }
-            } catch (ServiceInvocationException ex) {
-                logger.error(null, ex);
-                throw new QSARException("Cannot publish the predicted feature to the feature service at " + featureService, ex);
-            }
+            
+            String predictionFeatureUri = null;
+            Feature predictedFeature = publishFeature(m,dependentFeature.getUnits(),"Feature created as prediction feature for SVM model " + m.getUri(),datasetUri,featureService);
             m.addPredictedFeatures(predictedFeature);
-
+            predictionFeatureUri = predictedFeature.getUri().toString();
+            
+            getTask().getMeta().addComment("Prediction feature " + predictionFeatureUri + " was created.");
+            
             /* SET PARAMETERS FOR THE TRAINED MODEL */
             m.setParameters(new HashSet<Parameter>());
             Parameter<String> kernelParam = new Parameter("kernel", new LiteralValue<String>(kernel)).setScope(Parameter.ParameterScope.OPTIONAL);
@@ -325,55 +283,15 @@ public class SvmRegression extends AbstractTrainer {
             throw new JaqpotException(ex);
         }
     }
-    
-
-    private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
-        try {
-            Instances filt1 = cleanup.filter(in);
-            SimpleMVHFilter mvh = new SimpleMVHFilter();
-            Instances fin = mvh.filter(filt1);
-
-            /*
-             * Do some checks for the prediction feature...
-             */
-            // CHECK IF THE PREDICTION FEATURE EXISTS
-            // IF IT DOESN'T PROVIDE A LIST OF SOME NUMERIC FEATURES IN THE DATASET
-            Attribute classAttribute = fin.attribute(predictionFeatureUri.toString());
-            if (classAttribute == null) {
-                String message =
-                        "The prediction feature you provided is is not included in the  dataset :{"
-                        + predictionFeatureUri + "}. " + attributeHint(fin);
-                logger.debug(message);
-                throw new QSARException(message);
-            }
-
-            // CHECK IF THE PREDICTION FEATURE IS NUMERIC:
-            // IF IT DOESN'T PROVIDE A LIST OF SOME NUMERIC FEATURES IN THE DATASET
-            if (classAttribute.type() != Attribute.NUMERIC) {
-                String message =
-                        "The prediction feature you provided is not numeric : "
-                        + "{" + predictionFeatureUri + "}. " + attributeHint(fin);
-                logger.debug(message);
-                throw new QSARException(message);
-            }
-            fin.setClass(fin.attribute(predictionFeatureUri.toString()));
-            return fin;
-        } catch (JaqpotException ex) {
-            throw new QSARException(ex);
-        } catch (QSARException ex) {
-            throw new QSARException(ex);
-        }
-    }
 
     @Override
     public ITrainer doParametrize(IClientInput clientParameters) throws BadParameterException {
-        String predictionFeatureUriString = clientParameters.getFirstValue("prediction_feature");
-        if (predictionFeatureUriString == null) {
+        String targetString = clientParameters.getFirstValue("prediction_feature");
+        if (targetString == null) {
             throw new BadParameterException("The parameter 'prediction_feaure' is mandatory for this algorithm.");
         }
         try {
-            predictionFeatureUri = new VRI(predictionFeatureUriString);
+            targetUri = new VRI(targetString);
         } catch (URISyntaxException ex) {
             throw new BadParameterException("The parameter 'prediction_feaure' you provided is not a valid URI.", ex);
         }
@@ -398,123 +316,132 @@ public class SvmRegression extends AbstractTrainer {
         }
 
         for (Parameter p : getAlgorithm().getParameters()) {
-            try {
-                switch (SvmParameter.valueOf(p.getName().getValueAsString())) {
-                    case gamma:
-                        String gammaString = clientParameters.getFirstValue(SvmParameter.gamma.name());
-                        if (gammaString == null) {
-                            gamma = 1.5;
-                            break;
-                        }
-                        gamma = Double.parseDouble(gammaString);
-                        if (gamma <= 0) {
-                            throw new BadParameterException(
-                                    "The parameter " + p.getName() + " must be strictly positive. "
-                                    + "You provided the illegal value: {" + p.getValue() + "}");
-                        }
-                        p.getTypedValue().setValue(gamma);
-
-                        break;
-
-                    case cost:
-                        String costString = clientParameters.getFirstValue(SvmParameter.cost.name());
-                        if (costString == null) {
-                            cost = 100;
-                            break;
-                        }
-                        cost = Double.parseDouble(costString);
-                        if (cost <= 0) {
-                            throw new BadParameterException(
-                                    "The parameter " + p.getName() + " must be strictly positive. "
-                                    + "You provided the illegal value: {" + p.getValue() + "}");
-                        }
-                        p.getTypedValue().setValue(cost);
-                        break;
-
-                    case epsilon:
-                        String epsilonString = clientParameters.getFirstValue(SvmParameter.epsilon.name());
-                        if (epsilonString == null) {
-                            epsilon = 0.10;
-                            break;
-                        }
-                        epsilon = Double.parseDouble(epsilonString);
-                        if (epsilon <= 0) {
-                            throw new BadParameterException(
-                                    "The parameter " + p.getName() + " must be strictly positive. "
-                                    + "You provided the illegal value: {" + p.getValue() + "}");
-                        }
-                        p.getTypedValue().setValue(epsilon);
-                        break;
-
-                    case tolerance:
-                        String toleranceString = clientParameters.getFirstValue(SvmParameter.tolerance.name());
-                        if (toleranceString == null) {
-                            tolerance = 0.0001;
-                            break;
-                        }
-                        tolerance = Double.parseDouble(toleranceString);
-                        if (tolerance < 1E-6) {
-                            throw new BadParameterException(
-                                    "The parameter " + p.getName() + " must be greater that 1E-6. "
-                                    + "You provided the illegal value: {" + p.getValue() + "}");
-                        }
-                        p.getTypedValue().setValue(tolerance);
-                        break;
-
-                    case cacheSize:
-                        String cacheSizeString = clientParameters.getFirstValue(SvmParameter.cacheSize.name());
-                        if (cacheSizeString == null) {
-                            cacheSize = 25007;
-                            break;
-                        }
-                        cacheSize = Integer.parseInt(cacheSizeString);
-                        p.getTypedValue().setValue(cacheSize);
-                        break;
-
-                    case degree:
-                        String degreeString = clientParameters.getFirstValue(SvmParameter.degree.name());
-                        if (degreeString == null) {
-                            degree = 3;
-                            break;
-                        }
-                        p.getTypedValue().setValue(degreeString);
-                        degree = Integer.parseInt(degreeString);
-                        if (degree <= 0) {
-                            throw new BadParameterException("The parameter degree should be a strictly "
-                                    + "POSITIVE integer (greater of equal to 1)");
-                        }
-                        p.getTypedValue().setValue(degree);
-                        break;
-
-                    case kernel:
-                        kernel = clientParameters.getFirstValue(SvmParameter.kernel.name());
-                        if (kernel == null) {
-                            kernel = "RBF";
-                        }
-                        kernel = kernel.toUpperCase();
-                        if (!kernel.equals("RBF") && !kernel.equals("LINEAR") && !kernel.equals("POLYNOMIAL")) {
-                            throw new BadParameterException("The available kernels are [RBF; LINEAR; POLYNOMIAL]. Note that "
-                                    + "this parameter is not case-sensitive, i.e. rbf is the same as RbF. However you provided "
-                                    + "the illegal value : {" + kernel + "}");
-                        }
-                        p.getTypedValue().setValue(kernel);
-                        break;
-
-                    default:
-                        break;
-
+            Boolean exists = false;
+            for(SvmParameter temp : SvmParameter.values()) {
+                if(temp.name() == p.getName().getValueAsString()) {
+                    exists = true;
+                    break;
                 }
-            } catch (NumberFormatException ex) {
-                String message = "Parameter " + p.getName() + " should be numeric. "
-                        + "You provided the illegal "
-                        + "value : {" + p.getTypedValue() + "} ";
-                throw new BadParameterException(message, ex);
+            }
+            if(exists) {
+                try {
+                    switch (SvmParameter.valueOf(p.getName().getValueAsString())) {
+                        case gamma:
+                            String gammaString = clientParameters.getFirstValue(SvmParameter.gamma.name());
+                            if (gammaString == null) {
+                                gamma = 1.5;
+                                break;
+                            }
+                            gamma = Double.parseDouble(gammaString);
+                            if (gamma <= 0) {
+                                throw new BadParameterException(
+                                        "The parameter " + p.getName() + " must be strictly positive. "
+                                        + "You provided the illegal value: {" + p.getValue() + "}");
+                            }
+                            p.getTypedValue().setValue(gamma);
+
+                            break;
+
+                        case cost:
+                            String costString = clientParameters.getFirstValue(SvmParameter.cost.name());
+                            if (costString == null) {
+                                cost = 100;
+                                break;
+                            }
+                            cost = Double.parseDouble(costString);
+                            if (cost <= 0) {
+                                throw new BadParameterException(
+                                        "The parameter " + p.getName() + " must be strictly positive. "
+                                        + "You provided the illegal value: {" + p.getValue() + "}");
+                            }
+                            p.getTypedValue().setValue(cost);
+                            break;
+
+                        case epsilon:
+                            String epsilonString = clientParameters.getFirstValue(SvmParameter.epsilon.name());
+                            if (epsilonString == null) {
+                                epsilon = 0.10;
+                                break;
+                            }
+                            epsilon = Double.parseDouble(epsilonString);
+                            if (epsilon <= 0) {
+                                throw new BadParameterException(
+                                        "The parameter " + p.getName() + " must be strictly positive. "
+                                        + "You provided the illegal value: {" + p.getValue() + "}");
+                            }
+                            p.getTypedValue().setValue(epsilon);
+                            break;
+
+                        case tolerance:
+                            String toleranceString = clientParameters.getFirstValue(SvmParameter.tolerance.name());
+                            if (toleranceString == null) {
+                                tolerance = 0.0001;
+                                break;
+                            }
+                            tolerance = Double.parseDouble(toleranceString);
+                            if (tolerance < 1E-6) {
+                                throw new BadParameterException(
+                                        "The parameter " + p.getName() + " must be greater that 1E-6. "
+                                        + "You provided the illegal value: {" + p.getValue() + "}");
+                            }
+                            p.getTypedValue().setValue(tolerance);
+                            break;
+
+                        case cacheSize:
+                            String cacheSizeString = clientParameters.getFirstValue(SvmParameter.cacheSize.name());
+                            if (cacheSizeString == null) {
+                                cacheSize = 25007;
+                                break;
+                            }
+                            cacheSize = Integer.parseInt(cacheSizeString);
+                            p.getTypedValue().setValue(cacheSize);
+                            break;
+
+                        case degree:
+                            String degreeString = clientParameters.getFirstValue(SvmParameter.degree.name());
+                            if (degreeString == null) {
+                                degree = 3;
+                                break;
+                            }
+                            p.getTypedValue().setValue(degreeString);
+                            degree = Integer.parseInt(degreeString);
+                            if (degree <= 0) {
+                                throw new BadParameterException("The parameter degree should be a strictly "
+                                        + "POSITIVE integer (greater of equal to 1)");
+                            }
+                            p.getTypedValue().setValue(degree);
+                            break;
+
+                        case kernel:
+                            kernel = clientParameters.getFirstValue(SvmParameter.kernel.name());
+                            if (kernel == null) {
+                                kernel = "RBF";
+                            }
+                            kernel = kernel.toUpperCase();
+                            if (!kernel.equals("RBF") && !kernel.equals("LINEAR") && !kernel.equals("POLYNOMIAL")) {
+                                throw new BadParameterException("The available kernels are [RBF; LINEAR; POLYNOMIAL]. Note that "
+                                        + "this parameter is not case-sensitive, i.e. rbf is the same as RbF. However you provided "
+                                        + "the illegal value : {" + kernel + "}");
+                            }
+                            p.getTypedValue().setValue(kernel);
+                            break;
+
+                        default:
+                            break;
+
+                    }
+                } catch (NumberFormatException ex) {
+                    String message = "Parameter " + p.getName() + " should be numeric. "
+                            + "You provided the illegal "
+                            + "value : {" + p.getTypedValue() + "} ";
+                    throw new BadParameterException(message, ex);
+                }
             }
         }
         return this;
     }
 
-    private String attributeHint(Instances data) {
+    /*private String attributeHint(Instances data) {
         final String NEWLINE = "\n";
         StringBuilder hint = new StringBuilder();
         hint.append("Available features :");
@@ -531,5 +458,5 @@ public class SvmRegression extends AbstractTrainer {
             }
         }
         return new String(hint);
-    }
+    }*/
 }

@@ -48,7 +48,6 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -57,15 +56,12 @@ import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
-import org.opentox.toxotis.core.component.SubstanceDataset;
 import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
-import org.opentox.toxotis.factory.FeatureFactory;
-import org.opentox.toxotis.factory.PropertyFactory;
 import org.opentox.toxotis.ontology.LiteralValue;
-import org.opentox.toxotis.ontology.ResourceValue;
-import org.opentox.toxotis.ontology.collection.OTClasses;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.classifiers.functions.LinearRegression;
@@ -93,22 +89,6 @@ public class MlrRegression extends AbstractTrainer {
     
     public MlrRegression() {
     }
-
-
-    /*private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
-        try {
-            Instances filt1 = cleanup.filter(in);
-            SimpleMVHFilter mvh = new SimpleMVHFilter();
-            Instances fin = mvh.filter(filt1);
-            return fin;
-        } catch (JaqpotException ex) {
-            throw new QSARException(ex);
-        } catch (QSARException ex) {
-            throw new QSARException(ex);
-        }
-    }*/
-
     
 
     @Override
@@ -282,12 +262,21 @@ public class MlrRegression extends AbstractTrainer {
             try {
                 linreg.setOptions(linRegOptions);
                 linreg.buildClassifier(orderedTrainingSet);
+                
+                // evaluate classifier and print some statistics
+                Evaluation eval = new Evaluation(orderedTrainingSet);
+                eval.evaluateModel(linreg, orderedTrainingSet);
+                String stats = eval.toSummaryString("\nResults\n======\n", false);
+                m.setStatistics(stats);
+                    
             } catch (final Exception ex) {// illegal options or could not build the classifier!
                 String message = "MLR Model could not be trained";
                 logger.error(message, ex);
                 throw new JaqpotException(message, ex);
             }
+            
             try {
+                //todo fix rest trainers
                 m.setActualModel(new ActualModel(linreg));
             } catch (NotSerializableException ex) {
                 String message = "Model is not serializable";

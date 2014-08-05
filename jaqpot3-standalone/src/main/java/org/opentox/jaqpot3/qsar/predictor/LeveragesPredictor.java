@@ -103,6 +103,5 @@ public class LeveragesPredictor extends AbstractPredictor {
         Instances result = Instances.mergeInstances(compounds, predictions);
 
         return result;
-        //TODO catch null
     }
 }

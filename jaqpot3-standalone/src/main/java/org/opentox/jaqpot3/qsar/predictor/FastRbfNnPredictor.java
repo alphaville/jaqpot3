@@ -140,7 +140,6 @@ public class FastRbfNnPredictor extends AbstractPredictor {
 
         Instances resultSet = Instances.mergeInstances(justCompounds, predictions);
         return resultSet;
-        //TODO catch null
 
     }
     

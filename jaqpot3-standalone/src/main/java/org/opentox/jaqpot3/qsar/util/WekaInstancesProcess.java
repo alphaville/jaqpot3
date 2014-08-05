@@ -333,7 +333,7 @@ public class WekaInstancesProcess {
     /*
         Creates the csv data for a dataset to be published.
     */
-    
+    //todo fix endpoint category
     public static String getCSVOutput(Model model,AuthenticationToken token,Instances inst,VRI datasetURI,String VRIprefix) {
         
         String res,name;
@@ -439,7 +439,7 @@ public class WekaInstancesProcess {
             headerStr += ",";
             enStr += ","+sameAs;
             mStr += ","+medium;
-            //todo place algorithm
+            //todo place model, and in the future dont bind it with condition
             condStr += ",";
             unStr +=","+units;
         }

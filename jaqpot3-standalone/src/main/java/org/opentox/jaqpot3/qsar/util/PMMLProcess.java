@@ -53,11 +53,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.lang.StringUtils;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.jaqpot3.qsar.serializable.PLSModel;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.core.component.Feature;
@@ -66,6 +68,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.SVMreg;
+import weka.filters.supervised.attribute.PLSFilter;
 
 /**
  *
@@ -79,6 +83,10 @@ public class PMMLProcess {
     public static String generatePMML(Model model) throws JaqpotException{
         if(model.getAlgorithm().equals(Algorithms.mlr())){
             return generateMLR(model);
+        }else if(model.getAlgorithm().equals(Algorithms.plsFilter())){
+            return generatePLS(model);
+        }else if(model.getAlgorithm().equals(Algorithms.svm())){
+            return generateSVM(model);
         }else{
             throw new UnsupportedOperationException("PMML Representation for this model is not implemented yet.");
         }
@@ -86,7 +94,7 @@ public class PMMLProcess {
 
     private static String generateMLR(Model model) throws JaqpotException{
         LinearRegression wekaModel = (LinearRegression) model.getActualModel().getSerializableActualModel();
-        byte[] pmmlFile = model.getActualModel().getPmml();
+            byte[] pmmlFile = model.getActualModel().getPmml();
         
         String uuid = model.getUri().getId();
         String PMMLIntro = Configuration.getStringProperty("pmml.intro");
@@ -122,12 +130,13 @@ public class PMMLProcess {
                     pmml.append(TrDictionaryString+"\n");
                 }
             }
-            
+           
+           String dependentFeatures = (model.getDependentFeatures().isEmpty()) ? 
+                                "" : model.getDependentFeatures().iterator().next().getUri().toString() ;
             // RegressionModel
             pmml.append("<RegressionModel modelName=\"" + uuid.toString() + "\"" + 
                     " functionName=\"regression\" modelType=\"linearRegression\"" +
-                    " algorithmName=\"linearRegression\"" + " targetFieldName=\"" +
-                    model.getDependentFeatures().iterator().next().getUri().toString() + "\"" + ">\n");
+                    " algorithmName=\"linearRegression\">\n");
             // RegressionModel::MiningSchema
             pmml.append("<MiningSchema>\n");
             for (Feature feature : model.getIndependentFeatures()) {
@@ -135,16 +144,15 @@ public class PMMLProcess {
 
             }
             
-            pmml.append("<MiningField name=\"" + model.getDependentFeatures().iterator().next().getUri().toString() + "\" " + "usageType=\"predicted\"/>\n");
+            pmml.append("<MiningField name=\"" + dependentFeatures + "\" " + "usageType=\"predicted\"/>\n");
             pmml.append("</MiningSchema>\n");
             // RegressionModel::RegressionTable
             pmml.append("<RegressionTable intercept=\"" + coefficients[coefficients.length - 1] + "\">\n");
             
             int k = 0;
-            //TODO change coefficients
+            
             for (k = 0; k < model.getIndependentFeatures().size() ; k++) {
                     pmml.append("<NumericPredictor name=\"" + model.getIndependentFeatures().get(k).getUri().toString() + "\" " + " exponent=\"1\" " + "coefficient=\"" + coefficients[k] + "\"/>\n");
-
             }
             
             if(pmmlFile!=null) {
@@ -162,6 +170,158 @@ public class PMMLProcess {
                     }
                 }
             }
+            pmml.append("</RegressionTable>\n");
+            pmml.append("</RegressionModel>\n");
+            pmml.append("</PMML>\n\n");
+        } catch (UnsupportedEncodingException ex) {
+            String message = "Character Encoding :'"
+                    + Configuration.getStringProperty("jaqpot.urlEncoding") + "' is not supported.";
+            logger.debug(message, ex);
+            throw new JaqpotException(message, ex);
+        } catch (Exception ex) {
+            String message = "Unexpected exception was caught while generating"
+                    + " the PMML representaition of a trained model.";
+            logger.error(message, ex);
+            throw new JaqpotException(message, ex);
+        }
+        return pmml.toString();
+    }
+    
+    
+    private static String generateSVM(Model model) throws JaqpotException{
+        SVMreg regressor = (SVMreg) model.getActualModel().getSerializableActualModel();
+        byte[] pmmlFile = model.getActualModel().getPmml();
+        
+        String uuid = model.getUri().getId();
+        String PMMLIntro = Configuration.getStringProperty("pmml.intro");
+        StringBuilder pmml = new StringBuilder();
+        try {
+            pmml.append("<?xml version=\"1.0\" ?>");
+            pmml.append(PMMLIntro);
+            pmml.append("<Model ID=\"" + uuid + "\" Name=\"MLR Model\">\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/mlr\"/>\n");
+          //  URI trainingDatasetURI = URI.create(model.getDataset().getUri());
+
+            pmml.append("<DatasetID href=\"" + URLEncoder.encode(model.getDataset().toString(),
+                    Configuration.getStringProperty("jaqpot.urlEncoding")) + "\"/>\n");
+            pmml.append("<AlgorithmParameters />\n");
+//            pmml.append("<FeatureDefinitions>\n");
+//            for (Feature feature : model.getIndependentFeatures()) {
+//                pmml.append("<link href=\"" + feature.getUri().toString() + "\"/>\n");
+//            }
+//            pmml.append("<target index=\"" + data.attribute(model.getPredictedFeature().getUri().toString()).index() + "\" name=\"" + model.getPredictedFeature().getUri().toString() + "\"/>\n");
+//            pmml.append("</FeatureDefinitions>\n");
+            pmml.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
+            pmml.append("</Model>\n");
+            pmml.append("<DataDictionary numberOfFields=\"" + model.getIndependentFeatures().size() + "\" >\n");
+            for (Feature feature : model.getIndependentFeatures()) {
+                pmml.append("<DataField name=\"" + feature.getUri().toString() + "\" optype=\"continuous\" dataType=\"double\" />\n");
+            }
+            pmml.append("</DataDictionary>\n");
+            
+            if(pmmlFile!=null) {
+                if(pmmlFile.length>0) {
+                    String TrDictionaryString = getTransformationDictionaryXML(pmmlFile);
+                    pmml.append(TrDictionaryString+"\n");
+                }
+            }
+           
+           String dependentFeatures = (model.getDependentFeatures().isEmpty()) ? 
+                                "" : model.getDependentFeatures().iterator().next().getUri().toString() ;
+            // RegressionModel
+            pmml.append("<RegressionModel modelName=\"" + uuid.toString() + "\"" + 
+                    " functionName=\"regression\" modelType=\"linearRegression\"" +
+                    " algorithmName=\"linearRegression\">\n");
+            // RegressionModel::MiningSchema
+            pmml.append("<MiningSchema>\n");
+            for (Feature feature : model.getIndependentFeatures()) {
+                    pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" />\n");
+
+            }
+            
+            pmml.append("<MiningField name=\"" + dependentFeatures + "\" " + "usageType=\"predicted\"/>\n");
+            pmml.append("</MiningSchema>\n");
+            // RegressionModel::RegressionTable
+            
+            pmml.append("</RegressionTable>\n");
+            pmml.append("</RegressionModel>\n");
+            pmml.append("</PMML>\n\n");
+        } catch (UnsupportedEncodingException ex) {
+            String message = "Character Encoding :'"
+                    + Configuration.getStringProperty("jaqpot.urlEncoding") + "' is not supported.";
+            logger.debug(message, ex);
+            throw new JaqpotException(message, ex);
+        } catch (Exception ex) {
+            String message = "Unexpected exception was caught while generating"
+                    + " the PMML representaition of a trained model.";
+            logger.error(message, ex);
+            throw new JaqpotException(message, ex);
+        }
+        return pmml.toString();
+    }
+    
+    private static String generatePLS(Model model) throws JaqpotException{
+        PLSModel actual = (PLSModel) model.getActualModel().getSerializableActualModel();
+        PLSFilter plsFilter = actual.getPls();
+        byte[] pmmlFile = model.getActualModel().getPmml();
+        
+        String uuid = model.getUri().getId();
+        String PMMLIntro = Configuration.getStringProperty("pmml.intro");
+        StringBuilder pmml = new StringBuilder();
+        try {
+            pmml.append("<?xml version=\"1.0\" ?>");
+            pmml.append(PMMLIntro);
+            pmml.append("<Model ID=\"" + uuid + "\" Name=\"PLS Model\">\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/pls\"/>\n");
+          //  URI trainingDatasetURI = URI.create(model.getDataset().getUri());
+
+            pmml.append("<DatasetID href=\"" + URLEncoder.encode(model.getDataset().toString(),
+                    Configuration.getStringProperty("jaqpot.urlEncoding")) + "\"/>\n");
+            pmml.append("<AlgorithmParameters />\n");
+//            pmml.append("<FeatureDefinitions>\n");
+//            for (Feature feature : model.getIndependentFeatures()) {
+//                pmml.append("<link href=\"" + feature.getUri().toString() + "\"/>\n");
+//            }
+//            pmml.append("<target index=\"" + data.attribute(model.getPredictedFeature().getUri().toString()).index() + "\" name=\"" + model.getPredictedFeature().getUri().toString() + "\"/>\n");
+//            pmml.append("</FeatureDefinitions>\n");
+            pmml.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
+            pmml.append("</Model>\n");
+            pmml.append("<DataDictionary numberOfFields=\"" + model.getIndependentFeatures().size() + "\" >\n");
+            for (Feature feature : model.getIndependentFeatures()) {
+                pmml.append("<DataField name=\"" + feature.getUri().toString() + "\" optype=\"continuous\" dataType=\"double\" />\n");
+            }
+            pmml.append("</DataDictionary>\n");
+            
+            if(pmmlFile!=null) {
+                if(pmmlFile.length>0) {
+                    String TrDictionaryString = getTransformationDictionaryXML(pmmlFile);
+                    pmml.append(TrDictionaryString+"\n");
+                }
+            }
+            
+            // RegressionModel
+            pmml.append("<RegressionModel modelName=\"" + uuid.toString() + "\"" + 
+                    " functionName=\"regression\" modelType=\"linearRegression\"" +
+                    " algorithmName=\"linearRegression\">\n");
+            // RegressionModel::MiningSchema
+            pmml.append("<MiningSchema>\n");
+            for (Feature feature : model.getIndependentFeatures()) {
+                    pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" />\n");
+
+            }
+            for (Feature feature : model.getPredictedFeatures()) {
+                    pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" " + "usageType=\"predicted\"/>\n");
+
+            }
+            pmml.append("</MiningSchema>\n");
+            // RegressionModel::RegressionTable
+           
+            pmml.append("<ParameterList>");
+            pmml.append("<Parameter name=\"algorithm\" label=\"Algorithm\"/>");
+            pmml.append("<Parameter name=\"preprocessing\" label=\"Preprocessing\"/>");
+            pmml.append("<Parameter name=\"doUpdateClass\" label=\"doUpdateClass\"/>");
+            pmml.append("<Parameter name=\"numComponents\" label=\"Number of Components\"/>");
+            pmml.append("</ParameterList>");
             pmml.append("</RegressionTable>\n");
             pmml.append("</RegressionModel>\n");
             pmml.append("</PMML>\n\n");

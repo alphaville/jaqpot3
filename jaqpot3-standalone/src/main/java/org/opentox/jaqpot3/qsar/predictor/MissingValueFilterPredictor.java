@@ -112,6 +112,5 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
         }
         
         return data;
-        //TODO catch null
     }
 }

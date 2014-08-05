@@ -33,8 +33,6 @@
  */
 package org.opentox.jaqpot3.qsar;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.dmg.pmml.PMML;
@@ -53,7 +51,6 @@ import org.opentox.toxotis.factory.DatasetFactory;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.arff.ArffDownloader;
 import weka.core.Instances;
-import weka.core.converters.CSVSaver;
 
 /**
  *
