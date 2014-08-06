@@ -381,5 +381,8 @@ public abstract class AbstractTrainer implements ITrainer {
                 throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
             }
         }
+        if(hasScaling && hasNormalization) {
+            throw new BadParameterException("cannot both scale and normalize a dataset");
+        }
     }
 }
