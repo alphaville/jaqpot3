@@ -63,6 +63,7 @@ import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Substance;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.json.DatasetJsonDownloader;
+import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVSaver;
@@ -499,4 +500,64 @@ public class WekaInstancesProcess {
         return res;
     }
     
+    
+    private static double scalingMinValue(Instances dataInst, int attributeIndex) {
+        return dataInst.kthSmallestValue(attributeIndex, 1);
+    }
+
+    private static double scalingMaxValue(Instances dataInst, int attributeIndex) {
+        double maxVal = Double.MIN_VALUE;
+        double currentValue = maxVal;
+        int nInst = dataInst.numInstances();
+        for (int i = 0; i < nInst; i++) {
+            currentValue = dataInst.instance(i).value(attributeIndex);
+            if (currentValue > maxVal) {
+                maxVal = currentValue;
+            }
+        }
+        return maxVal;
+    }
+
+    public static HashMap<VRI, Double> setScalingMinValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
+        HashMap<VRI, Double> scalingMinVals = new HashMap<VRI, Double>();
+        int nAttr = dataInst.numAttributes();
+        
+        for (int i = 0; i < nAttr; i++) {
+            Attribute attribute = dataInst.attribute(i);
+            Feature selected = null;
+            for(Feature temp : independentFeatures) {
+                if(StringUtils.equals(temp.getUri().getUri(),attribute.name())) {
+                    selected = temp;
+                    break;
+                }
+            }
+            if (attribute.isNumeric() && selected !=null) {
+                //TODO: Create in-house private methods to find min and max values
+                scalingMinVals.put(selected.getUri(), scalingMinValue(dataInst, i));
+            }
+        }
+        return scalingMinVals;
+    }
+    
+    
+    public static HashMap<VRI, Double> setScalingMaxValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
+        HashMap<VRI, Double> scalingMaxVals = new HashMap<VRI, Double>();
+        int nAttr = dataInst.numAttributes();
+        
+        for (int i = 0; i < nAttr; i++) {
+            Attribute attribute = dataInst.attribute(i);
+            Feature selected = null;
+            for(Feature temp : independentFeatures) {
+                if(StringUtils.equals(temp.getUri().getUri(),attribute.name())) {
+                    selected = temp;
+                    break;
+                }
+            }
+            if (attribute.isNumeric() && selected !=null) {
+                //TODO: Create in-house private methods to find min and max values
+                scalingMaxVals.put(selected.getUri(), scalingMaxValue(dataInst, i));
+            }
+        }
+        return scalingMaxVals;
+    }
 }

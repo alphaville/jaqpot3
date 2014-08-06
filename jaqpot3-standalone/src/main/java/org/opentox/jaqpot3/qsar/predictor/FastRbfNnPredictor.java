@@ -103,7 +103,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
 
     @Override
     public Instances predict(Instances inputSet) throws JaqpotException {
-        FastRbfNnModel actualModel = (FastRbfNnModel) model.getActualModel();
+        FastRbfNnModel actualModel = (FastRbfNnModel) model.getActualModel().getSerializableActualModel();
         Instances orderedDataset = null;
         try {
             orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);

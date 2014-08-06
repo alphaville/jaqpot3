@@ -35,6 +35,7 @@ package org.opentox.jaqpot3.qsar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.dmg.pmml.PMML;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.util.PMMLProcess;
@@ -50,6 +51,7 @@ import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.factory.DatasetFactory;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.arff.ArffDownloader;
+import weka.core.Attribute;
 import weka.core.Instances;
 
 /**
@@ -93,7 +95,31 @@ public abstract class AbstractPredictor implements IPredictor {
                 inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
             }
+            if(model.getActualModel().hasScaling()) {
+                
+                int Ninst = inst.numInstances();
+                Map<String, Double> mins = model.getActualModel().getMinVals2();
+                Map<String, Double> maxs = model.getActualModel().getMaxVals2();
+                String nextFeatureStr = null;
+                Attribute currentAttribute = null;
+                double currentMin;
+                double currentMax;
+                double currentValue = 0;
+
+                for(Feature nextFeature : model.getIndependentFeatures()) {
+                    nextFeatureStr = nextFeature.getUri().getUri();
+                    currentMin = mins.get(nextFeatureStr);
+                    currentMax = maxs.get(nextFeatureStr);
+                    currentAttribute = inst.attribute(nextFeatureStr);
+                    for (int iInst = 0; iInst < Ninst; iInst++) {
+                        currentValue = inst.instance(iInst).value(currentAttribute);
+                        currentValue = (currentValue - currentMin) / (currentMax - currentMin);
+                        inst.instance(iInst).setValue(currentAttribute, currentValue);
+                    }
+                }
+            }
         }
+        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\new.csv");
         return inst;
     }    
     

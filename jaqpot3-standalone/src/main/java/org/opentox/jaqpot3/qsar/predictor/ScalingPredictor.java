@@ -113,7 +113,7 @@ public class ScalingPredictor extends AbstractPredictor {
             }
 
 
-            /** Rename Attributes in `inputData` **/
+            /** Rename Attributes in `inputData`
             features = featureToScaled.keySet().iterator();
             while (features.hasNext()) {
                 nextFeature = features.next();
@@ -123,7 +123,7 @@ public class ScalingPredictor extends AbstractPredictor {
                             + "feature : " + nextFeature);
                 }
                 inputData.renameAttribute(currentAttribute, featureToScaled.get(nextFeature));
-            }
+            } **/
 
             return inputData;
             

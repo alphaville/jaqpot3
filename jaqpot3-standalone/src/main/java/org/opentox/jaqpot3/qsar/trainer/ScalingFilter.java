@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -16,6 +17,7 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.client.collection.Services;
+import org.opentox.toxotis.core.component.ActualModel;
 import org.opentox.toxotis.core.component.Algorithm;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
@@ -46,9 +48,9 @@ public class ScalingFilter extends AbstractTrainer {
     @Override
     protected boolean keepNumeric() { return true; }
     @Override
-    protected boolean keepNominal() { return true; }
+    protected boolean keepNominal() { return false; }
     @Override
-    protected boolean keepString()  { return true; }
+    protected boolean keepString()  { return false; }
     @Override
     protected boolean performMVH()  { return false; }
     
@@ -69,48 +71,49 @@ public class ScalingFilter extends AbstractTrainer {
         return maxVal;
     }
 
-    private Model processAbsoluteScaling(Instances dataInst) throws JaqpotException {
+    @Override
+    public Model train(Instances dataInst) throws JaqpotException {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());
         Model scalingModel = new Model(newModelUri);
+        scalingModel.setIndependentFeatures(independentFeatures);
         ScalingModel actualModel = new ScalingModel();
+        
         int nAttr = dataInst.numAttributes();
         for (int i = 0; i < nAttr; i++) {
             Attribute attribute = dataInst.attribute(i);
-            if (attribute.isNumeric() && !ignored.contains(attribute.name())) {
+            
+            Feature selected = null;
+            for(Feature temp : independentFeatures) {
+                if(StringUtils.equals(temp.getUri().getUri(),attribute.name())) {
+                    selected = temp;
+                    break;
+                }
+            }
+            
+            if (selected!=null && !ignored.contains(attribute.name())) {
+                //TODO: Create in-house private methods to find min and max values
+                actualModel.getMinVals().put(selected.getUri(), minValue(dataInst, i));
+                actualModel.getMaxVals().put(selected.getUri(), maxValue(dataInst, i));                 
+                Feature f = publishFeature(scalingModel,dependentFeature.getUnits(),"Scaled " + i,datasetUri,featureService);
+                scalingModel.addPredictedFeatures(f);
+                //getTask().getMeta().setComments(new HashSet<LiteralValue>());
+                getTask().getMeta().addComment("Scaled feature for " + selected.getUri().toString()
+                        + " has been created at " + f.getUri().toString());
+
+                UpdateTask taskUpdater = new UpdateTask(getTask());
+                //taskUpdater.setUpdatePercentageCompleted(true);
+                taskUpdater.setUpdateMeta(true);
+
                 try {
-                    VRI featureVri = new VRI(attribute.name());
-                    scalingModel.addIndependentFeatures(new Feature(featureVri));
-                    //TODO: Create in-house private methods to find min and max values
-                    actualModel.getMinVals().put(featureVri, minValue(dataInst, i));
-                    actualModel.getMaxVals().put(featureVri, maxValue(dataInst, i));
-                    Feature f = FeatureFactory.createAndPublishFeature("Scaled " + featureVri.toString() + " within [" + min + ", " + max + "]", "",
-                            new ResourceValue(newModelUri, OTClasses.model()), featureService, token);                    
-                    scalingModel.addPredictedFeatures(f);
-                    //getTask().getMeta().setComments(new HashSet<LiteralValue>());
-                    getTask().getMeta().addComment("Scaled feature for " + featureVri.toString()
-                            + " has been created at " + f.getUri().toString());
-
-                    UpdateTask taskUpdater = new UpdateTask(getTask());
-                    //taskUpdater.setUpdatePercentageCompleted(true);
-                    taskUpdater.setUpdateMeta(true);
-
+                    taskUpdater.update();
+                } catch (DbException ex) {
+                    throw new JaqpotException(ex);
+                } finally {
                     try {
-                        taskUpdater.update();
+                        taskUpdater.close();
                     } catch (DbException ex) {
                         throw new JaqpotException(ex);
-                    } finally {
-                        try {
-                            taskUpdater.close();
-                        } catch (DbException ex) {
-                            throw new JaqpotException(ex);
-                        }
                     }
-                } catch (final URISyntaxException ex) {
-                    String message = "URI syntax exception for numeric feature : '" + attribute.name() + "'. Invalid URI provided.";
-                    logger.error(message, ex);
-                    throw new JaqpotException(message, ex);
-                } catch (ServiceInvocationException ex) {
-                    logger.debug("", ex);
                 }
             }
         }
@@ -131,32 +134,7 @@ public class ScalingFilter extends AbstractTrainer {
     }
 
     @Override
-    public Model train(Instances data) throws JaqpotException {
-        return processAbsoluteScaling(data);
-    }
-
-    @Override
     public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
-        String minString = clientParameters.getFirstValue("min");
-        if (minString != null) {
-            try {
-                min = Double.parseDouble(minString);
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'scaling_min' (" + minString + ")", nfe);
-            }
-        }
-        String maxString = clientParameters.getFirstValue("max");
-        if (maxString != null) {
-            try {
-                max = Double.parseDouble(maxString);
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'scaling_max' (" + maxString + ")", nfe);
-            }
-        }
-        if (max <= min) {
-            throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
-                    + "you spcified are inconsistent. min=" + min + " while max=" + max + ". It should be min &lt; max.");
-        }
 
         String datasetUriString = clientParameters.getFirstValue("dataset_uri");
         if (datasetUriString == null) {

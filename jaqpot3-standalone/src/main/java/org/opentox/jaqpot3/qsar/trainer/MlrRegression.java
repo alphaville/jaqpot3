@@ -263,12 +263,6 @@ public class MlrRegression extends AbstractTrainer {
                 linreg.setOptions(linRegOptions);
                 linreg.buildClassifier(orderedTrainingSet);
                 
-                // evaluate classifier and print some statistics
-                Evaluation eval = new Evaluation(orderedTrainingSet);
-                eval.evaluateModel(linreg, orderedTrainingSet);
-                String stats = eval.toSummaryString("\nResults\n======\n", false);
-                m.setStatistics(stats);
-                    
             } catch (final Exception ex) {// illegal options or could not build the classifier!
                 String message = "MLR Model could not be trained";
                 logger.error(message, ex);
@@ -276,13 +270,25 @@ public class MlrRegression extends AbstractTrainer {
             }
             
             try {
+                // evaluate classifier and print some statistics
+                Evaluation eval = new Evaluation(orderedTrainingSet);
+                eval.evaluateModel(linreg, orderedTrainingSet);
+                String stats = eval.toSummaryString("\nResults\n======\n", false);
+                
                 //todo fix rest trainers
-                m.setActualModel(new ActualModel(linreg));
+                ActualModel am = new ActualModel(linreg);
+                am.setStatistics(stats);
+                m.setActualModel(am);
             } catch (NotSerializableException ex) {
                 String message = "Model is not serializable";
                 logger.error(message, ex);
                 throw new JaqpotException(message, ex);
+            } catch (final Exception ex) {// illegal options or could not build the classifier!
+                String message = "MLR Model could not be trained";
+                logger.error(message, ex);
+                throw new JaqpotException(message, ex);
             }
+            
             m.getMeta().addPublisher("OpenTox").addComment("This is a Multiple Linear Regression Model");
             return m;
         } catch (QSARException ex) {

@@ -35,6 +35,7 @@ package org.opentox.jaqpot3.qsar;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
@@ -78,6 +79,11 @@ public abstract class AbstractTrainer implements ITrainer {
     private UUID uuid = UUID.randomUUID();
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
+    private Boolean hasScaling = false;
+    private double scalingMin = 0;
+    private double scalingMax = 1;
+    HashMap<VRI, Double> scalingMinVals = null;
+    HashMap<VRI, Double> scalingMaxVals = null;
 
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
@@ -87,13 +93,20 @@ public abstract class AbstractTrainer implements ITrainer {
     
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
         
-        nonProcessedInstances=inst;
+        nonProcessedInstances = inst;
         String isMvh = ClientParams.getFirstValue("mvh");
         Boolean isMvhEnabled = (StringUtils.equals(isMvh,"1")) ? true : false;
 
         //todo cleanup
         //missing value
         if (!keepNominal()){
+            AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.nominal);
+            try {
+                inst = cleanup.filter(inst);
+            }catch(QSARException ex) {
+                String message = "Exception while trying to cleanup nominals in instances";
+                throw new JaqpotException(message, ex);
+            }
             
         }
         if (!keepString()){
@@ -122,24 +135,38 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
-         
+        //TODO specs pmml must have datadictionary
         if(pmml!=null) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+        }
+        
+        if(hasScaling) {
+            scalingMinVals = WekaInstancesProcess.setScalingMinValuesToModel(inst, independentFeatures);
+            scalingMaxVals = WekaInstancesProcess.setScalingMaxValuesToModel(inst, independentFeatures);
         }
         
         return preprocessDataset(inst);
     }
     
     private Model postProcessModel(Model model) throws JaqpotException {
+        
+        //todo pmml xml for scaling
+        if(hasScaling) {
+            model.getActualModel().setHasScaling(hasScaling);
+            model.getActualModel().setScalingMax(scalingMax);
+            model.getActualModel().setScalingMin(scalingMin);
+            model.getActualModel().setScalingMinVals(scalingMinVals);
+            model.getActualModel().setScalingMaxVals(scalingMaxVals);
+        }
+        
         if(pmml!=null) {
             model.getActualModel().setPmml(pmml);
-            try {
-                model.setActualModel(model.getActualModel());
-            } catch (Exception ex) {
-                String message = "Exception while trying to add pmml to ActualModel";
-                throw new JaqpotException(message, ex);
-            }
-            
+        }
+        try {
+            model.setActualModel(model.getActualModel());
+        } catch (Exception ex) {
+            String message = "Exception while trying to add pmml to ActualModel";
+            throw new JaqpotException(message, ex);
         }
         return model;
     }
@@ -230,6 +257,7 @@ public abstract class AbstractTrainer implements ITrainer {
     public IParametrizableAlgorithm parametrize(IClientInput clientParameters) throws BadParameterException {
         ClientParams = clientParameters;
         pmml = clientParameters.getUploadBytes();
+        preprocParametrize(clientParameters);
         return doParametrize(clientParameters);
     }
 
@@ -280,6 +308,7 @@ public abstract class AbstractTrainer implements ITrainer {
                 //gets the csv data for publishing a property to enanomapper
                 String csvData = WekaInstancesProcess.getCSVOutputForProperty(token,nonProcessedInstances,units,title,datasetUri,host);
                 ds.setCsv(csvData);
+                ds.setClearData(false);
                 //this csv name must be final in order to have only one dataset for the published properties
                 ds.setOwnerName("publishProperty.csv");
                 ds.setUri(datasetUri);
@@ -297,5 +326,29 @@ public abstract class AbstractTrainer implements ITrainer {
         
             
         return predictedFeature;   
+    }
+    
+    private void preprocParametrize(IClientInput clientParameters) throws BadParameterException {
+        String minString = clientParameters.getFirstValue("scalingMin");
+        if (minString != null) {
+            hasScaling = true;
+            try {
+                scalingMin = Double.parseDouble(minString);
+            } catch (NumberFormatException nfe) {
+                throw new BadParameterException("Invalid value for the parameter 'scaling_min' (" + minString + ")", nfe);
+            }
+        }
+        String maxString = clientParameters.getFirstValue("scalingMax");
+        if (maxString != null) {
+            try {
+                scalingMax = Double.parseDouble(maxString);
+            } catch (NumberFormatException nfe) {
+                throw new BadParameterException("Invalid value for the parameter 'scaling_max' (" + maxString + ")", nfe);
+            }
+        }
+        if (scalingMax <= scalingMin) {
+            throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
+                    + "you spcified are inconsistent. min=" + scalingMin + " while max=" + scalingMax + ". It should be min &lt; max.");
+        }
     }
 }

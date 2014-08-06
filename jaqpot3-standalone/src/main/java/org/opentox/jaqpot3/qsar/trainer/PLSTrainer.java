@@ -165,14 +165,8 @@ public class PLSTrainer extends AbstractTrainer {
 
         data.setClass(data.attribute(targetUri.toString()));
 
-        model.setIndependentFeatures(new ArrayList<Feature>(data.numAttributes()));
-        for (int i = 0; i < data.numAttributes(); i++) {
-            try {
-                model.getIndependentFeatures().add(new Feature(new VRI(data.attribute(i).name())));
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        model.setIndependentFeatures(independentFeatures);
+       
         /*
          * Train the PLS filter
          */

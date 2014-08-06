@@ -71,6 +71,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
+import org.opentox.toxotis.core.component.ActualModel;
 
 /**
  *
@@ -92,11 +93,11 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     @Override
     protected boolean keepNumeric() { return true; }
     @Override
-    protected boolean keepNominal() { return true; }
+    protected boolean keepNominal() { return false; }
     @Override
-    protected boolean keepString()  { return true; }
+    protected boolean keepString()  { return false; }
     @Override
-    protected boolean performMVH()  { return false; }
+    protected boolean performMVH()  { return true; }
 
 
     private static double squaredNormDifference(Instance a, Instance b) {
@@ -170,45 +171,17 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         return result;
     }
 
-    private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
-        try {
-            Instances filt1 = cleanup.filter(in);
-            SimpleMVHFilter mvh = new SimpleMVHFilter();
-            Instances fin = mvh.filter(filt1);
-            return fin;
-        } catch (JaqpotException ex) {
-            throw new QSARException(ex);
-        } catch (QSARException ex) {
-            throw new QSARException(ex);
-        }
-    }
-
     @Override
     public Model train(Instances training) throws JaqpotException {
+        //todo check this
         training.renameAttribute(0, "compound_uri");
-        try {
-            training = preprocessInstances(training);
-            //        Instances training = data.getInstances();
-        } catch (QSARException ex) {
-            throw new JaqpotException(ex);
-        }
-//        Instances training = data.getInstances();
-
-        if (!training.attribute(targetUri.toString()).isNumeric()) {
-            throw new JaqpotException("The prediction feature you specified is not a numeric feature");
-        }
         /*
          * For this algorithm we need to remove all string and nominal attributes
          * and additionally we will remove the target attribute too.
          */
-        AttributeCleanup cleanup = new AttributeCleanup(false, nominal, string);
-        Instances cleanedTraining = null;
-        try {
-            cleanedTraining = cleanup.filter(training);
-        } catch (QSARException ex) {
-            logger.error(null, ex);
-        }
+        
+        Instances cleanedTraining = training;
+        
         Attribute targetAttribute = cleanedTraining.attribute(targetUri.toString());
         if (targetAttribute == null) {
             throw new JaqpotException("The prediction feature you provided was not found in the dataset. "
@@ -295,29 +268,14 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.setAlgorithm(getAlgorithm());
         m.setCreatedBy(getTask().getCreatedBy());
         m.setDataset(datasetUri);
-        Feature dependentFeature = new Feature(targetUri);
         m.addDependentFeatures(dependentFeature);
-        try {
-            Feature predictedFeature = FeatureFactory.createAndPublishFeature(
-                    "Feature created as prediction feature for the RBF NN model " + m.getUri(), "",
-                    new ResourceValue(m.getUri(), OTClasses.model()), featureService, token);
-            m.addPredictedFeatures(predictedFeature);
-        } catch (ServiceInvocationException ex) {
-            logger.warn(null, ex);
-            throw new JaqpotException(ex);
-        }
-        List<Feature> independentFeatures = new ArrayList<Feature>();
-        for (int i = 0; i < rbfNnNodes.numAttributes(); i++) {
-            try {
-                independentFeatures.add(new Feature(new VRI(rbfNnNodes.attribute(i).name())));
-                //endpoint
-            } catch (URISyntaxException ex) {
-                throw new JaqpotException(new QSARException("The URI: " + rbfNnNodes.attribute(i).name() + " is not valid", ex));
-            }
-        }
+        
+        Feature predictedFeature = publishFeature(m,dependentFeature.getUnits(),"Created as prediction feature for the RBF NN model " + m.getUri(),datasetUri,featureService);
+        m.addPredictedFeatures(predictedFeature);
+        
         m.setIndependentFeatures(independentFeatures);
         try {
-            m.setActualModel(actualModel);
+            m.setActualModel(new ActualModel(actualModel));
         } catch (NotSerializableException ex) {
             logger.error("The provided instance of model cannot be serialized! Critical Error!", ex);
         }
