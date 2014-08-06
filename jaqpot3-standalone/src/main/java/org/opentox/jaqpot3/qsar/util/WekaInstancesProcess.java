@@ -37,10 +37,12 @@ package org.opentox.jaqpot3.qsar.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
@@ -466,6 +468,8 @@ public class WekaInstancesProcess {
         When posting to /substance all values of the substances being posted are removed.
         Thus the substance name is SubstancePredicted.
     */
+    //todo zeta potential from uuiclid
+    //use the endpoint of the dataset in order to get info for the header of the predicted descriptor
     public static String getCSVOutputForProperty(AuthenticationToken token,Instances inst,String units,String title,VRI datasetURI,String VRIprefix) {
         
         String res,attrName,medium;
@@ -501,11 +505,11 @@ public class WekaInstancesProcess {
     }
     
     
-    private static double scalingMinValue(Instances dataInst, int attributeIndex) {
+    private static double attributeMinValue(Instances dataInst, int attributeIndex) {
         return dataInst.kthSmallestValue(attributeIndex, 1);
     }
 
-    private static double scalingMaxValue(Instances dataInst, int attributeIndex) {
+    private static double attributeMaxValue(Instances dataInst, int attributeIndex) {
         double maxVal = Double.MIN_VALUE;
         double currentValue = maxVal;
         int nInst = dataInst.numInstances();
@@ -517,9 +521,17 @@ public class WekaInstancesProcess {
         }
         return maxVal;
     }
+    
+    
+    private static double normedValue(Instances dataInst, int attributeIndex) {
 
-    public static HashMap<VRI, Double> setScalingMinValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
-        HashMap<VRI, Double> scalingMinVals = new HashMap<VRI, Double>();
+        double[] attrValues = dataInst.attributeToDoubleArray(attributeIndex);
+        StandardDeviation std = new StandardDeviation();
+        return std.evaluate(attrValues);
+    }
+
+    public static HashMap<VRI, Double> setMinValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
+        HashMap<VRI, Double> minVals = new HashMap<VRI, Double>();
         int nAttr = dataInst.numAttributes();
         
         for (int i = 0; i < nAttr; i++) {
@@ -533,15 +545,15 @@ public class WekaInstancesProcess {
             }
             if (attribute.isNumeric() && selected !=null) {
                 //TODO: Create in-house private methods to find min and max values
-                scalingMinVals.put(selected.getUri(), scalingMinValue(dataInst, i));
+                minVals.put(selected.getUri(), attributeMinValue(dataInst, i));
             }
         }
-        return scalingMinVals;
+        return minVals;
     }
     
     
     public static HashMap<VRI, Double> setScalingMaxValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
-        HashMap<VRI, Double> scalingMaxVals = new HashMap<VRI, Double>();
+        HashMap<VRI, Double> maxVals = new HashMap<VRI, Double>();
         int nAttr = dataInst.numAttributes();
         
         for (int i = 0; i < nAttr; i++) {
@@ -555,9 +567,89 @@ public class WekaInstancesProcess {
             }
             if (attribute.isNumeric() && selected !=null) {
                 //TODO: Create in-house private methods to find min and max values
-                scalingMaxVals.put(selected.getUri(), scalingMaxValue(dataInst, i));
+                maxVals.put(selected.getUri(), attributeMaxValue(dataInst, i));
             }
         }
-        return scalingMaxVals;
+        return maxVals;
+    }
+    
+    public static HashMap<VRI, Double> setNormalizedValuesToModel(Instances dataInst,List<Feature> independentFeatures) {
+        HashMap<VRI, Double> normedVals = new HashMap<VRI, Double>();
+        int nAttr = dataInst.numAttributes();
+        
+        for (int i = 0; i < nAttr; i++) {
+            Attribute attribute = dataInst.attribute(i);
+            Feature selected = null;
+            for(Feature temp : independentFeatures) {
+                if(StringUtils.equals(temp.getUri().getUri(),attribute.name())) {
+                    selected = temp;
+                    break;
+                }
+            }
+            if (attribute.isNumeric() && selected !=null) {
+                //TODO: Create in-house private methods to find min and max values
+                normedVals.put(selected.getUri(), normedValue(dataInst, i));
+            }
+        }
+        return normedVals;
+    }
+    
+    public static Instances scaleInstances(Instances inst,List<Feature> independentFeatures,Map<String, Double> mins,Map<String, Double> maxs) {
+        int Ninst = inst.numInstances();
+        String nextFeatureStr = null;
+        Attribute currentAttribute = null;
+        double currentMin;
+        double currentMax;
+        double currentValue = 0;
+
+        for(Feature nextFeature : independentFeatures) {
+            nextFeatureStr = nextFeature.getUri().getUri();
+            currentMin = mins.get(nextFeatureStr);
+            currentMax = maxs.get(nextFeatureStr);
+            currentAttribute = inst.attribute(nextFeatureStr);
+            for (int iInst = 0; iInst < Ninst; iInst++) {
+                currentValue = inst.instance(iInst).value(currentAttribute);
+                currentValue = (currentValue - currentMin) / (currentMax - currentMin);
+                inst.instance(iInst).setValue(currentAttribute, currentValue);
+            }
+        }
+        return inst;
+    }
+    
+    public static Instances normalizeInstances(Instances inst,List<Feature> independentFeatures,Map<String, Double> mins,Map<String, Double> norms) {
+        int Ninst = inst.numInstances();
+        String nextFeatureStr = null;
+        Attribute currentAttribute = null;
+        double currentMin;
+        double currentStdev;
+        double currentValue = 0;
+
+        for(Feature nextFeature : independentFeatures) {
+            nextFeatureStr = nextFeature.getUri().getUri();
+            currentMin = mins.get(nextFeatureStr);
+            currentStdev = norms.get(nextFeatureStr);
+            currentAttribute = inst.attribute(nextFeatureStr);
+            for (int iInst = 0; iInst < Ninst; iInst++) {
+                currentValue = inst.instance(iInst).value(currentAttribute);
+                currentValue = (currentValue - currentMin) / (currentStdev);
+                inst.instance(iInst).setValue(currentAttribute, currentValue);
+            }
+        }
+        return inst;
+    }
+    
+    public static Map<String, Double> getVRIkeyMapToDoublekeyMap(Map<VRI, Double> scalingVals) {
+        if (scalingVals == null) {
+            return null;
+        }
+        Map<String, Double> simpleMap = new HashMap<String, Double>();
+        if (!scalingVals.isEmpty()) {
+            Iterator<Map.Entry<VRI, Double>> iterator = scalingVals.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<VRI, Double> entry = iterator.next();
+                simpleMap.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        return simpleMap;
     }
 }

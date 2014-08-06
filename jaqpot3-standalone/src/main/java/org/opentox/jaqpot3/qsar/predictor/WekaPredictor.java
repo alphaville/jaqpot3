@@ -91,7 +91,7 @@ public class WekaPredictor extends AbstractPredictor {
             throw new JaqpotException(message, ex);
         }
 
-        if (predictions != null) {
+        if (predictions != null) {  
             Classifier classifier = (Classifier) model.getActualModel().getSerializableActualModel();
 
             int numInstances = predictions.numInstances();

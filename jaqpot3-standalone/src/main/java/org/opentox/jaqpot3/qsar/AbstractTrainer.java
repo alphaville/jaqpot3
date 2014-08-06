@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.dmg.pmml.DataDictionary;
@@ -80,10 +81,13 @@ public abstract class AbstractTrainer implements ITrainer {
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
     private Boolean hasScaling = false;
+    private Boolean hasNormalization = false;
     private double scalingMin = 0;
     private double scalingMax = 1;
     HashMap<VRI, Double> scalingMinVals = null;
     HashMap<VRI, Double> scalingMaxVals = null;
+    HashMap<VRI, Double> normalizationMinVals = null;
+    HashMap<VRI, Double> normedVals = null;
 
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
@@ -141,8 +145,19 @@ public abstract class AbstractTrainer implements ITrainer {
         }
         
         if(hasScaling) {
-            scalingMinVals = WekaInstancesProcess.setScalingMinValuesToModel(inst, independentFeatures);
+            scalingMinVals = WekaInstancesProcess.setMinValuesToModel(inst, independentFeatures);
             scalingMaxVals = WekaInstancesProcess.setScalingMaxValuesToModel(inst, independentFeatures);
+            Map<String, Double> tempScalingMinVals = WekaInstancesProcess.getVRIkeyMapToDoublekeyMap(scalingMinVals);
+            Map<String, Double> tempScalingMaxVals = WekaInstancesProcess.getVRIkeyMapToDoublekeyMap(scalingMaxVals);
+            inst = WekaInstancesProcess.scaleInstances(inst,independentFeatures,tempScalingMinVals,tempScalingMaxVals);
+        }
+        
+        if(hasNormalization) {
+            normalizationMinVals = WekaInstancesProcess.setMinValuesToModel(inst, independentFeatures);
+            normedVals = WekaInstancesProcess.setNormalizedValuesToModel(inst, independentFeatures);
+            Map<String, Double> tempNormalizationMinVals = WekaInstancesProcess.getVRIkeyMapToDoublekeyMap(normalizationMinVals);
+            Map<String, Double> tempNormedVals = WekaInstancesProcess.getVRIkeyMapToDoublekeyMap(normedVals);
+            inst = WekaInstancesProcess.normalizeInstances(inst,independentFeatures,tempNormalizationMinVals,tempNormedVals);
         }
         
         return preprocessDataset(inst);
@@ -157,6 +172,13 @@ public abstract class AbstractTrainer implements ITrainer {
             model.getActualModel().setScalingMin(scalingMin);
             model.getActualModel().setScalingMinVals(scalingMinVals);
             model.getActualModel().setScalingMaxVals(scalingMaxVals);
+        }
+        
+        //todo pmml xml for scaling
+        if(hasNormalization) {
+            model.getActualModel().setHasNormalization(hasNormalization);
+            model.getActualModel().setNormalizationMinVals(normalizationMinVals);
+            model.getActualModel().setNormedVals(normedVals);
         }
         
         if(pmml!=null) {
@@ -349,6 +371,15 @@ public abstract class AbstractTrainer implements ITrainer {
         if (scalingMax <= scalingMin) {
             throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
                     + "you spcified are inconsistent. min=" + scalingMin + " while max=" + scalingMax + ". It should be min &lt; max.");
+        }
+        String normalizeString = clientParameters.getFirstValue("normalize");
+        if (normalizeString != null) {
+            try {
+                int tempNorm = Integer.parseInt(normalizeString);
+                hasNormalization = (Integer.compare(tempNorm, 1)==0)? true : false;
+            } catch (NumberFormatException nfe) {
+                throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
+            }
         }
     }
 }

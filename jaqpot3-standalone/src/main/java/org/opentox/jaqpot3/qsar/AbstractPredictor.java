@@ -96,30 +96,12 @@ public abstract class AbstractPredictor implements IPredictor {
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
             }
             if(model.getActualModel().hasScaling()) {
-                
-                int Ninst = inst.numInstances();
-                Map<String, Double> mins = model.getActualModel().getMinVals2();
-                Map<String, Double> maxs = model.getActualModel().getMaxVals2();
-                String nextFeatureStr = null;
-                Attribute currentAttribute = null;
-                double currentMin;
-                double currentMax;
-                double currentValue = 0;
-
-                for(Feature nextFeature : model.getIndependentFeatures()) {
-                    nextFeatureStr = nextFeature.getUri().getUri();
-                    currentMin = mins.get(nextFeatureStr);
-                    currentMax = maxs.get(nextFeatureStr);
-                    currentAttribute = inst.attribute(nextFeatureStr);
-                    for (int iInst = 0; iInst < Ninst; iInst++) {
-                        currentValue = inst.instance(iInst).value(currentAttribute);
-                        currentValue = (currentValue - currentMin) / (currentMax - currentMin);
-                        inst.instance(iInst).setValue(currentAttribute, currentValue);
-                    }
-                }
+                inst = WekaInstancesProcess.scaleInstances(inst,independentFeatures,model.getActualModel().getScalingMinVals2(),model.getActualModel().getScalingMaxVals2());
+            }
+            if(model.getActualModel().hasNormalization()) {
+                inst = WekaInstancesProcess.normalizeInstances(inst,independentFeatures,model.getActualModel().getNormalizationMinVals2(),model.getActualModel().getNormedVals2());
             }
         }
-        WekaInstancesProcess.toCSV(inst, "C:\\Users\\philip\\Downloads\\new.csv");
         return inst;
     }    
     
