@@ -83,6 +83,7 @@ public abstract class AbstractTrainer implements ITrainer {
     protected Feature dependentFeature;
     private Boolean hasScaling = false;
     private Boolean hasNormalization = false;
+    private Boolean hasMVH = false;
     private double scalingMin = 0;
     private double scalingMax = 1;
     HashMap<VRI, Double> scalingMinVals = null;
@@ -94,14 +95,16 @@ public abstract class AbstractTrainer implements ITrainer {
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
     protected abstract boolean keepString();
+    protected abstract boolean pmmlSupported();
+    protected abstract boolean scalingSupported();
+    protected abstract boolean normalizationSupported();
+    protected abstract boolean DoASupported();
     protected abstract boolean performMVH();
     
     
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
         
         nonProcessedInstances = inst;
-        String isMvh = ClientParams.getFirstValue("mvh");
-        Boolean isMvhEnabled = (StringUtils.equals(isMvh,"1")) ? true : false;
 
         //todo cleanup
         //missing value
@@ -125,7 +128,13 @@ public abstract class AbstractTrainer implements ITrainer {
             }
         }
         if (!keepNumeric()){
-            
+            AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.numeric);
+            try {
+                inst = cleanup.filter(inst);
+            }catch(QSARException ex) {
+                String message = "Exception while trying to cleanup strings in instances";
+                throw new JaqpotException(message, ex);
+            }
         }
         if(pmml!=null) {
             pmmlObject = PMMLProcess.loadPMMLObject(pmml);
@@ -137,7 +146,7 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures,dependentFeature);
         }
         
-        if( isMvhEnabled || performMVH() ) {
+        if( hasMVH || performMVH() ) {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
@@ -394,6 +403,16 @@ public abstract class AbstractTrainer implements ITrainer {
         }
         if(hasScaling && hasNormalization) {
             throw new BadParameterException("cannot both scale and normalize a dataset");
+        }
+        
+        String mvhString = clientParameters.getFirstValue("mvh");
+        if (mvhString != null) {
+            try {
+                int mvh = Integer.parseInt(mvhString);
+                hasMVH = (Integer.compare(mvh, 1)==0)? true : false;
+            } catch (NumberFormatException nfe) {
+                throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
+            }
         }
     }
 }

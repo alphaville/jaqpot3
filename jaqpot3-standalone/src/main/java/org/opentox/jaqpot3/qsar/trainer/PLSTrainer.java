@@ -81,14 +81,14 @@ public class PLSTrainer extends AbstractTrainer {
     private String pls_algorithm;
     private String doUpdateClass;
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return false; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return true; }
+    @Override protected boolean performMVH()  { return false; }
     
     @Override
     public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {

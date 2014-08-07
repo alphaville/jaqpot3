@@ -43,14 +43,14 @@ public class LeveragesTrainer extends AbstractTrainer {
     private UUID uuid = UUID.randomUUID();
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesTrainer.class);
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return true; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return false; }
+    @Override protected boolean performMVH()  { return true; }
 
     @Override
     public Model train(Instances trainingSet) throws JaqpotException {

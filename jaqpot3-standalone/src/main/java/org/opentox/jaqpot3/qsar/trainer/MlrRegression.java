@@ -79,14 +79,14 @@ public class MlrRegression extends AbstractTrainer {
     private VRI featureService;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MlrRegression.class);
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return true; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return true; }
+    @Override protected boolean performMVH()  { return true; }
     
     public MlrRegression() {
     }

@@ -31,14 +31,14 @@ public class ModelBundlerTrainer extends AbstractTrainer {
     private ArrayList<String> modelUris = new ArrayList<String>();
     private static final Random RANDOM = new Random(78 * System.currentTimeMillis() + 131);
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return true; }
-    @Override
-    protected boolean performMVH()  { return false; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return true; }
+    @Override protected boolean pmmlSupported()  { return false; }
+    @Override protected boolean scalingSupported()  { return false; }
+    @Override protected boolean normalizationSupported()  { return false; }
+    @Override protected boolean DoASupported()  { return false; }
+    @Override protected boolean performMVH()  { return false; }
     
     @Override
     public boolean needsDataset() {

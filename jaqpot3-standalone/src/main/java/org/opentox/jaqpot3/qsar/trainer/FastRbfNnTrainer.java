@@ -90,14 +90,14 @@ public class FastRbfNnTrainer extends AbstractTrainer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FastRbfNnModel.class);
     private static final Random RANDOM = new Random(3 * System.currentTimeMillis() + 71);
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return false; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return true; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return false; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return true; }
+    @Override protected boolean performMVH()  { return true; }
 
 
     private static double squaredNormDifference(Instance a, Instance b) {

@@ -45,14 +45,14 @@ public class ScalingFilter extends AbstractTrainer {
     Set<String> ignored = new HashSet<String>();
 
     
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return false; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return false; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return false; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return false; }
+    @Override protected boolean normalizationSupported()  { return false; }
+    @Override protected boolean DoASupported()  { return false; }
+    @Override protected boolean performMVH()  { return false; }
     
     private double minValue(Instances dataInst, int attributeIndex) {
         return dataInst.kthSmallestValue(attributeIndex, 1);

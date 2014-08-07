@@ -52,14 +52,14 @@ public class CustomAlgorithmFilter extends AbstractTrainer {
     VRI descriptor1Uri = null;
     VRI descriptor2Uri = null;
     
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return true; }
-    @Override
-    protected boolean performMVH()  { return false; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return true; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return true; }
+    @Override protected boolean performMVH()  { return false; }
     
     private Model processAbsoluteValuesFeatures(Instances dataInst) throws JaqpotException {
         VRI newModelUri = Configuration.getBaseUri().augment("model", getUuid());

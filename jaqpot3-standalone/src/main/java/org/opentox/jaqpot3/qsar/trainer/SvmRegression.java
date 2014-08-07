@@ -91,14 +91,14 @@ public class SvmRegression extends AbstractTrainer {
 
     private static final Random RANDOM = new Random(19 * System.currentTimeMillis() + 53);
 
-    @Override
-    protected boolean keepNumeric() { return true; }
-    @Override
-    protected boolean keepNominal() { return true; }
-    @Override
-    protected boolean keepString()  { return false; }
-    @Override
-    protected boolean performMVH()  { return true; }
+    @Override protected boolean keepNumeric() { return true; }
+    @Override protected boolean keepNominal() { return true; }
+    @Override protected boolean keepString()  { return false; }
+    @Override protected boolean pmmlSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean DoASupported()  { return true; }
+    @Override protected boolean performMVH()  { return true; }
     
     @Override
     public Algorithm getAlgorithm() {
