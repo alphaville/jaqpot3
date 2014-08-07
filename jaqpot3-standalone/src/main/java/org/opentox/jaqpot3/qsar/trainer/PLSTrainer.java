@@ -92,6 +92,10 @@ public class PLSTrainer extends AbstractTrainer {
     
     @Override
     public IParametrizableAlgorithm doParametrize(IClientInput clientParameters) throws BadParameterException {
+        //PLS is a filtering algorithm and doesnt uses prediction feature
+        //instead a target feature must be specified in the bottom and it may be any of the other features
+        //clientParameters.getFirstValue("prediction_feature")
+        
         String datasetUriString = clientParameters.getFirstValue("dataset_uri");
         if (datasetUriString == null) {
             throw new BadParameterException("The parameter 'dataset_uri' is mandatory for this algorithm.");
@@ -142,14 +146,14 @@ public class PLSTrainer extends AbstractTrainer {
                     + "parameter doUpdateClass are only 'on' and 'off'.");
         }
         
-        String targetString = clientParameters.getFirstValue("prediction_feature");
+        String targetString = clientParameters.getFirstValue("target");
         if (targetString == null) {
-            throw new BadParameterException("The parameter 'prediction_feature' is mandatory for this algorithm.");
+            throw new BadParameterException("The parameter 'target' is mandatory for this algorithm.");
         }
         try {
             targetUri = new VRI(targetString);
         } catch (URISyntaxException ex) {
-            throw new BadParameterException("The parameter 'prediction_feature' you provided is not a valid URI.", ex);
+            throw new BadParameterException("The parameter 'target' you provided is not a valid URI.", ex);
         }
         return this;
     }
@@ -223,7 +227,9 @@ public class PLSTrainer extends AbstractTrainer {
             model.addPredictedFeatures(f);
         }
 
-
+        //save the instances being predicted to abstract trainer for calculating DoA
+        predictedInstances = data;
+            
         return model;
     }
 }

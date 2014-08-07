@@ -276,6 +276,9 @@ public class SvmRegression extends AbstractTrainer {
             m.getParameters().add(degreeParam);
             m.getParameters().add(toleranceParam);
 
+            //save the instances being predicted to abstract trainer for calculating DoA
+            predictedInstances = orderedTrainingSet;
+            
             return m;
         } catch (QSARException ex) {
             logger.debug(null, ex);

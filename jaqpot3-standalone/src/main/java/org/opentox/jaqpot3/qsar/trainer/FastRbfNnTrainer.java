@@ -173,8 +173,6 @@ public class FastRbfNnTrainer extends AbstractTrainer {
 
     @Override
     public Model train(Instances training) throws JaqpotException {
-        //todo check this
-        training.renameAttribute(0, "compound_uri");
         /*
          * For this algorithm we need to remove all string and nominal attributes
          * and additionally we will remove the target attribute too.
@@ -290,7 +288,8 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.getParameters().add(aParam);
         m.getParameters().add(bParam);
         m.getParameters().add(eParam);
-
+        
+        //todo set instances for DoA 
         return m;
     }
 

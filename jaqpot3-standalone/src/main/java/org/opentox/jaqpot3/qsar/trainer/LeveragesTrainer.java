@@ -48,28 +48,13 @@ public class LeveragesTrainer extends AbstractTrainer {
     @Override
     protected boolean keepNominal() { return true; }
     @Override
-    protected boolean keepString()  { return true; }
+    protected boolean keepString()  { return false; }
     @Override
-    protected boolean performMVH()  { return false; }
-    
-    private Instances preprocessInstances(Instances in) throws QSARException {
-        AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
-        try {
-            Instances filt1 = cleanup.filter(in);
-            SimpleMVHFilter mvh = new SimpleMVHFilter();
-            Instances fin = mvh.filter(filt1);
-            return fin;
-        } catch (JaqpotException ex) {
-            throw new QSARException(ex);
-        } catch (QSARException ex) {
-            throw new QSARException(ex);
-        }
-    }
+    protected boolean performMVH()  { return true; }
 
     @Override
     public Model train(Instances trainingSet) throws JaqpotException {
         try {
-            trainingSet = preprocessInstances(trainingSet);
             Attribute target = trainingSet.attribute(targetUri.toString());
             if (target == null) {
                 // Do nothing! It doesn't matter :)
@@ -90,53 +75,30 @@ public class LeveragesTrainer extends AbstractTrainer {
             Feature dependentFeature = new Feature(targetUri);
             model.addDependentFeatures(dependentFeature);
             model.setDataset(datasetUri);
-            List<Feature> independentFeatures = new ArrayList<Feature>();
-            for (int i = 0; i < trainingSet.numAttributes(); i++) {
-                if (i != targetIndex) {
-                    try {
-                        independentFeatures.add(new Feature(new VRI(trainingSet.attribute(i).name())));
-                    } catch (URISyntaxException ex) {
-                        throw new QSARException("The URI: " + trainingSet.attribute(i).name() + " is not valid", ex);
-                    }
-                }
-            }
             model.setIndependentFeatures(independentFeatures);
-            Feature predictedFeature = new Feature();
-            predictedFeature.getMeta().addHasSource(new ResourceValue(model.getUri(), OTClasses.model())).
-                    addTitle("Feature created as prediction feature for DoA model " + model.getUri());
 
-            Future<VRI> predictedFeatureUri = predictedFeature.publish(featureService, token);
-            /* Wait for remote server to respond */
-            while (!predictedFeatureUri.isDone()) {
-                Thread.sleep(1000);
-            }
+            String predictionFeatureUri = null;
+            Feature predictedFeature = publishFeature(model,dependentFeature.getUnits(),"Feature created as prediction feature for DoA model ",datasetUri,featureService);
+            model.addPredictedFeatures(predictedFeature);
+            predictionFeatureUri = predictedFeature.getUri().toString();
+
+            getTask().getMeta().addComment("Prediction feature " + predictionFeatureUri + " was created.");
+
+            UpdateTask firstTaskUpdater = new UpdateTask(getTask());
+            firstTaskUpdater.setUpdateMeta(true);
+            firstTaskUpdater.setUpdateTaskStatus(true);//TODO: Is this necessary?
             try {
-                VRI resultUri = predictedFeatureUri.get();
-                predictedFeature.setUri(resultUri);
-                getTask().getMeta().addComment("Prediction Feature created: " + resultUri);
-
-                UpdateTask updater = new UpdateTask(getTask());
-                updater.setUpdateMeta(true);
+                firstTaskUpdater.update();
+            } catch (DbException ex) {
+                throw new JaqpotException(ex);
+            } finally {
                 try {
-                    updater.update();
+                    firstTaskUpdater.close();
                 } catch (DbException ex) {
-                    String msg = "DB Update operation failed";
-                    logger.error(msg);
-                    throw new JaqpotException(msg, ex);
-                } finally {
-                    try {
-                        updater.close();
-                    } catch (DbException ex) {
-                        String msg = "DB Updater uncloseable";
-                        logger.error(msg);
-                        throw new JaqpotException(msg, ex);
-                    }
+                    throw new JaqpotException(ex);
                 }
-
-            } catch (ExecutionException ex) {
-                logger.error("Exceptional event occured while registering/updating task in DB", ex);
             }
-
+            
             model.addPredictedFeatures(predictedFeature);
             if (target != null) {
                 trainingSet.deleteAttributeAt(targetIndex);
@@ -153,15 +115,12 @@ public class LeveragesTrainer extends AbstractTrainer {
             actualModel.setDataMatrix(omega);
             actualModel.setGamma(k, n);
             model.setActualModel(actualModel);
-            model.getMeta().addCreator(getTask().getCreatedBy().getUid()).addDescription("Model designed to tell wether a compound "
+            model.getMeta().addCreator(getTask().getCreatedBy().getUid()).addDescription("Model designed to tell whether a compound "
                     + "belongs to the domain of applicability of any model trained with the dataset " + datasetUri + " using the "
                     + "leverages algorithm");
 
 
             return model;
-        } catch (InterruptedException ex) {
-            logger.error("Action was suddenly interrupted :(", ex);
-            throw new JaqpotException(ex);
         } catch (QSARException ex) {
             logger.debug(null, ex);
             throw new JaqpotException(ex);

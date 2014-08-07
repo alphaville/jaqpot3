@@ -33,6 +33,7 @@
  */
 package org.opentox.jaqpot3.qsar;
 
+import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,12 @@ public abstract class AbstractPredictor implements IPredictor {
             }
             if(model.getActualModel().hasNormalization()) {
                 inst = WekaInstancesProcess.normalizeInstances(inst,independentFeatures,model.getActualModel().getNormalizationMinVals2(),model.getActualModel().getNormedVals2());
+            }
+            
+            Matrix matrix = model.getActualModel().getDataMatrix();
+            double gamma = model.getActualModel().getGamma();
+            if(matrix!=null) {
+                
             }
         }
         return inst;

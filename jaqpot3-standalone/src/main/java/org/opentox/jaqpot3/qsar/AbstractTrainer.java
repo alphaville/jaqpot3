@@ -33,6 +33,7 @@
  */
 package org.opentox.jaqpot3.qsar;
 
+import Jama.Matrix;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +89,7 @@ public abstract class AbstractTrainer implements ITrainer {
     HashMap<VRI, Double> scalingMaxVals = null;
     HashMap<VRI, Double> normalizationMinVals = null;
     HashMap<VRI, Double> normedVals = null;
+    protected Instances predictedInstances = null;
 
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
@@ -174,11 +176,20 @@ public abstract class AbstractTrainer implements ITrainer {
             model.getActualModel().setScalingMaxVals(scalingMaxVals);
         }
         
-        //todo pmml xml for scaling
+        //todo pmml xml for normalization
         if(hasNormalization) {
             model.getActualModel().setHasNormalization(hasNormalization);
             model.getActualModel().setNormalizationMinVals(normalizationMinVals);
             model.getActualModel().setNormedVals(normedVals);
+        }
+        
+        //todo pmml xml for DoA
+        if(predictedInstances!=null) {
+            Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);
+            model.getActualModel().setDataMatrix(omega);
+            int k = predictedInstances.numInstances();
+            int n = predictedInstances.numAttributes();
+            model.getActualModel().setGamma(k, n);
         }
         
         if(pmml!=null) {

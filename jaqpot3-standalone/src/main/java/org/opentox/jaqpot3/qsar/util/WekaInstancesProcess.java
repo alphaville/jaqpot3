@@ -34,6 +34,7 @@
 
 package org.opentox.jaqpot3.qsar.util;
 
+import Jama.Matrix;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -651,5 +652,32 @@ public class WekaInstancesProcess {
             }
         }
         return simpleMap;
+    }
+    
+    public static Matrix getLeverageDoAMatrix(Instances inst) throws JaqpotException {
+        int targetIndex = inst.classIndex();
+        Matrix omega = null;
+        Instances res = null;
+        try {
+            if (targetIndex>=0) {
+                Remove remove = new Remove();
+                remove.setAttributeIndicesArray(new int[]{targetIndex});
+                remove.setInputFormat(inst);
+                res = Filter.useFilter(inst, remove);
+            }
+        } catch(Exception ex) {
+            throw new JaqpotException(ex);
+        }
+        if(res!=null) {
+            int k = inst.numInstances();
+            int n = inst.numAttributes();
+            double[][] dataArray = new double[k][n];
+            for (int i = 0; i < k; i++) {
+                dataArray[i] = inst.instance(i).toDoubleArray();
+            }
+            Matrix dataMatrix = new Matrix(dataArray);            
+            omega = (dataMatrix.transpose().times(dataMatrix)).inverse();
+        }
+        return omega;
     }
 }

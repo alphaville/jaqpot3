@@ -291,6 +291,10 @@ public class MlrRegression extends AbstractTrainer {
             }
             
             m.getMeta().addPublisher("OpenTox").addComment("This is a Multiple Linear Regression Model");
+            
+            //save the instances being predicted to abstract trainer for calculating DoA
+            predictedInstances = orderedTrainingSet;
+            
             return m;
         } catch (QSARException ex) {
             String message = "QSAR Exception: cannot train MLR model";
