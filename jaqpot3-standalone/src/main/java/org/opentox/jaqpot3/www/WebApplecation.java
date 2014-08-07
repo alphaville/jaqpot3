@@ -111,7 +111,7 @@ final public class WebApplecation extends JaqpotWebApplication {
             java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //TODO: Cleanup database
+        //TODO: ADMIN Cleanup database
 
         System.out.print(keyOut_normal + "Database Janitor is in place and started working ");
         DatabaseJanitor.work();

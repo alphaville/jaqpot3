@@ -230,7 +230,7 @@ public class AlgorithmResource extends JaqpotResource {
             return errorReport(ex, "DbError", "Cannot get the number of running tasks from "
                     + "the database - Read Error", variant.getMediaType(), false);
         }
-        //TODO: This should become user-specific
+        //TODO: ADMIN This should become user-specific
         int maxModels = creator.getMaxModels();
         int maxTasks = creator.getMaxParallelTasks();
        
@@ -337,7 +337,7 @@ public class AlgorithmResource extends JaqpotResource {
 
         /** The user takes a task and waits for completion**/
         Publisher publisher = new Publisher(variant.getMediaType());
-        //TODO: Should release be here???
+        //TODO: RESTLET Should release be here???
         release();
         try {
             getResponse().setStatus(Status.valueOf((int) task.getHttpStatus()));

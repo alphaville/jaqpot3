@@ -63,7 +63,7 @@ public class Publisher {
     }
 
     public Publishable process(IOTComponent data) throws JaqpotException {
-        // TODO: Take care of all supported and unsupported mediatypes.
+        // TODO: RESTLET Take care of all supported and unsupported mediatypes.
         Publishable p = null;
         if (ms_rdfRelated.contains(m_mediaType)) {
             p = new DataModelPublishable(data.asOntModel(), m_mediaType);

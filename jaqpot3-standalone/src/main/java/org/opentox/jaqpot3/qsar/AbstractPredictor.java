@@ -91,7 +91,7 @@ public abstract class AbstractPredictor implements IPredictor {
                 pmmlObject = PMMLProcess.loadPMMLObject(pmml);
                 //IMPORTANT!!!! WekaInstancesProcess.getFilteredInstances removes compound URI that is needed
                 
-                //TODO check Spot for MVH
+                //TODO: PREPROC check Spot for MVH
                 //inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
                 inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
@@ -183,7 +183,7 @@ public abstract class AbstractPredictor implements IPredictor {
         Instances inst = predictInstances(input);
         SubstanceDataset ds = new SubstanceDataset();
         
-        //TODO custom enanomapper
+        //TODO: API EXT custom enanomapper
         String host = SubstanceDataset.getHostFromVRI(input.toString());
         //get the csv data and the owner for the dataset to be published
         String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host);

@@ -289,7 +289,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.getParameters().add(bParam);
         m.getParameters().add(eParam);
         
-        //todo set instances for DoA 
+        //TODO: PREPROC set instances for DoA 
         return m;
     }
 

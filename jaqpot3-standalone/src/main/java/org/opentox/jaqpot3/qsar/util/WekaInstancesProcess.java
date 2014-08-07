@@ -243,7 +243,7 @@ public class WekaInstancesProcess {
     }
     
     public static Instances transformDataset(Instances inst,PMML pmmlObject) throws JaqpotException{
-        //TODO add new features when uris missing
+        //TODO: PMML add new features when uris missing
         try {     
 
             if (pmmlObject!=null) {
@@ -301,7 +301,7 @@ public class WekaInstancesProcess {
     }
     
     public static List<Integer> getTransformationFieldsAttrIndex(Instances inst,PMML pmmlObject) throws JaqpotException{
-        //TODO add new features when uris missing
+        //TODO: PMML add new features when uris missing
         List<Integer> res = new ArrayList<Integer>();
         try {     
 
@@ -337,7 +337,7 @@ public class WekaInstancesProcess {
     /*
         Creates the csv data for a dataset to be published.
     */
-    //todo fix endpoint category
+    //TODO: API EXT fix endpoint category
     public static String getCSVOutput(Model model,AuthenticationToken token,Instances inst,VRI datasetURI,String VRIprefix) {
         
         String res,name;
@@ -443,7 +443,7 @@ public class WekaInstancesProcess {
             headerStr += ",";
             enStr += ","+sameAs;
             mStr += ","+medium;
-            //todo place model, and in the future dont bind it with condition
+            //TODO: API EXT place model, and in the future dont bind it with condition
             condStr += ",";
             unStr +=","+units;
         }
@@ -469,7 +469,7 @@ public class WekaInstancesProcess {
         When posting to /substance all values of the substances being posted are removed.
         Thus the substance name is SubstancePredicted.
     */
-    //todo zeta potential from uuiclid
+    //TODO: API EXT zeta potential from uuiclid
     //use the endpoint of the dataset in order to get info for the header of the predicted descriptor
     public static String getCSVOutputForProperty(AuthenticationToken token,Instances inst,String units,String title,VRI datasetURI,String VRIprefix) {
         

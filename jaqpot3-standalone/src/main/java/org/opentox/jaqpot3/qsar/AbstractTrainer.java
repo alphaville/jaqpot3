@@ -109,9 +109,7 @@ public abstract class AbstractTrainer implements ITrainer {
     private Instances doPreprocessing(Instances inst) throws JaqpotException {
         
         nonProcessedInstances = inst;
-
-        //todo cleanup
-        //missing value
+        //TODO: PREPROC set all above flags for each algorithm properly
         if (!keepNominal()) {
             AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.nominal);
             try {
@@ -157,7 +155,7 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
-        //TODO specs pmml must have datadictionary
+        //TODO: PMML specs  must have datadictionary
         if(pmml!=null && pmmlSupported()) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
         }
@@ -183,7 +181,7 @@ public abstract class AbstractTrainer implements ITrainer {
     
     private Model postProcessModel(Model model) throws JaqpotException {
         
-        //todo pmml xml for scaling
+        //TODO: PMML xml for scaling
         if(hasScaling) {
             model.getActualModel().setHasScaling(hasScaling);
             model.getActualModel().setScalingMax(scalingMax);
@@ -192,14 +190,14 @@ public abstract class AbstractTrainer implements ITrainer {
             model.getActualModel().setScalingMaxVals(scalingMaxVals);
         }
         
-        //todo pmml xml for normalization
+        //TODO: PMML xml for normalization
         if(hasNormalization) {
             model.getActualModel().setHasNormalization(hasNormalization);
             model.getActualModel().setNormalizationMinVals(normalizationMinVals);
             model.getActualModel().setNormedVals(normedVals);
         }
         
-        //todo pmml xml for DoA
+        //TODO: PMML xml for DoA
         if(predictedInstances!=null && DoASupported()) {
             Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);
             model.getActualModel().setDataMatrix(omega);
@@ -354,7 +352,7 @@ public abstract class AbstractTrainer implements ITrainer {
                 
                 String host = SubstanceDataset.getHostFromVRI(datasetUri.toString());
                 units = (units==null) ? "" : units;
-                //TODO custom enanomapper
+                //TODO: API EXT custom enanomapper
                 //gets the csv data for publishing a property to enanomapper
                 String csvData = WekaInstancesProcess.getCSVOutputForProperty(token,nonProcessedInstances,units,title,datasetUri,host);
                 ds.setCsv(csvData);

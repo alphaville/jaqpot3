@@ -133,7 +133,6 @@ public class SvmRegression extends AbstractTrainer {
     @Override
     public Model train(Instances data) throws JaqpotException {
         try {
-            //todo check target parameter
             Attribute target = data.attribute(targetUri.toString());
             if (target == null) {
                 throw new QSARException("The prediction feature you provided was not found in the dataset");

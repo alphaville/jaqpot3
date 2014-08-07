@@ -215,7 +215,7 @@ public class TaskResource extends JaqpotResource {
                 task = tasksFound.next();
             }
         } catch (DbException ex) {
-            logger.error("DB exception while searchin in the DB for the Task with primary ID '" + primaryId + "'");
+            logger.error("DB exception while searching in the DB for the Task with primary ID '" + primaryId + "'");
             //TODO: Handle ex
 
         } finally {

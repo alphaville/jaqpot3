@@ -159,8 +159,7 @@ public class PredictionService extends RunnableTaskService {
                 VRI resultUri = future.get();
                 
                 if(isSubstanceDataset) {
-                    //TODO custom enanomapper
-                    //TODO fix this
+                    //TODO: API EXT custom enanomapper and datasetURI must be returned
                     //In enanomapper publishing a dataset is available through posting to /substance
                     //this returns a substance.
                     //In order to get the dataset, the ownerUUID from the substance is retrieved 
