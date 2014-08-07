@@ -212,26 +212,28 @@ public class SvmRegression extends AbstractTrainer {
                         + "tolerance = {" + tolerance + "}.", ex);
             }
             regressor.setKernel(svm_kernel);
-            // START TRAINING
+            // START TRAINING & CREATE MODEL
             try {
                 regressor.buildClassifier(orderedTrainingSet);
                 
                 // evaluate classifier and print some statistics
-                Evaluation eval = new Evaluation(data);
-                eval.evaluateModel(regressor, data);
+                Evaluation eval = new Evaluation(orderedTrainingSet);
+                eval.evaluateModel(regressor, orderedTrainingSet);
                 String stats = eval.toSummaryString("", false);
+                
+                ActualModel am = new ActualModel(regressor);
+                am.setStatistics(stats);
+                m.setActualModel(am);
                // m.setStatistics(stats);
-            } catch (final Exception ex) {
+            } catch (NotSerializableException ex) {
+                String message = "Model is not serializable";
+                logger.error(message, ex);
+                throw new JaqpotException(message, ex);
+            }  catch (final Exception ex) {
                 throw new QSARException("Unexpected condition while trying to train "
                         + "the model. Possible explanation : {" + ex.getMessage() + "}", ex);
-            }
-
-            //CREATE MODEL
-            try {
-                m.setActualModel(new ActualModel(regressor));
-            } catch (NotSerializableException ex) {
-                logger.error("Serialization error!", ex);
-            }
+            } 
+            
             m.setAlgorithm(getAlgorithm());
             m.setCreatedBy(getTask().getCreatedBy());
             m.setDataset(datasetUri);
@@ -244,7 +246,6 @@ public class SvmRegression extends AbstractTrainer {
             m.addDependentFeatures(dependentFeature);
 
             m.setIndependentFeatures(independentFeatures);
-
             
             String predictionFeatureUri = null;
             Feature predictedFeature = publishFeature(m,dependentFeature.getUnits(),"Feature created as prediction feature for SVM model " + m.getUri(),datasetUri,featureService);

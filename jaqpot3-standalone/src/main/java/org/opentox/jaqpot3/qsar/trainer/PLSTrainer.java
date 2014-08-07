@@ -188,8 +188,24 @@ public class PLSTrainer extends AbstractTrainer {
         
         PLSModel actualModel = new PLSModel(pls);
         try {
-            model.setActualModel(new ActualModel(actualModel));
+            
+            PLSClassifier cls = new PLSClassifier();
+            cls.setFilter(pls);
+            cls.buildClassifier(data);
+            
+            // evaluate classifier and print some statistics
+            Evaluation eval = new Evaluation(data);
+            eval.evaluateModel(cls, data);
+            String stats = eval.toSummaryString("", false);
+
+            ActualModel am = new ActualModel(actualModel);
+            am.setStatistics(stats);
+            
+            model.setActualModel(am);
         } catch (NotSerializableException ex) {
+            Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new JaqpotException(ex);
+        } catch (Exception ex) {
             Logger.getLogger(PLSTrainer.class.getName()).log(Level.SEVERE, null, ex);
             throw new JaqpotException(ex);
         }

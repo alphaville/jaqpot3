@@ -403,5 +403,29 @@ public class PMMLProcess {
         }
         return res;
     }
+    
+    private static String getCorrelation(String stats) {
+        return getStatisticsAttr("Correlation\\s*coefficient",stats);
+    }
+    
+    private static String getMeanAbsError(String stats) {
+        return getStatisticsAttr("Mean\\s*absolute\\s*error",stats);
+    }
+    
+    private static String getRootMeanSquaredError(String stats) {
+        return getStatisticsAttr("Root\\s*mean\\s*squared\\s*error",stats);
+    }
+    
+    private static String getRelativeAbsoluteError(String stats) {
+        return getStatisticsAttr("Relative\\s*absolute\\s*error",stats);
+    }
+    
+    private static String getRootRelativeSquaredError (String stats) {
+        return getStatisticsAttr("Root\\s*relative\\s*squared\\s*error",stats);
+    }
+    
+    private static String getStatisticsAttr(String attr,String stats) {
+        return GenericUtils.getRegex("\\s*"+attr+"\\s*([0-9.]*)", stats);
+    }
 }
 
