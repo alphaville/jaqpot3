@@ -72,25 +72,29 @@ import org.opentox.toxotis.ontology.collection.OTClasses;
  */
 public abstract class AbstractTrainer implements ITrainer {
 
-    protected byte[] pmml =null;
-    protected PMML pmmlObject;
     private IClientInput ClientParams;
     private Task task;
-    protected Instances nonProcessedInstances;
     protected AuthenticationToken token;
     private UUID uuid = UUID.randomUUID();
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
+    
     private Boolean hasScaling = false;
     private Boolean hasNormalization = false;
     private Boolean hasMVH = false;
+    
+    protected byte[] pmml =null;
+    protected PMML pmmlObject;
     private double scalingMin = 0;
     private double scalingMax = 1;
     HashMap<VRI, Double> scalingMinVals = null;
     HashMap<VRI, Double> scalingMaxVals = null;
     HashMap<VRI, Double> normalizationMinVals = null;
     HashMap<VRI, Double> normedVals = null;
-    protected Instances predictedInstances = null;
+    
+    protected Instances nonProcessedInstances; //used in publishing property 
+    //predictedInstances is used in DoA must be set in the end of training of each algorithm
+    protected Instances predictedInstances = null; 
 
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
@@ -108,7 +112,7 @@ public abstract class AbstractTrainer implements ITrainer {
 
         //todo cleanup
         //missing value
-        if (!keepNominal()){
+        if (!keepNominal()) {
             AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.nominal);
             try {
                 inst = cleanup.filter(inst);
@@ -118,7 +122,8 @@ public abstract class AbstractTrainer implements ITrainer {
             }
             
         }
-        if (!keepString()){
+        
+        if (!keepString()) {
             AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.string);
             try {
                 inst = cleanup.filter(inst);
@@ -127,7 +132,8 @@ public abstract class AbstractTrainer implements ITrainer {
                 throw new JaqpotException(message, ex);
             }
         }
-        if (!keepNumeric()){
+        
+        if (!keepNumeric()) {
             AttributeCleanup cleanup = new AttributeCleanup(false, AttributeCleanup.AttributeType.numeric);
             try {
                 inst = cleanup.filter(inst);
@@ -136,22 +142,23 @@ public abstract class AbstractTrainer implements ITrainer {
                 throw new JaqpotException(message, ex);
             }
         }
-        if(pmml!=null) {
+        
+        if(pmml!=null && pmmlSupported()) {
             pmmlObject = PMMLProcess.loadPMMLObject(pmml);
         }
             
         setIndepNDependentFeatures(inst);
         
-        if(pmml!=null) {
+        if(pmml!=null && pmmlSupported()) {
             inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures,dependentFeature);
         }
         
-        if( hasMVH || performMVH() ) {
+        if( hasMVH) {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
         //TODO specs pmml must have datadictionary
-        if(pmml!=null) {
+        if(pmml!=null && pmmlSupported()) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
         }
         
@@ -193,7 +200,7 @@ public abstract class AbstractTrainer implements ITrainer {
         }
         
         //todo pmml xml for DoA
-        if(predictedInstances!=null) {
+        if(predictedInstances!=null && DoASupported()) {
             Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);
             model.getActualModel().setDataMatrix(omega);
             int k = predictedInstances.numInstances();
@@ -201,9 +208,10 @@ public abstract class AbstractTrainer implements ITrainer {
             model.getActualModel().setGamma(k, n);
         }
         
-        if(pmml!=null) {
+        if(pmml!=null && pmmlSupported()) {
             model.getActualModel().setPmml(pmml);
         }
+        
         try {
             model.setActualModel(model.getActualModel());
         } catch (Exception ex) {
@@ -371,47 +379,56 @@ public abstract class AbstractTrainer implements ITrainer {
     }
     
     private void preprocParametrize(IClientInput clientParameters) throws BadParameterException {
-        String minString = clientParameters.getFirstValue("scalingMin");
-        if (minString != null) {
-            hasScaling = true;
-            try {
-                scalingMin = Double.parseDouble(minString);
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'scaling_min' (" + minString + ")", nfe);
+        
+        if(scalingSupported()) {
+            String minString = clientParameters.getFirstValue("scalingMin");
+            if (minString != null) {
+                hasScaling = true;
+                try {
+                    scalingMin = Double.parseDouble(minString);
+                } catch (NumberFormatException nfe) {
+                    throw new BadParameterException("Invalid value for the parameter 'scaling_min' (" + minString + ")", nfe);
+                }
+            }
+            String maxString = clientParameters.getFirstValue("scalingMax");
+            if (maxString != null) {
+                try {
+                    scalingMax = Double.parseDouble(maxString);
+                } catch (NumberFormatException nfe) {
+                    throw new BadParameterException("Invalid value for the parameter 'scaling_max' (" + maxString + ")", nfe);
+                }
+            }
+            if (scalingMax <= scalingMin) {
+                throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
+                        + "you spcified are inconsistent. min=" + scalingMin + " while max=" + scalingMax + ". It should be min &lt; max.");
             }
         }
-        String maxString = clientParameters.getFirstValue("scalingMax");
-        if (maxString != null) {
-            try {
-                scalingMax = Double.parseDouble(maxString);
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'scaling_max' (" + maxString + ")", nfe);
+          
+        if(normalizationSupported()) {
+            String normalizeString = clientParameters.getFirstValue("normalize");
+            if (normalizeString != null) {
+                try {
+                    int tempNorm = Integer.parseInt(normalizeString);
+                    hasNormalization = (Integer.compare(tempNorm, 1)==0)? true : false;
+                } catch (NumberFormatException nfe) {
+                    throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
+                }
             }
         }
-        if (scalingMax <= scalingMin) {
-            throw new BadParameterException("Assertion Exception: max >= min. The values for the parameters min and max that "
-                    + "you spcified are inconsistent. min=" + scalingMin + " while max=" + scalingMax + ". It should be min &lt; max.");
-        }
-        String normalizeString = clientParameters.getFirstValue("normalize");
-        if (normalizeString != null) {
-            try {
-                int tempNorm = Integer.parseInt(normalizeString);
-                hasNormalization = (Integer.compare(tempNorm, 1)==0)? true : false;
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
-            }
-        }
+        
         if(hasScaling && hasNormalization) {
             throw new BadParameterException("cannot both scale and normalize a dataset");
         }
         
-        String mvhString = clientParameters.getFirstValue("mvh");
-        if (mvhString != null) {
-            try {
-                int mvh = Integer.parseInt(mvhString);
-                hasMVH = (Integer.compare(mvh, 1)==0)? true : false;
-            } catch (NumberFormatException nfe) {
-                throw new BadParameterException("Invalid value for the parameter 'normalize' (" + normalizeString + ")", nfe);
+        if(performMVH()) {
+            String mvhString = clientParameters.getFirstValue("mvh");
+            if (mvhString != null) {
+                try {
+                    int mvh = Integer.parseInt(mvhString);
+                    hasMVH = (Integer.compare(mvh, 1)==0)? true : false;
+                } catch (NumberFormatException nfe) {
+                    throw new BadParameterException("Invalid value for the parameter 'mvh' (" + mvhString + ")", nfe);
+                }
             }
         }
     }
