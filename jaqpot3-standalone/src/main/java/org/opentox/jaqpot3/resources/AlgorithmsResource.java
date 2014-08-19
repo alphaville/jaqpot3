@@ -58,6 +58,7 @@ import org.opentox.toxotis.core.component.ServiceRestDocumentation;
 import org.opentox.toxotis.ontology.collection.HttpMethods.MethodsEnum;
 import org.opentox.toxotis.ontology.collection.OTRestClasses;
 import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
+import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.ReferenceList;
@@ -65,6 +66,7 @@ import org.restlet.data.Status;
 import org.restlet.ext.wadl.MethodInfo;
 import org.restlet.ext.wadl.RepresentationInfo;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
 
@@ -108,6 +110,13 @@ public class AlgorithmsResource extends JaqpotResource {
 
     @Override
     protected Representation get(Variant variant) throws ResourceException {
+        
+        AuthenticationToken userToken = getUserToken();
+        if (userToken == null) {
+            toggleSeeOther("/login");
+            return new StringRepresentation("You must login first!!!");
+        }
+        
         MediaType media = variant.getMediaType();
         UriListPublishable publishable = new UriListPublishable(getAlgorithmUris(), media);
         Representer representer = new Representer(true);

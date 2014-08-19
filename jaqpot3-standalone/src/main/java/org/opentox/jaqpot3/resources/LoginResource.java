@@ -110,6 +110,7 @@ public class LoginResource extends JaqpotResource {
         }
 
         formBuilder.append("<p>Click <a href=\"..\">here</a> to go back to the main page</p>");
+        formBuilder.append("<p>Users without account may use the account 'guest'</p>");
         if (token != null) {
             AuthenticationToken at = new AuthenticationToken(token);
             try {
