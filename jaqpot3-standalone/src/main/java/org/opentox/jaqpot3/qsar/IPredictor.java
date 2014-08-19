@@ -126,4 +126,6 @@ public interface IPredictor {
     Dataset predict(VRI input) throws JaqpotException;
     
     SubstanceDataset predictEnm(VRI input) throws JaqpotException;
+    
+    Instances getPredictedInstances() throws JaqpotException;
 }

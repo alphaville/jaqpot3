@@ -71,6 +71,7 @@ public abstract class AbstractPredictor implements IPredictor {
     protected Model model;
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
+    private Instances predictedInstances;
 
     public AbstractPredictor() {
         trFieldsAttrIndex = new ArrayList<Integer>();
@@ -166,7 +167,7 @@ public abstract class AbstractPredictor implements IPredictor {
     
     @Override
     public Dataset predict(VRI input) throws JaqpotException {
-        Instances inst = predictInstances(input);
+        Instances inst = predictedInstances = predictInstances(input);
         try {
             return DatasetFactory.getInstance().createFromArff(inst);
         } catch (ToxOtisException ex) {
@@ -180,7 +181,7 @@ public abstract class AbstractPredictor implements IPredictor {
     @Override
     public SubstanceDataset predictEnm(VRI input) throws JaqpotException {
         
-        Instances inst = predictInstances(input);
+        Instances inst = predictedInstances = predictInstances(input);
         SubstanceDataset ds = new SubstanceDataset();
         
         //TODO: API EXT custom enanomapper
@@ -192,6 +193,10 @@ public abstract class AbstractPredictor implements IPredictor {
         ds.setCsv(csvData);
         ds.setOwnerName(ownerName);
         return ds;
+    }
+
+    public Instances getPredictedInstances() {
+        return predictedInstances;
     }
     
     

@@ -155,7 +155,7 @@ public abstract class AbstractTrainer implements ITrainer {
             inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
         }
            
-        //TODO: PMML specs  must have datadictionary
+        //TODO: PMML specs must have datadictionary
         if(pmml!=null && pmmlSupported()) {
             inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
         }
