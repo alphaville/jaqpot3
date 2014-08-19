@@ -287,6 +287,13 @@ public abstract class JaqpotResource extends WadlServerResource {
         rep.setDigest(new Digest(Digest.ALGORITHM_MD5, message.getBytes()));
         return rep;
     }
+    
+    
+    protected Representation sendMessage(String message,MediaType media) {
+        Representation rep = new StringRepresentation(message, media, Language.ENGLISH, CharacterSet.UTF_8);
+        rep.setDigest(new Digest(Digest.ALGORITHM_MD5, message.getBytes()));
+        return rep;
+    }
 
     /**
      * The method the client applied on the server is not allowed.
@@ -439,7 +446,8 @@ public abstract class JaqpotResource extends WadlServerResource {
     }
 
     protected Representation errorReport(String errorCode, String message, String details, MediaType media, boolean doAutoLogging) {
-        if (!MediaType.APPLICATION_RDF_XML.equals(media) && !MediaType.APPLICATION_RDF_TURTLE.equals(media) && !MediaType.TEXT_RDF_N3.equals(media) && !MediaType.TEXT_RDF_N3.equals(media) && !MediaType.TEXT_HTML.equals(media)) {
+        if (!MediaType.APPLICATION_RDF_XML.equals(media) && !MediaType.APPLICATION_RDF_TURTLE.equals(media) && !MediaType.TEXT_RDF_N3.equals(media) && !MediaType.TEXT_RDF_N3.equals(media)
+                && !MediaType.TEXT_HTML.equals(media) && !MediaType.MULTIPART_FORM_DATA.equals(media)) {
             media = MediaType.APPLICATION_RDF_XML;// Default!
         }
         if (doAutoLogging) {

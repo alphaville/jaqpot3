@@ -147,7 +147,7 @@ public class TrainGeneric extends JaqpotResource {
        
         AuthenticationToken userToken = getUserToken();
         if (userToken == null) {
-            toggleSeeOther("/login?redirect=" + getCurrentVRI());
+            toggleSeeOther("/login");
             return new StringRepresentation("You must login first!!!");
         }
         

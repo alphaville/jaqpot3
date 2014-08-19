@@ -184,7 +184,7 @@ public class ModelResource extends JaqpotResource {
             }
             if (variant.getMediaType().equals(MediaType.APPLICATION_XML)) {
                 try {
-                    return sendMessage(PMMLProcess.generatePMML(mdl));
+                    return sendMessage(PMMLProcess.generatePMML(mdl),MediaType.APPLICATION_XML);
                 } catch (UnsupportedOperationException ex) {
                     getResponse().setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
                     return errorReport("NotSupportedYet", ex.getMessage(),
