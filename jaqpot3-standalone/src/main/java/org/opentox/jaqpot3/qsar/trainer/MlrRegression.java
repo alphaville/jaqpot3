@@ -276,7 +276,6 @@ public class MlrRegression extends AbstractTrainer {
                 eval.evaluateModel(linreg, orderedTrainingSet);
                 String stats = eval.toSummaryString("\nResults\n======\n", false);
                 
-                //TODO: PMML fix rest trainers statistics
                 ActualModel am = new ActualModel(linreg);
                 am.setStatistics(stats);
                 m.setActualModel(am);

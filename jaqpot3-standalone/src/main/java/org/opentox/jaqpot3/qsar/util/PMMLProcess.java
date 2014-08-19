@@ -76,6 +76,8 @@ import weka.filters.supervised.attribute.PLSFilter;
  * @author Pantelis Sopasakis
  * @author Charalampos Chomenides
  */
+
+//TODO: PMML insert to pmml xml the statistics 
 public class PMMLProcess {
 
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PMMLProcess.class);
@@ -94,7 +96,7 @@ public class PMMLProcess {
 
     private static String generateMLR(Model model) throws JaqpotException{
         LinearRegression wekaModel = (LinearRegression) model.getActualModel().getSerializableActualModel();
-            byte[] pmmlFile = model.getActualModel().getPmml();
+        byte[] pmmlFile = model.getActualModel().getPmml();
         
         String uuid = model.getUri().getId();
         String PMMLIntro = Configuration.getStringProperty("pmml.intro");

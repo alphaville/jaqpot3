@@ -89,6 +89,8 @@ public class DbListStreamPublisher {
                         try {
 
                             if (MediaType.TEXT_HTML.equals(media)) {
+                                writer.write("<h2>List of URIs</h2>");
+                                writer.write("<div style='margin-left:20px;'>");
                                 writer.write("<p><ol>");
                             }
                             while (iterator.hasNext()) {
@@ -113,6 +115,7 @@ public class DbListStreamPublisher {
                             }
                             if (MediaType.TEXT_HTML.equals(media)) {
                                 writer.write("</ol></p>");
+                                writer.write("</div>");
                             }
                             iterator.close();
                         } catch (DbException ex) {

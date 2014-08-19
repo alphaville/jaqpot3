@@ -97,12 +97,13 @@ public class UriListPublishable extends AbstractPublishable {
         writer.write("</head>\n"
                 + "<body>");
         if (heading == null) {
-            writer.write("<h1>List of URIs</h1>\n");
+            writer.write("<h2>List of URIs</h2>\n");
         } else {
-            writer.write("<h1>");
+            writer.write("<h2>");
             writer.write(heading);
-            writer.write("</h1>\n");
+            writer.write("</h2>\n");
         }
+        writer.write("<div style='margin-left:20px;'>");
         writer.write("<p>");
 
         Iterator<Reference> iterator = refList.iterator();
@@ -119,6 +120,7 @@ public class UriListPublishable extends AbstractPublishable {
             writer.write(currentUri);
             writer.write("</a></br>\n");
         }
+        writer.write("</div>");
 
         writer.write("</p>\n"
                 + "</boby>\n"

@@ -77,10 +77,10 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append(GoogleAnalytics.getGAjs());
         formBuilder.append("</head>");
         formBuilder.append("<body>");
-        formBuilder.append("<h1>Login</h1>");
+        formBuilder.append("<h2>Login</h2>");
 
 
-        formBuilder.append("<form method=\"POST\" actionUri=\"./\">");
+        formBuilder.append("<form method=\"POST\" actionUri=\"./\" style='margin-left:20px;'>");
         formBuilder.append("<table>");
         formBuilder.append("<tr>");
         formBuilder.append("<td>Username</td> <td><input type=\"text\" size=\"15\" maxlength=\"40\" name=\"username\" ");
