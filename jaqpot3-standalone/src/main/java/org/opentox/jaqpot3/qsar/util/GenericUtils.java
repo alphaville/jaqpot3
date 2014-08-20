@@ -37,7 +37,8 @@ package org.opentox.jaqpot3.qsar.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
@@ -47,7 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.www.WebApplecation;
 import org.opentox.toxotis.core.component.Model;
 import org.opentox.toxotis.core.component.Parameter;
-import org.opentox.toxotis.ontology.LiteralValue;
 
 /**
  *

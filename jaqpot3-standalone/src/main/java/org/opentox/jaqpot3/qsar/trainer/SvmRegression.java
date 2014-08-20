@@ -34,17 +34,13 @@
 
 package org.opentox.jaqpot3.qsar.trainer;
 
-import org.opentox.jaqpot3.qsar.util.SimpleMVHFilter;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
-import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -52,8 +48,6 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.AttributeCleanup;
-import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -67,8 +61,6 @@ import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.ontology.LiteralValue;
-import org.opentox.toxotis.ontology.ResourceValue;
-import org.opentox.toxotis.ontology.collection.OTClasses;
 import weka.classifiers.functions.SVMreg;
 import weka.classifiers.functions.supportVector.Kernel;
 import weka.classifiers.functions.supportVector.PolyKernel;
@@ -204,7 +196,7 @@ public class SvmRegression extends AbstractTrainer {
                 poly_kernel.setUseLowerOrder(true);
                 svm_kernel = poly_kernel;
             }
-
+            
             try {
                 regressor.setOptions(regressorOptions);
             } catch (final Exception ex) {

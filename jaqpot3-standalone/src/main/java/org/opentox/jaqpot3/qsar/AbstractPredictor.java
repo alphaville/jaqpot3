@@ -72,6 +72,7 @@ public abstract class AbstractPredictor implements IPredictor {
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
     private Instances predictedInstances;
+    protected Instances nonProcessedInstances; //used in DoA 
 
     public AbstractPredictor() {
         trFieldsAttrIndex = new ArrayList<Integer>();
@@ -79,7 +80,7 @@ public abstract class AbstractPredictor implements IPredictor {
 
     
     public Instances preprocessDataset(Instances inst) throws JaqpotException {
-        
+        nonProcessedInstances = inst;
         independentFeatures = model.getIndependentFeatures();
         dependentFeature = (model.getDependentFeatures().isEmpty()) ? null : model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
@@ -103,16 +104,15 @@ public abstract class AbstractPredictor implements IPredictor {
             if(model.getActualModel().hasNormalization()) {
                 inst = WekaInstancesProcess.normalizeInstances(inst,independentFeatures,model.getActualModel().getNormalizationMinVals2(),model.getActualModel().getNormedVals2());
             }
-            
-            Matrix matrix = model.getActualModel().getDataMatrix();
-            double gamma = model.getActualModel().getGamma();
-            if(matrix!=null) {
-                
-            }
         }
         return inst;
     }    
     
+    public Instances postprocessDataset(Instances nonProcessedinst,Instances inst,String datasetUri) throws JaqpotException {
+        
+        inst = WekaInstancesProcess.getLeverageDoAPredictedInstances(nonProcessedinst,inst, datasetUri, model);
+        return inst;
+    }
     
     @Override
     public IPredictor setModel(Model model) {
@@ -162,6 +162,7 @@ public abstract class AbstractPredictor implements IPredictor {
         }
         inst = preprocessDataset(inst);
         inst = predict(inst);
+        inst = postprocessDataset(nonProcessedInstances,inst,input.getUri());
         return inst;
     }
     

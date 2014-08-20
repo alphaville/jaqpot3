@@ -108,7 +108,7 @@ public class WekaPredictor extends AbstractPredictor {
         List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(predictions, pmmlObject);
         predictions = WekaInstancesProcess.removeInstancesAttributes(predictions, trFieldsIndex);
         Instances result = Instances.mergeInstances(justCompounds, predictions);
-
+        
         return result;
     }
 }

@@ -56,6 +56,7 @@ import org.jpmml.manager.PMMLManager;
 import org.json.JSONObject;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.nominal;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.numeric;
@@ -679,15 +680,56 @@ public class WekaInstancesProcess {
             throw new JaqpotException(ex);
         }
         if(res!=null) {
-            int k = inst.numInstances();
-            int n = inst.numAttributes();
+            int k = res.numInstances();
+            int n = res.numAttributes();
             double[][] dataArray = new double[k][n];
             for (int i = 0; i < k; i++) {
-                dataArray[i] = inst.instance(i).toDoubleArray();
+                dataArray[i] = res.instance(i).toDoubleArray();
             }
             Matrix dataMatrix = new Matrix(dataArray);            
             omega = (dataMatrix.transpose().times(dataMatrix)).inverse();
         }
         return omega;
+    }
+    
+    public static Instances getLeverageDoAPredictedInstances(Instances nonProcessedinst,Instances inst,String datasetUri,Model model) throws JaqpotException {
+        
+        double gamma = model.getActualModel().getGamma();
+        Matrix matrix = model.getActualModel().getDataMatrix();
+        nonProcessedinst = InstancesUtil.sortForModel(model, nonProcessedinst, -1);
+        
+        int numInstances = nonProcessedinst.numInstances();
+        int numAttributes = nonProcessedinst.numAttributes();
+        double[] indicator = new double[numInstances];
+        
+        //calculate DoA
+        Matrix x = null;
+        for (int i = 0; i < numInstances; i++) {
+            x = new Matrix(nonProcessedinst.instance(i).toDoubleArray(), numAttributes);
+            indicator[i] = Math.max(0, (gamma - x.transpose().times(matrix).times(x).get(0, 0)) / gamma);
+        }
+
+        //add new DoA attribute
+        Add attributeAdder = new Add();
+        attributeAdder.setAttributeIndex("last");
+        attributeAdder.setAttributeName("DoA"+datasetUri);
+        try {
+            attributeAdder.setInputFormat(inst);
+            inst = Filter.useFilter(inst, attributeAdder);
+        } catch (Exception ex) {
+            String message = "Exception while trying to add prediction feature to Instances";
+            throw new JaqpotException(message, ex);
+        }
+        
+        
+        int newNumInstances = inst.numInstances();
+        int newNumAttributes = inst.numAttributes();
+        
+        //set the DoA values
+        for (int i = 0; i < newNumInstances; i++) {
+           inst.instance(i).setValue(newNumAttributes-1, indicator[i]);
+        }
+        
+        return inst;
     }
 }

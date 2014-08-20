@@ -201,8 +201,8 @@ public abstract class AbstractTrainer implements ITrainer {
         if(predictedInstances!=null && DoASupported()) {
             Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);
             model.getActualModel().setDataMatrix(omega);
-            int k = predictedInstances.numInstances();
-            int n = predictedInstances.numAttributes();
+            int k = omega.getRowDimension();
+            int n = omega.getColumnDimension();
             model.getActualModel().setGamma(k, n);
         }
         
