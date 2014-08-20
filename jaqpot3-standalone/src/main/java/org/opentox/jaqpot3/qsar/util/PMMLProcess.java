@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -64,11 +65,13 @@ import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.core.component.Feature;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.Parameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.SVMreg;
+import weka.classifiers.functions.supportVector.Kernel;
 import weka.filters.supervised.attribute.PLSFilter;
 
 /**
@@ -107,17 +110,9 @@ public class PMMLProcess {
             pmml.append(PMMLIntro);
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"MLR Model\">\n");
             pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/mlr\"/>\n");
-          //  URI trainingDatasetURI = URI.create(model.getDataset().getUri());
 
-            pmml.append("<DatasetID href=\"" + URLEncoder.encode(model.getDataset().toString(),
-                    Configuration.getStringProperty("jaqpot.urlEncoding")) + "\"/>\n");
+            pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
-//            pmml.append("<FeatureDefinitions>\n");
-//            for (Feature feature : model.getIndependentFeatures()) {
-//                pmml.append("<link href=\"" + feature.getUri().toString() + "\"/>\n");
-//            }
-//            pmml.append("<target index=\"" + data.attribute(model.getPredictedFeature().getUri().toString()).index() + "\" name=\"" + model.getPredictedFeature().getUri().toString() + "\"/>\n");
-//            pmml.append("</FeatureDefinitions>\n");
             pmml.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
             pmml.append("</Model>\n");
             pmml.append("<DataDictionary numberOfFields=\"" + model.getIndependentFeatures().size() + "\" >\n");
@@ -192,27 +187,22 @@ public class PMMLProcess {
     
     private static String generateSVM(Model model) throws JaqpotException{
         SVMreg regressor = (SVMreg) model.getActualModel().getSerializableActualModel();
+        Kernel kr = regressor.getKernel();
         byte[] pmmlFile = model.getActualModel().getPmml();
         
         String uuid = model.getUri().getId();
         String PMMLIntro = Configuration.getStringProperty("pmml.intro");
         StringBuilder pmml = new StringBuilder();
+        String kernel = GenericUtils.getValueFromSet(model.getParameters(), "kernel").toLowerCase();
+        
         try {
             pmml.append("<?xml version=\"1.0\" ?>");
             pmml.append(PMMLIntro);
-            pmml.append("<Model ID=\"" + uuid + "\" Name=\"MLR Model\">\n");
-            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/mlr\"/>\n");
-          //  URI trainingDatasetURI = URI.create(model.getDataset().getUri());
+            pmml.append("<Model ID=\"" + uuid + "\" Name=\"SVM Model\">\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/svm\"/>\n");
 
-            pmml.append("<DatasetID href=\"" + URLEncoder.encode(model.getDataset().toString(),
-                    Configuration.getStringProperty("jaqpot.urlEncoding")) + "\"/>\n");
+            pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
-//            pmml.append("<FeatureDefinitions>\n");
-//            for (Feature feature : model.getIndependentFeatures()) {
-//                pmml.append("<link href=\"" + feature.getUri().toString() + "\"/>\n");
-//            }
-//            pmml.append("<target index=\"" + data.attribute(model.getPredictedFeature().getUri().toString()).index() + "\" name=\"" + model.getPredictedFeature().getUri().toString() + "\"/>\n");
-//            pmml.append("</FeatureDefinitions>\n");
             pmml.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
             pmml.append("</Model>\n");
             pmml.append("<DataDictionary numberOfFields=\"" + model.getIndependentFeatures().size() + "\" >\n");
@@ -228,25 +218,48 @@ public class PMMLProcess {
                 }
             }
            
-           String dependentFeatures = (model.getDependentFeatures().isEmpty()) ? 
+            String dependentFeatures = (model.getDependentFeatures().isEmpty()) ? 
                                 "" : model.getDependentFeatures().iterator().next().getUri().toString() ;
-            // RegressionModel
-            pmml.append("<RegressionModel modelName=\"" + uuid.toString() + "\"" + 
-                    " functionName=\"regression\" modelType=\"linearRegression\"" +
-                    " algorithmName=\"linearRegression\">\n");
-            // RegressionModel::MiningSchema
+           
+            String svmRepresentation =  (StringUtils.equals(kernel, "rbf")) ? "SupportVectors" : "Coefficients";           
+            // SupportVectorMachineModel
+            pmml.append("<SupportVectorMachineModel modelName=\"" + uuid.toString() + "\"" + 
+                    " algorithmName=\"supportVectorMachine\" functionName=\"regression\" svmRepresentation=\""+svmRepresentation+"\">\n");
+            
             pmml.append("<MiningSchema>\n");
             for (Feature feature : model.getIndependentFeatures()) {
                     pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" />\n");
 
             }
             
-            pmml.append("<MiningField name=\"" + dependentFeatures + "\" " + "usageType=\"predicted\"/>\n");
+            pmml.append("<MiningField name=\"" + dependentFeatures + "\" " + "usageType=\"target\"/>\n");
             pmml.append("</MiningSchema>\n");
             // RegressionModel::RegressionTable
             
-            pmml.append("</RegressionTable>\n");
-            pmml.append("</RegressionModel>\n");
+            
+            if(StringUtils.equals(kernel, "rbf")) {
+                String gamma = GenericUtils.getValueFromSet(model.getParameters(), "gamma");
+                pmml.append("<RadialBasisKernelType gamma=\"" + gamma + "\" description=\"Radial basis kernel type\"/>\n");
+                
+            } else if(StringUtils.equals(kernel, "polynomial")) {
+                String gamma = GenericUtils.getValueFromSet(model.getParameters(), "gamma");
+                String degree = GenericUtils.getValueFromSet(model.getParameters(), "degree");
+                pmml.append("<PolynomialKernelType coef0=\"0\" gamma=\"" + gamma + "\" degree=\"" + degree + "\" description=\"Polynomial kernel type\"/>\n");
+            } else if(StringUtils.equals(kernel, "linear")) {
+                
+                pmml.append("<LinearKernelType description=\"Linear kernel type\"/>\n");
+            }
+            
+            pmml.append("<VectorDictionary numberOfVectors=\""+""+"\">\n");
+            pmml.append("<VectorFields  numberOfFields=\""+model.getIndependentFeatures().size()+"\">\n");
+            for (Feature feature : model.getIndependentFeatures()) {
+               pmml.append("<FieldRef field=\"" + feature.getUri().toString() + "\" />\n");
+            }
+            pmml.append("</VectorFields\">\n");
+
+            pmml.append("</VectorDictionary>\n");
+            
+            pmml.append("</SupportVectorMachineModel>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {
             String message = "Character Encoding :'"

@@ -409,7 +409,7 @@ public class WekaInstancesProcess {
         int noAttributes = inst.numAttributes();
         
         String headerStr="",enStr="",mStr="",condStr="",unStr="";
-        String units,sameAs,medium,attrName,res;
+        String units,sameAs,medium,attrName,res,title;
         
         for(int k=1;k<noAttributes;++k ) {
             attrName = inst.attribute(k).name();
@@ -433,15 +433,25 @@ public class WekaInstancesProcess {
             keys.add("sameAs");
             sameAs = jsn.traverse(keys,obj);
             
-            // if feature uri not in dataset then search in features list
-            if(StringUtils.isEmpty(sameAs) ) {
-                if(featuresUris.contains(attrName)) {
-                    sameAs = attrName;
+            keys = new ArrayList<String>();
+            keys.add("feature");
+            keys.add(attrName);
+            keys.add("title");
+            title = jsn.traverse(keys,obj);
+            
+            if(StringUtils.isEmpty(title)) {
+                 // if feature uri not in dataset then search in features list
+                if(StringUtils.isEmpty(sameAs) || StringUtils.equals(sameAs, "http://www.opentox.org/echaEndpoints.owl#UNKNOWN_TOXICITY")  ) {
+                    if(featuresUris.contains(attrName)) {
+                        title = attrName;
+                    }
+                } else {
+                    title = sameAs;
                 }
             }
             
             headerStr += ",";
-            enStr += ","+sameAs;
+            enStr += ","+title;
             mStr += ","+medium;
             //TODO: API EXT place model, and in the future dont bind it with condition
             condStr += ",";

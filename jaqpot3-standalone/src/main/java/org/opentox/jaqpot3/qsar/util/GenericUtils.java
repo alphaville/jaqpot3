@@ -39,11 +39,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.www.WebApplecation;
 import org.opentox.toxotis.core.component.Model;
+import org.opentox.toxotis.core.component.Parameter;
 import org.opentox.toxotis.ontology.LiteralValue;
 
 /**
@@ -122,6 +125,16 @@ public class GenericUtils {
             }
         } catch (Exception ex) {
             
+        }
+        return res;
+    }
+    
+    public static String getValueFromSet(Set<Parameter> st,String key) {
+        String res = "";
+        for(Parameter temp: st) {
+            if(StringUtils.equals(temp.getName().getValueAsString(),key)){
+                res= temp.getValue().toString();
+            }
         }
         return res;
     }
