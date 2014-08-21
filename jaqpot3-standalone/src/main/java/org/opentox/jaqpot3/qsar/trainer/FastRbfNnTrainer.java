@@ -186,6 +186,10 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         }
         cleanedTraining.deleteAttributeAt(targetAttribute.index());
 
+        
+        //save the instances being predicted to abstract trainer for calculating DoA
+        predictedInstances = cleanedTraining;
+        
 
         Instances rbfNnNodes = new Instances(cleanedTraining);
         rbfNnNodes.delete();
@@ -235,6 +239,8 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         /* Caclulate the matrix X = (l_{i,j})_{i,j} */
         double[][] X = new double[cleanedTraining.numInstances()][rbfNnNodes.numInstances()];
         for (int i = 0; i < cleanedTraining.numInstances(); i++) {
+            
+            //for DoA
             for (int j = 0; j < rbfNnNodes.numInstances(); j++) {
                 X[i][j] = rbf(sigma[j], cleanedTraining.instance(i), rbfNnNodes.instance(j));
             }
@@ -280,7 +286,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.getParameters().add(bParam);
         m.getParameters().add(eParam);
         
-        //TODO: PREPROC set instances for DoA 
+        
         return m;
     }
 

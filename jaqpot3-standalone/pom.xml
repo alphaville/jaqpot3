@@ -152,6 +152,8 @@
                 <!--Core size of the execution pool
                 Default value: 4-->
                 <taskpool.coreSize>4</taskpool.coreSize>
+                
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             </properties>
         </profile>
     </profiles>
@@ -213,6 +215,11 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>codehaus-snapshots</id>
+            <url>http://nexus.codehaus.org/snapshots/</url>
+        </repository>
+        
     </repositories>
 
 

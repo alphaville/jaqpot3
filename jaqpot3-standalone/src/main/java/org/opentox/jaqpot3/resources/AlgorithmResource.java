@@ -33,6 +33,7 @@
  */
 package org.opentox.jaqpot3.resources;
 
+import static java.net.URLDecoder.decode;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -75,7 +76,6 @@ import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ResourceException;
-import static sun.net.www.ParseUtil.decode;
 
 /**
  *
@@ -311,7 +311,7 @@ public class AlgorithmResource extends JaqpotResource {
                     for(int i=0;i<items.size();++i) {
                         if(items.get(i).isFormField()) {
                             fieldVal = items.get(i).getString();
-                            fieldVal = decode(fieldVal);
+                            fieldVal = decode(fieldVal,"UTF-8");
                             multiInput.add(items.get(i).getFieldName(), fieldVal);
                         } else {
                             if (StringUtils.equals(items.get(i).getFieldName(),"upload")) {

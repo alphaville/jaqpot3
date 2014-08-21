@@ -198,8 +198,10 @@ public abstract class AbstractTrainer implements ITrainer {
         }
         
         //TODO: PMML xml for DoA
-        if(predictedInstances!=null && DoASupported()) {
-            Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);
+        if( predictedInstances!=null && DoASupported()) {
+            model.getActualModel().setHasDoA(true);
+            
+            Matrix omega = WekaInstancesProcess.getLeverageDoAMatrix(predictedInstances);            
             model.getActualModel().setDataMatrix(omega);
             int k = omega.getRowDimension();
             int n = omega.getColumnDimension();

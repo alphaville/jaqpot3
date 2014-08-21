@@ -443,9 +443,7 @@ public class WekaInstancesProcess {
             if(StringUtils.isEmpty(title)) {
                  // if feature uri not in dataset then search in features list
                 if(StringUtils.isEmpty(sameAs) || StringUtils.equals(sameAs, "http://www.opentox.org/echaEndpoints.owl#UNKNOWN_TOXICITY")  ) {
-                    if(featuresUris.contains(attrName)) {
-                        title = attrName;
-                    }
+                    title = attrName;
                 } else {
                     title = sameAs;
                 }
@@ -668,7 +666,7 @@ public class WekaInstancesProcess {
     public static Matrix getLeverageDoAMatrix(Instances inst) throws JaqpotException {
         int targetIndex = inst.classIndex();
         Matrix omega = null;
-        Instances res = null;
+        Instances res = inst;
         try {
             if (targetIndex>=0) {
                 Remove remove = new Remove();

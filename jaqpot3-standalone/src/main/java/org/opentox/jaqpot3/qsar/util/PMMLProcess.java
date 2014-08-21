@@ -35,7 +35,6 @@
 
 package org.opentox.jaqpot3.qsar.util;
 
-import com.sun.org.apache.bcel.internal.util.ByteSequence;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -443,11 +442,12 @@ public class PMMLProcess {
             pmml.append("<MiningSchema>\n");
             for (Feature feature : model.getIndependentFeatures()) {
                     pmml.append("<MiningField name=\"" + feature.getUri().toString() + "\" />\n");
-
             }
-            
             pmml.append("<MiningField name=\"" + dependentFeatures + "\" " + "usageType=\"predicted\"/>\n");
             pmml.append("</MiningSchema>\n");
+            
+            //No neuralInputs
+            
             pmml.append("<NeuralLayer numberOfNeurons=\""+rbfNnNodes.numInstances()+"\">\n");
             int numAttributes;
             for (int i = 0; i < rbfNnNodes.numInstances(); i++) {
@@ -481,7 +481,7 @@ public class PMMLProcess {
     public static PMML loadPMMLObject(byte[] pmml) throws JaqpotException{
         PMML pmmlObject;
         try {    
-            InputStream is = new ByteSequence(pmml);
+            InputStream is = new ByteArrayInputStream (pmml);
             InputSource source = new InputSource(is);
 
             SAXSource transformedSource = ImportFilter.apply(source);

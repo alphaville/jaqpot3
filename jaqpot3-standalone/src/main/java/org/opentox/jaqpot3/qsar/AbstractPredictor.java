@@ -109,8 +109,9 @@ public abstract class AbstractPredictor implements IPredictor {
     }    
     
     public Instances postprocessDataset(Instances nonProcessedinst,Instances inst,String datasetUri) throws JaqpotException {
-        
-        inst = WekaInstancesProcess.getLeverageDoAPredictedInstances(nonProcessedinst,inst, datasetUri, model);
+        if(model.getActualModel().hasDoA()) {
+            inst = WekaInstancesProcess.getLeverageDoAPredictedInstances(nonProcessedinst,inst, datasetUri, model);
+        }
         return inst;
     }
     
