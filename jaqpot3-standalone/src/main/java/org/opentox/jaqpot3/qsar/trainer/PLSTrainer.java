@@ -37,6 +37,7 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -242,10 +243,11 @@ public class PLSTrainer extends AbstractTrainer {
             Feature f = publishFeature(model,"","PLS-" + i,datasetUri,featureService);
             model.addPredictedFeatures(f);
         }
-
+            
         //save the instances being predicted to abstract trainer for calculating DoA
         predictedInstances = data;
-            
+        model.getActualModel().setExcludeFeatures(asList(targetUri));
+        
         return model;
     }
 }

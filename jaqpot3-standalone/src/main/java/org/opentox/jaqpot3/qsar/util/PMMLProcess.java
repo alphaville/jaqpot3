@@ -449,9 +449,8 @@ public class PMMLProcess {
             //No neuralInputs
             
             pmml.append("<NeuralLayer numberOfNeurons=\""+rbfNnNodes.numInstances()+"\">\n");
-            int numAttributes;
+            int numAttributes = rbfNnNodes.numAttributes();
             for (int i = 0; i < rbfNnNodes.numInstances(); i++) {
-                numAttributes = rbfNnNodes.instance(i).numAttributes();
                 
                 pmml.append("<Neuron width=\""+sigma[i]+"\" id=\""+i+"\">\n");
                 for (int j = 0; j < numAttributes; j++) {
@@ -461,6 +460,24 @@ public class PMMLProcess {
             }
             pmml.append("</NeuralLayer>\n");
             
+            int neuralOutputId = rbfNnNodes.numInstances();
+            pmml.append("<NeuralLayer numberOfNeurons=\"1\">\n");
+            pmml.append("<Neuron id=\""+neuralOutputId+"\">\n");
+            
+            double[] rbfCoeffs = rbfModel.getLrCoefficients();
+            int tempId;
+            for (int i = 0; i < rbfCoeffs.length; i++) {
+               tempId = numAttributes + i;
+               pmml.append("<Con from=\""+ tempId +"\" weight=\""+rbfCoeffs[i]+"\"/>\n");
+            }
+            pmml.append("</Neuron>\n");
+            pmml.append("</NeuralLayer>\n");
+                pmml.append("<NeuralOutputs numberOfOutputs=\"1\">");
+                pmml.append("<NeuralOutput outputNeuron=\"" + neuralOutputId + "\">");
+                pmml.append("<DerivedField optype=\"continuous\" dataType=\"double\">");
+                pmml.append("</DerivedField>");
+                pmml.append("</NeuralOutput>");
+                pmml.append("</NeuralOutputs>");
             pmml.append("</NeuralNetwork>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {

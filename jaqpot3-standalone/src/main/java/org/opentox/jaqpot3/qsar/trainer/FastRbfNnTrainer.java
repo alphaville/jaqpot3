@@ -41,6 +41,7 @@ import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -168,7 +169,7 @@ public class FastRbfNnTrainer extends AbstractTrainer {
          * For this algorithm we need to remove all string and nominal attributes
          * and additionally we will remove the target attribute too.
          */
-        
+                
         Instances cleanedTraining = training;
         
         Attribute targetAttribute = cleanedTraining.attribute(targetUri.toString());
@@ -185,11 +186,6 @@ public class FastRbfNnTrainer extends AbstractTrainer {
             targetValues[i] = cleanedTraining.instance(i).value(targetAttribute);
         }
         cleanedTraining.deleteAttributeAt(targetAttribute.index());
-
-        
-        //save the instances being predicted to abstract trainer for calculating DoA
-        predictedInstances = cleanedTraining;
-        
 
         Instances rbfNnNodes = new Instances(cleanedTraining);
         rbfNnNodes.delete();
@@ -286,7 +282,10 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         m.getParameters().add(bParam);
         m.getParameters().add(eParam);
         
-        
+        //save the instances being predicted to abstract trainer and set the features to be excluded for calculating DoA
+        predictedInstances = training;
+        m.getActualModel().setExcludeFeatures(asList(dependentFeature.getUri()));
+            
         return m;
     }
 

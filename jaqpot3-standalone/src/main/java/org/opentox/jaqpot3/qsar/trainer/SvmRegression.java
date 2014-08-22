@@ -37,6 +37,7 @@ package org.opentox.jaqpot3.qsar.trainer;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -270,6 +271,7 @@ public class SvmRegression extends AbstractTrainer {
 
             //save the instances being predicted to abstract trainer for calculating DoA
             predictedInstances = orderedTrainingSet;
+            m.getActualModel().setExcludeFeatures(asList(dependentFeature.getUri()));
             
             return m;
         } catch (QSARException ex) {

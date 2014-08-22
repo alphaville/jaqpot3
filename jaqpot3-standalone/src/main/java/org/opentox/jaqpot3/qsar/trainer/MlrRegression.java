@@ -37,6 +37,7 @@ package org.opentox.jaqpot3.qsar.trainer;
 import java.io.NotSerializableException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -48,7 +49,6 @@ import org.opentox.jaqpot3.qsar.ITrainer;
 import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.exceptions.QSARException;
-import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.jaqpot3.resources.collections.Algorithms;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
@@ -61,7 +61,6 @@ import org.opentox.toxotis.database.engine.task.UpdateTask;
 import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.ontology.LiteralValue;
-import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -293,6 +292,7 @@ public class MlrRegression extends AbstractTrainer {
             
             //save the instances being predicted to abstract trainer for calculating DoA
             predictedInstances = orderedTrainingSet;
+            m.getActualModel().setExcludeFeatures(asList(dependentFeature.getUri()));
             
             return m;
         } catch (QSARException ex) {
@@ -301,9 +301,4 @@ public class MlrRegression extends AbstractTrainer {
             throw new JaqpotException(message, ex);
         }
     }
-
-    
-   
-
-    
 }

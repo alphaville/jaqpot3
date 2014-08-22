@@ -663,16 +663,21 @@ public class WekaInstancesProcess {
         return simpleMap;
     }
     
-    public static Matrix getLeverageDoAMatrix(Instances inst) throws JaqpotException {
-        int targetIndex = inst.classIndex();
+    public static Matrix getLeverageDoAMatrix(Instances inst, Model m) throws JaqpotException {
         Matrix omega = null;
         Instances res = inst;
         try {
-            if (targetIndex>=0) {
-                Remove remove = new Remove();
-                remove.setAttributeIndicesArray(new int[]{targetIndex});
-                remove.setInputFormat(inst);
-                res = Filter.useFilter(inst, remove);
+            List<VRI> excludeVris = m.getActualModel().getExcludeFeatures();
+            if (excludeVris.size()>0) {
+                Attribute attr;
+                List<Integer> indices = new ArrayList();
+                for(VRI temp : excludeVris) {
+                    attr = inst.attribute(temp.getUri());
+                    if(attr!=null) {
+                        indices.add(attr.index());
+                    }
+                }
+                res = removeInstancesAttributes(inst,indices);
             }
         } catch(Exception ex) {
             throw new JaqpotException(ex);
@@ -694,7 +699,23 @@ public class WekaInstancesProcess {
         
         double gamma = model.getActualModel().getGamma();
         Matrix matrix = model.getActualModel().getDataMatrix();
-        nonProcessedinst = InstancesUtil.sortForModel(model, nonProcessedinst, -1);
+        
+        try {
+            AttributeCleanup removeCompounds = new AttributeCleanup(false,string);
+            nonProcessedinst = removeCompounds.filter(nonProcessedinst);
+        } catch (Exception ex) {}
+        
+        List<VRI> excludeVris = model.getActualModel().getExcludeFeatures();
+        if (excludeVris.size()>0) {
+            Attribute attr;
+            List<Integer> indices = new ArrayList();
+            for(VRI temp : excludeVris) {
+                attr = nonProcessedinst.attribute(temp.getUri());
+                indices.add(attr.index());
+            }
+            nonProcessedinst = removeInstancesAttributes(nonProcessedinst,indices);
+            
+        }
         
         int numInstances = nonProcessedinst.numInstances();
         int numAttributes = nonProcessedinst.numAttributes();
@@ -730,4 +751,6 @@ public class WekaInstancesProcess {
         
         return inst;
     }
+    
+    
 }
