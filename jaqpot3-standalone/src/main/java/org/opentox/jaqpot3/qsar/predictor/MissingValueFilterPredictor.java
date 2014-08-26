@@ -45,6 +45,7 @@ import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractPredictor;
 import org.opentox.jaqpot3.qsar.IClientInput;
 import org.opentox.jaqpot3.qsar.IPredictor;
+import org.opentox.jaqpot3.qsar.InstancesUtil;
 import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.toxotis.core.component.Dataset;
 import org.opentox.toxotis.core.component.Feature;
@@ -80,7 +81,7 @@ public class MissingValueFilterPredictor extends AbstractPredictor {
 
     @Override
     public Instances predict(Instances data) throws JaqpotException {
-        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel();        
+        HashSet<String> ignoredUris = (HashSet<String>) model.getActualModel().getSerializableActualModel();        
         for (String attribute2Bignored : ignoredUris) {
             Attribute attr = data.attribute(attribute2Bignored);
             if (attr != null) {

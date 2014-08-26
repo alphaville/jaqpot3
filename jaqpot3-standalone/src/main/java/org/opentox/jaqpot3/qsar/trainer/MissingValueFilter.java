@@ -78,7 +78,7 @@ public class MissingValueFilter extends AbstractTrainer {
 
     @Override protected boolean keepNumeric() { return true; }
     @Override protected boolean keepNominal() { return true; }
-    @Override protected boolean keepString()  { return true; }
+    @Override protected boolean keepString()  { return false; }
     @Override protected boolean pmmlSupported()  { return false; }
     @Override protected boolean scalingSupported()  { return false; }
     @Override protected boolean normalizationSupported()  { return false; }
@@ -107,8 +107,8 @@ public class MissingValueFilter extends AbstractTrainer {
                 try {
                     VRI featureVri = new VRI(attribute.name());
                     mvh.addIndependentFeatures(new Feature(featureVri));
-                    Feature f = FeatureFactory.createAndPublishFeature("MVH " + featureVri.toString(), "",
-                            new ResourceValue(newModelUri, OTClasses.model()), featureService, token);
+                    
+                    Feature f = publishFeature(mvh,"","MVH " + featureVri.toString(),datasetUri,featureService);
                     mvh.addPredictedFeatures(f);
                     getTask().getMeta().addComment("MVH feature for " + featureVri.toString()
                             + " has been created at " + f.getUri().toString());
@@ -126,8 +126,6 @@ public class MissingValueFilter extends AbstractTrainer {
                             throw new JaqpotException(ex);
                         }
                     }
-                } catch (ServiceInvocationException ex) {
-                    Logger.getLogger(MissingValueFilter.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (URISyntaxException ex) {
                     Logger.getLogger(MissingValueFilter.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -186,8 +184,4 @@ public class MissingValueFilter extends AbstractTrainer {
         return Algorithms.mvh();
     }
 
-    @Override
-    public boolean needsDataset() {
-        return false;
-    }
 }

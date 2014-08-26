@@ -611,6 +611,15 @@ public class Algorithms {
                         addDescription("The well known leverages algorithm for the estimation of a model's applicability domain").
                         addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
                         addPublisher(Configuration.BASE_URI).setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis())));
+                leverages.setParameters(new HashSet<Parameter>());
+                Parameter missingValHandlingParam =
+                        new Parameter(
+                        Configuration.getBaseUri().augment("prm", "leverages_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
+                        Parameter.ParameterScope.OPTIONAL);
+                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
+                leverages.getParameters().add(missingValHandlingParam);
+                
+                
                 leverages.setMeta(algorithmMeta);
                 leverages.setOntologies(new HashSet<OntologicalClass>());
                 leverages.getOntologies().add(OTAlgorithmTypes.applicabilityDomain());
