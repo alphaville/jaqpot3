@@ -60,18 +60,15 @@ import org.opentox.toxotis.ontology.impl.MetaInfoImpl;
 public class Algorithms {
 
     private static Algorithm mlr;
-    private static Algorithm consensus;
     private static Algorithm svm;
     //private static Algorithm svc;
     private static Algorithm leverages;
     private static Algorithm mvh;
-    private static Algorithm cleanup;
     private static Algorithm plsFilter;
     //private static Algorithm svmFilter;
     private static Algorithm fastRbfNn;
     private static Algorithm scaling;
     private static Algorithm modelBundler;
-    private static Algorithm customAlgFilter;
 //    private static Algorithm fcbf;
 //    private static Algorithm multifilter;
     private static Set<Algorithm> repository;
@@ -293,56 +290,6 @@ public class Algorithms {
         return scaling;
     }
     
-    
-    public static Algorithm customAlgorithm() {
-        if (customAlgFilter == null) {
-            try {
-                customAlgFilter = new Algorithm(Configuration.getBaseUri().augment("algorithm", "customAlgorithm"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("customized Algorithm").
-                        addSubject("Filter", "Data Preprocessing", "customized Algorithm", "Data Preparation").
-                        addContributor("Lampovas Nikolaos").
-                        addDescription("This web service is intended to perform calculations on the values of 2 descriptors from the given dataset. Specifically the sign, the magnitude, the difference and the division of the values of the 2 descriptors are calculated and stored as new descriptors in the final dataset").
-                        addPublisher(Configuration.BASE_URI).
-                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(customAlgFilter.getUri().toString());
-                customAlgFilter.setMeta(algorithmMeta);
-                customAlgFilter.setOntologies(new HashSet<OntologicalClass>());
-                customAlgFilter.getOntologies().add(OTAlgorithmTypes.preprocessing());
-
-                customAlgFilter.setParameters(new HashSet<Parameter>());
-
-                Parameter descriptor1 =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "descriptor1"), "descriptor1", new LiteralValue("", XSDDatatype.XSDanyURI)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                descriptor1.getMeta().addDescription("The URI of the first descriptor");
-                customAlgFilter.getParameters().add(descriptor1);
-                
-                
-                Parameter descriptor2=
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "descriptor2"), "descriptor2", new LiteralValue("", XSDDatatype.XSDanyURI)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                descriptor2.getMeta().addDescription("The URI of the second descriptor.When the 2 descriptors are divided, this descriptor acts as the divident");
-                customAlgFilter.getParameters().add(descriptor2);
-
-                Parameter scalingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "custom_scaling"), "scaling", new LiteralValue(0d, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingParam.getMeta().addDescription("Set scaling enabled");
-                customAlgFilter.getParameters().add(scalingParam);
-                
-                
-                customAlgFilter.getMeta().addRights(_LICENSE);
-                customAlgFilter.setEnabled(true);
-            } catch (ToxOtisException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return customAlgFilter;
-    }
-
     public static Algorithm mlr() {
         if (mlr == null) {
             try {
@@ -419,80 +366,6 @@ public class Algorithms {
             }
         }
         return mlr;
-    }
-
-    public static Algorithm consensus() {
-        if (consensus == null) {
-            try {
-                consensus = new Algorithm(Configuration.getBaseUri().augment("algorithm", "consensus"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("consensus", "Multiple Linear Regression Training Algorithm").
-                        addComment("Multiple Linear Regression Algorithm").
-                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Regression", "Classification", "Training", "Consensus modeling", "Machine Learning", "Single Target", "Eager Learning").
-                        addContributor("Pantelis Sopasakis").
-                        addDescription("Training algorithm for Consensus Models").
-                        addPublisher(Configuration.BASE_URI).
-                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(consensus.getUri().toString());
-                consensus.setMeta(algorithmMeta);
-                consensus.setOntologies(new HashSet<OntologicalClass>());
-                consensus.getOntologies().add(OTAlgorithmTypes.regression());
-                consensus.getOntologies().add(OTAlgorithmTypes.singleTarget());
-                consensus.getOntologies().add(OTAlgorithmTypes.eagerLearning());
-                consensus.setParameters(new HashSet<Parameter>());
-                /*
-                
-                Parameter scalingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingParam.getMeta().addDescription("Set scaling enabled");
-                consensus.getParameters().add(scalingParam);
-                
-                Parameter scalingMinParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMinParam.getMeta().addDescription("Set scaling min");
-                consensus.getParameters().add(scalingMinParam);
-                
-                Parameter scalingMaxParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMaxParam.getMeta().addDescription("Set scaling max");
-                consensus.getParameters().add(scalingMaxParam);
-                
-                Parameter normalizationParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                normalizationParam.getMeta().addDescription("Set normalization enabled");
-                consensus.getParameters().add(normalizationParam);
-                */
-                
-                Parameter missingValHandlingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                missingValHandlingParam.getMeta().addDescription("Set missing value handling enabled");
-                consensus.getParameters().add(missingValHandlingParam);
-                
-                
-                Parameter missingValHandlingIgnoreUriParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "consensus_mvh_ignore_uri"), "mvh_ignore_uri", new LiteralValue<URI>(null, XSDDatatype.XSDanyURI)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
-                consensus.getParameters().add(missingValHandlingIgnoreUriParam);
-                
-                consensus.getMeta().addRights(_LICENSE);
-                consensus.setEnabled(true);
-            } catch (ToxOtisException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return consensus;
     }
 
     public static Algorithm mvh() {
@@ -602,43 +475,6 @@ public class Algorithms {
             }
         }
         return plsFilter;
-    }
-
-    public static Algorithm cleanup() {
-        if (cleanup == null) {
-            try {
-                cleanup = new Algorithm(Configuration.getBaseUri().augment("algorithm", "cleanup"));
-                MetaInfo algorithmMeta = new MetaInfoImpl().addTitle("cleanup", "Attribute Cleanup Procedure").
-                        addComment("You can also use this algorithm from withing the proxy service at " + Configuration.BASE_URI + "/algorithm/multifilter").
-                        addComment("For example cURL commands for this algorithm check out http://cut.gd/P6fa").
-                        addSubject("Filter", "Data Preprocessing", "Data Preparation").
-                        addContributor("Pantelis Sopasakis", "Charalampos Chomenides").
-                        addDescription("Removes from the dataset all attributes of certain types. This is useful in many cases, when for example one "
-                        + "needs to train a model but have a clean dataset that doesn't include string values").
-                        addSeeAlso(new ResourceValue(mvh().getUri(), OTClasses.algorithm())).
-                        addPublisher(Configuration.BASE_URI).
-                        setDate(new LiteralValue<Date>(new Date(System.currentTimeMillis()))).
-                        addIdentifier(cleanup.getUri().toString());
-                Parameter attribute_type =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "attribute_type"), "attribute_type", null).setScope(
-                        Parameter.ParameterScope.MANDATORY);
-                attribute_type.getMeta().addDescription("An array list of attributes that need to be removed from the dataset. "
-                        + "Admissible values are 'string', 'nominal' and 'numeric'").
-                        addComment("Though HTTP you provide this parameter using brackets. For example, to remove string"
-                        + "and numeric attributes the POSTed query would be 'attribute_type[]=string&attribute_type[]=numeric'.");
-                cleanup.setParameters(new HashSet<Parameter>());
-                cleanup.getParameters().add(attribute_type);
-                cleanup.setMeta(algorithmMeta);
-                cleanup.setOntologies(new HashSet<OntologicalClass>());
-                cleanup.getOntologies().add(OTAlgorithmTypes.preprocessing());
-                cleanup.getMeta().addRights(_LICENSE);
-                cleanup.setEnabled(true);
-            } catch (ToxOtisException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return cleanup;
     }
 
     public static Algorithm svm() {

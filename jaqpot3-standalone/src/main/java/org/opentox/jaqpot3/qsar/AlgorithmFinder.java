@@ -49,7 +49,6 @@ public class AlgorithmFinder {
     private static final Map<String, Class<? extends IParametrizableAlgorithm>> map = new HashMap<String, Class<? extends IParametrizableAlgorithm>>();
 
     static {
-//        map.put("cleanup", CleanupFilter.class);
         map.put("mvh", MissingValueFilter.class);
         map.put("mlr", MlrRegression.class);
         map.put("svm", SvmRegression.class);

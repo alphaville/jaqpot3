@@ -102,7 +102,6 @@ public class TrainGeneric extends JaqpotResource {
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "svm") + "\">Support Vector Machines</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "fastRbfNn") + "\">RBF Neural Networks (Fast Impl)</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "leverages") + "\">Leverage Domain of Applicability</option>");
-        formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "consensus") + "\">Consensus Modeling</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "scaling") + "\">Preprocessing: Scaling</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "mvh") + "\">Preprocessing: MVH</option>");
         formBuilder.append("<option value=\"" + Configuration.getBaseUri().augment("algorithm", "cleanup") + "\">Preprocessing: Data Cleanup</option>");

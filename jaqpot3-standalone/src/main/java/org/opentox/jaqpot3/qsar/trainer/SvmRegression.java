@@ -71,6 +71,8 @@ import weka.core.Instances;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LibSVM;
+import weka.classifiers.functions.supportVector.KernelEvaluation;
 
 /**
  *
@@ -172,7 +174,7 @@ public class SvmRegression extends AbstractTrainer {
 
             Model m = new Model(Configuration.getBaseUri().augment("model", getUuid().toString()));
             
-            // INITIALIZE THE REGRESSOR
+            // INITIALIZE THE REGRESSOR regressor
             SVMreg regressor = new SVMreg();
             final String[] regressorOptions = {
                 "-P", Double.toString(epsilon),
