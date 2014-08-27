@@ -29,26 +29,12 @@ import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
  */
 public class LeveragesPredictor extends AbstractPredictor {
 
-    private VRI datasetServiceUri = Services.ideaconsult().augment("dataset");
     private transient org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LeveragesPredictor.class);
 
     public LeveragesPredictor() {
         super();
     }
-
-    @Override
-    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-        String datasetServiceString = clientParameters.getFirstValue("dataset_uri");
-        if (datasetServiceString != null) {
-            try {
-                datasetServiceUri = new VRI(datasetServiceString);
-            } catch (URISyntaxException ex) {
-                throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
-            }
-        }
-        return this;
-    }
-
+    
     @Override
     public Instances predict(Instances inputSet) throws JaqpotException {
         LeveragesModel actualModel = (LeveragesModel) model.getActualModel();

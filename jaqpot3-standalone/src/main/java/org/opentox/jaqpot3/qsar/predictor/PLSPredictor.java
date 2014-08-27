@@ -60,12 +60,7 @@ import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
  * @author Pantelis Sopasakis
  */
 public class PLSPredictor extends AbstractPredictor {
-
-    @Override
-    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-        return this;
-    }
-
+    
     @Override
     public Instances predict(Instances input) throws JaqpotException {
         PLSModel actual = (PLSModel) model.getActualModel().getSerializableActualModel();

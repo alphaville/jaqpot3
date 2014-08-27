@@ -34,6 +34,8 @@
 package org.opentox.jaqpot3.resources;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -396,7 +398,18 @@ public class ModelResource extends JaqpotResource {
 
         IClientInput clientInput = null;
         if (model != null) {
-            clientInput = new ClientInput(entity);
+            ClientInput clInput = new ClientInput(entity);
+            
+            String params = clInput.getFirstValue("params");
+            
+            if (params != null && !params.isEmpty()) {
+                String paramTokens[] = params.split(" ");
+                for (String nvp : paramTokens) {
+                    String[] parts = nvp.split("=");
+                    clInput.add(parts[0],parts[1]);
+                }
+            }
+            clientInput = (IClientInput) clInput;
             IPredictor predictor = PredictorFinder.getPredictor(model.getAlgorithm().getUri().getId());
             predictor.setModel(model);
             predictor.setTask(task);

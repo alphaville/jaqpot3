@@ -695,14 +695,14 @@ public class WekaInstancesProcess {
         return omega;
     }
     
-    public static Instances getLeverageDoAPredictedInstances(Instances nonProcessedinst,Instances inst,String datasetUri,Model model) throws JaqpotException {
+    public static Instances getLeverageDoAPredictedInstances(Instances processedinst,Instances inst,String datasetUri,Model model) throws JaqpotException {
         
         double gamma = model.getActualModel().getGamma();
         Matrix matrix = model.getActualModel().getDataMatrix();
         
         try {
             AttributeCleanup removeCompounds = new AttributeCleanup(false,string);
-            nonProcessedinst = removeCompounds.filter(nonProcessedinst);
+            processedinst = removeCompounds.filter(processedinst);
         } catch (Exception ex) {}
         
         List<VRI> excludeVris = model.getActualModel().getExcludeFeatures();
@@ -710,21 +710,23 @@ public class WekaInstancesProcess {
             Attribute attr;
             List<Integer> indices = new ArrayList();
             for(VRI temp : excludeVris) {
-                attr = nonProcessedinst.attribute(temp.getUri());
-                indices.add(attr.index());
+                attr = processedinst.attribute(temp.getUri());
+                if(attr!=null) {
+                    indices.add(attr.index());
+                }
             }
-            nonProcessedinst = removeInstancesAttributes(nonProcessedinst,indices);
+            processedinst = removeInstancesAttributes(processedinst,indices);
             
         }
         
-        int numInstances = nonProcessedinst.numInstances();
-        int numAttributes = nonProcessedinst.numAttributes();
+        int numInstances = processedinst.numInstances();
+        int numAttributes = processedinst.numAttributes();
         double[] indicator = new double[numInstances];
         
         //calculate DoA
         Matrix x = null;
         for (int i = 0; i < numInstances; i++) {
-            x = new Matrix(nonProcessedinst.instance(i).toDoubleArray(), numAttributes);
+            x = new Matrix(processedinst.instance(i).toDoubleArray(), numAttributes);
             indicator[i] = Math.max(0, (gamma - x.transpose().times(matrix).times(x).get(0, 0)) / gamma);
         }
 

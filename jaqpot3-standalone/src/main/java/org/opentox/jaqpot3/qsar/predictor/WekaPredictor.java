@@ -66,12 +66,6 @@ public class WekaPredictor extends AbstractPredictor {
     }
 
     @Override
-    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-
-        return this;
-    }
-
-    @Override
     public Instances predict(Instances inputSet) throws JaqpotException {
         
         /* THE OBJECT newData WILL HOST THE PREDICTIONS... */

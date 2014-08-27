@@ -34,11 +34,13 @@
 package org.opentox.jaqpot3.qsar;
 
 import Jama.Matrix;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.dmg.pmml.PMML;
 import org.opentox.jaqpot3.exception.JaqpotException;
+import org.opentox.jaqpot3.qsar.exceptions.BadParameterException;
 import org.opentox.jaqpot3.qsar.util.PMMLProcess;
 import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 import org.opentox.toxotis.client.VRI;
@@ -62,6 +64,7 @@ import weka.core.Instances;
  */
 public abstract class AbstractPredictor implements IPredictor {
 
+    private IClientInput ClientParams;
     protected byte[] pmml;
     protected List<Integer> trFieldsAttrIndex;
     protected PMML pmmlObject;
@@ -72,15 +75,29 @@ public abstract class AbstractPredictor implements IPredictor {
     protected List<Feature> independentFeatures = new ArrayList<Feature>();
     protected Feature dependentFeature;
     private Instances predictedInstances;
-    protected Instances nonProcessedInstances; //used in DoA 
+    protected Instances processedInstances; //used in DoA 
+    private Boolean hasMVH = false;
 
     public AbstractPredictor() {
         trFieldsAttrIndex = new ArrayList<Integer>();
     }
-
+    
+    @Override
+    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
+        ClientParams = clientParameters;
+        String mvhString = clientParameters.getFirstValue("mvh");
+        if (mvhString != null) {
+            try {
+                int mvh = Integer.parseInt(mvhString);
+                hasMVH = (Integer.compare(mvh, 1)==0)? true : false;
+            } catch (NumberFormatException nfe) {
+                throw new BadParameterException("Invalid value for the parameter 'mvh' (" + mvhString + ")", nfe);
+            }
+        }
+        return this;
+    }
     
     public Instances preprocessDataset(Instances inst) throws JaqpotException {
-        nonProcessedInstances = inst;
         independentFeatures = model.getIndependentFeatures();
         dependentFeature = (model.getDependentFeatures().isEmpty()) ? null : model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
@@ -93,10 +110,11 @@ public abstract class AbstractPredictor implements IPredictor {
                 pmmlObject = PMMLProcess.loadPMMLObject(pmml);
                 //IMPORTANT!!!! WekaInstancesProcess.getFilteredInstances removes compound URI that is needed
                 
-                //TODO: PREPROC check Spot for MVH
-                //inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
                 inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
+            }
+            if(hasMVH) {
+                inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
             }
             if(model.getActualModel().hasScaling()) {
                 inst = WekaInstancesProcess.scaleInstances(inst,independentFeatures,model.getActualModel().getScalingMinVals2(),model.getActualModel().getScalingMaxVals2());
@@ -104,13 +122,18 @@ public abstract class AbstractPredictor implements IPredictor {
             if(model.getActualModel().hasNormalization()) {
                 inst = WekaInstancesProcess.normalizeInstances(inst,independentFeatures,model.getActualModel().getNormalizationMinVals2(),model.getActualModel().getNormedVals2());
             }
+            processedInstances = inst;
+        } else {
+            if(hasMVH) {
+                inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
+            }
         }
         return inst;
     }    
     
-    public Instances postprocessDataset(Instances nonProcessedinst,Instances inst,String datasetUri) throws JaqpotException {
+    public Instances postprocessDataset(Instances inst,String datasetUri) throws JaqpotException {
         if(model.getActualModel().hasDoA()) {
-            inst = WekaInstancesProcess.getLeverageDoAPredictedInstances(nonProcessedinst,inst, datasetUri, model);
+            inst = WekaInstancesProcess.getLeverageDoAPredictedInstances(processedInstances,inst, datasetUri, model);
         }
         return inst;
     }
@@ -163,7 +186,7 @@ public abstract class AbstractPredictor implements IPredictor {
         }
         inst = preprocessDataset(inst);
         inst = predict(inst);
-        inst = postprocessDataset(nonProcessedInstances,inst,input.getUri());
+        inst = postprocessDataset(inst,input.getUri());
         return inst;
     }
     

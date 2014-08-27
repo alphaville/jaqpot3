@@ -63,26 +63,12 @@ import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
  */
 public class FastRbfNnPredictor extends AbstractPredictor {
 
-    private VRI datasetServiceUri = Services.ideaconsult().augment("dataset");
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FastRbfNnPredictor.class);
 
     public FastRbfNnPredictor() {
         super();
     }
-
-    @Override
-    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-        String datasetServiceString = clientParameters.getFirstValue("dataset_uri");
-        if (datasetServiceString != null) {
-            try {
-                datasetServiceUri = new VRI(datasetServiceString);
-            } catch (URISyntaxException ex) {
-                throw new BadParameterException("The parameter 'dataset_uri' you provided is not a valid URI.", ex);
-            }
-        }
-        return this;
-    }
-
+    
     private static double squaredNormDifference(Instance a, Instance b) {
         int numAttributes = a.numAttributes();
         if (numAttributes != b.numAttributes()) {

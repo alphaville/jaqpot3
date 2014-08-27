@@ -63,11 +63,6 @@ public class ScalingPredictor extends AbstractPredictor {
      */
     private Map<String, String> featureToScaled = new HashMap<String, String>();
 
-    @Override
-    public IPredictor parametrize(IClientInput clientParameters) throws BadParameterException {
-        return this;
-    }
-
     private void updateFeatureMap(Model model) {
         assert (model.getIndependentFeatures().size() == model.getDependentFeatures().size());
         List<Feature> predictedFeatures = model.getPredictedFeatures();
