@@ -284,8 +284,8 @@ public class FastRbfNnTrainer extends AbstractTrainer {
         
         //save the instances being predicted to abstract trainer and set the features to be excluded for calculating DoA
         predictedInstances = training;
-        m.getActualModel().setExcludeFeatures(asList(dependentFeature.getUri()));
-            
+        excludeAttributesDoA.add(dependentFeature.getUri().toString());
+        
         return m;
     }
 

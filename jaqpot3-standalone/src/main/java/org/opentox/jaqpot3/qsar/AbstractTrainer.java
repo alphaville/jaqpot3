@@ -36,6 +36,7 @@ package org.opentox.jaqpot3.qsar;
 import Jama.Matrix;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,7 @@ public abstract class AbstractTrainer implements ITrainer {
     protected Instances nonProcessedInstances; //used in publishing property 
     //predictedInstances is used in DoA must be set in the end of training of each algorithm
     protected Instances predictedInstances = null; 
+    protected List<String> excludeAttributesDoA = new ArrayList<String>();
 
     protected abstract boolean keepNumeric();
     protected abstract boolean keepNominal();
@@ -148,6 +150,7 @@ public abstract class AbstractTrainer implements ITrainer {
         setIndepNDependentFeatures(inst);
         
         if(pmml!=null && pmmlSupported()) {
+            excludedAttributesDataDictionary(inst);
             inst = WekaInstancesProcess.getFilteredInstances(inst, independentFeatures,dependentFeature);
         }
         
@@ -157,7 +160,14 @@ public abstract class AbstractTrainer implements ITrainer {
            
         //TODO: PMML specs must have datadictionary
         if(pmml!=null && pmmlSupported()) {
-            inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+            Map<String,Object> resMap = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+            inst = (Instances) resMap.get("instances");
+            List<String> newAttributeNames = (List<String>) resMap.get("exAttributeNamesDoA");
+            if(newAttributeNames.size()>0) {
+                for(String temp : newAttributeNames) {
+                    excludeAttributesDoA.add(temp);
+                }
+            }
         }
         
         if(hasScaling) {
@@ -197,6 +207,10 @@ public abstract class AbstractTrainer implements ITrainer {
             model.getActualModel().setNormedVals(normedVals);
         }
         
+        if((pmml!=null && pmmlSupported()) || DoASupported()) {
+            model.getActualModel().setExcludeAttributesDoA(excludeAttributesDoA);
+        }
+            
         //TODO: PMML xml for DoA
         if( predictedInstances!=null && DoASupported()) {
             model.getActualModel().setHasDoA(true);
@@ -272,6 +286,27 @@ public abstract class AbstractTrainer implements ITrainer {
             dependentFeature = new Feature(targetUri);
         } catch (URISyntaxException ex) {
             //already validated
+        }
+    }
+    
+    private void excludedAttributesDataDictionary(Instances inst) {
+        DataDictionary dtDir = pmmlObject.getDataDictionary();
+        if (dtDir!=null) {
+            List<DataField> dtfVar = dtDir.getDataFields();
+            
+            Boolean fieldExists;
+            for (int k=0;k < inst.numAttributes();++k) {
+                fieldExists = false;
+                for (DataField tempField : dtfVar) {
+                    if( StringUtils.equals(inst.attribute(k).name(),tempField.getName().toString())) {
+                        fieldExists = true;
+                        break;
+                    }
+                }
+                if (!fieldExists) {
+                    excludeAttributesDoA.add(inst.attribute(k).name());
+                }
+            }
         }
     }
 

@@ -36,6 +36,7 @@ package org.opentox.jaqpot3.qsar.util;
 
 import Jama.Matrix;
 import java.io.File;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -243,11 +244,13 @@ public class WekaInstancesProcess {
         } catch (Exception ex) {}
     }
     
-    public static Instances transformDataset(Instances inst,PMML pmmlObject) throws JaqpotException{
+    public static Map<String,Object> transformDataset(Instances inst,PMML pmmlObject) throws JaqpotException{
         //TODO: PMML add new features when uris missing
+        Map<String,Object> resMap = new HashMap<String, Object>();
+        List<String> attributeNames = new ArrayList<String>();
         try {     
 
-            if (pmmlObject!=null) {
+            if (pmmlObject!=null && inst!=null) {
                 
                 PMMLManager pmmlManager = new PMMLManager(pmmlObject);
 
@@ -255,7 +258,6 @@ public class WekaInstancesProcess {
 
                 DataDictionary dataDictionary = pmmlManager.getDataDictionary();
                 List<DataField> dataFields = dataDictionary.getDataFields();
-
                 
                 //Get the Derived fields (math formulas) of the PMML file
                 TransformationDictionary trDir = pmmlManager.getTransformationDictionary();
@@ -273,6 +275,7 @@ public class WekaInstancesProcess {
 
                             //add a new attribute
                             String attrName = (StringUtils.isNotEmpty(dfVar.get(i).getName().getValue())) ? dfVar.get(i).getName().getValue() : "New Attribute"+i;
+                            attributeNames.add(attrName);
                             inst = WekaInstancesProcess.addNewAttribute(inst, attrName);
 
                             Double res;
@@ -297,8 +300,10 @@ public class WekaInstancesProcess {
             String message = "Exception while trying to transform Instances";
             throw new JaqpotException(message, ex);
         }
-                
-        return inst;
+        resMap.put("instances", inst);
+        resMap.put("exAttributeNamesDoA", attributeNames);
+        
+        return resMap;
     }
     
     public static List<Integer> getTransformationFieldsAttrIndex(Instances inst,PMML pmmlObject) throws JaqpotException{
@@ -667,12 +672,12 @@ public class WekaInstancesProcess {
         Matrix omega = null;
         Instances res = inst;
         try {
-            List<VRI> excludeVris = m.getActualModel().getExcludeFeatures();
-            if (excludeVris.size()>0) {
+            List<String> excludeAttributes = m.getActualModel().getExcludeAttributesDoA();
+            if (excludeAttributes.size()>0) {
                 Attribute attr;
                 List<Integer> indices = new ArrayList();
-                for(VRI temp : excludeVris) {
-                    attr = inst.attribute(temp.getUri());
+                for(String temp : excludeAttributes) {
+                    attr = inst.attribute(temp);
                     if(attr!=null) {
                         indices.add(attr.index());
                     }
@@ -705,12 +710,12 @@ public class WekaInstancesProcess {
             processedinst = removeCompounds.filter(processedinst);
         } catch (Exception ex) {}
         
-        List<VRI> excludeVris = model.getActualModel().getExcludeFeatures();
-        if (excludeVris.size()>0) {
+        List<String> excludeAttributes = model.getActualModel().getExcludeAttributesDoA();
+        if (excludeAttributes.size()>0) {
             Attribute attr;
             List<Integer> indices = new ArrayList();
-            for(VRI temp : excludeVris) {
-                attr = processedinst.attribute(temp.getUri());
+            for(String temp : excludeAttributes) {
+                attr = processedinst.attribute(temp);
                 if(attr!=null) {
                     indices.add(attr.index());
                 }

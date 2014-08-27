@@ -273,7 +273,7 @@ public class SvmRegression extends AbstractTrainer {
 
             //save the instances being predicted to abstract trainer for calculating DoA
             predictedInstances = orderedTrainingSet;
-            m.getActualModel().setExcludeFeatures(asList(dependentFeature.getUri()));
+            excludeAttributesDoA.add(dependentFeature.getUri().toString());
             
             return m;
         } catch (QSARException ex) {

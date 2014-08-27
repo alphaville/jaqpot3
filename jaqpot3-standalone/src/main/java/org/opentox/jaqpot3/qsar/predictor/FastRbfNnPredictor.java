@@ -37,6 +37,7 @@ package org.opentox.jaqpot3.qsar.predictor;
 
 import org.opentox.jaqpot3.qsar.serializable.FastRbfNnModel;
 import java.net.URISyntaxException;
+import java.util.List;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractPredictor;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -55,6 +56,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
+import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 
 /**
  *
@@ -92,7 +94,7 @@ public class FastRbfNnPredictor extends AbstractPredictor {
         FastRbfNnModel actualModel = (FastRbfNnModel) model.getActualModel().getSerializableActualModel();
         Instances orderedDataset = null;
         try {
-            orderedDataset = InstancesUtil.sortForModel(model, inputSet, -1);
+            orderedDataset = InstancesUtil.sortForPMMLModel(model.getIndependentFeatures(),trFieldsAttrIndex, inputSet, -1);
         } catch (JaqpotException ex) {
             logger.error(null, ex);
         }
@@ -123,8 +125,11 @@ public class FastRbfNnPredictor extends AbstractPredictor {
             }
             predictions.instance(i).setClassValue(sum);
         }
-
+        
+        List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(predictions, pmmlObject);
+        predictions = WekaInstancesProcess.removeInstancesAttributes(predictions, trFieldsIndex);
         Instances resultSet = Instances.mergeInstances(justCompounds, predictions);
+        
         return resultSet;
 
     }

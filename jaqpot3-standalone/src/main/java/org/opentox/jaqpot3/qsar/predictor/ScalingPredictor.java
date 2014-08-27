@@ -80,6 +80,15 @@ public class ScalingPredictor extends AbstractPredictor {
             Map<String, Double> mins = actualModel.getMinVals2();
             Map<String, Double> maxs = actualModel.getMaxVals2();
 
+            
+            Attribute attr;
+            for(String attrName : actualModel.getExcludeAttributesDoA()) {
+                attr = inputData.attribute(attrName);
+                if(attr!=null) {
+                    inputData.deleteAttributeAt(attr.index());
+                }
+            }
+            
             updateFeatureMap(model);
 
 

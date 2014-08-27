@@ -103,12 +103,21 @@ public class LeveragesTrainer extends AbstractTrainer {
             if (target != null) {
                 trainingSet.deleteAttributeAt(targetIndex);
             }
+            
+            Attribute attr;
+            for(String attrName : excludeAttributesDoA) {
+                attr = trainingSet.attribute(attrName);
+                if(attr!=null) {
+                    trainingSet.deleteAttributeAt(attr.index());
+                }
+            }
             int k = trainingSet.numInstances();
             int n = trainingSet.numAttributes();
             double[][] dataArray = new double[k][n];
             for (int i = 0; i < k; i++) {
                 dataArray[i] = trainingSet.instance(i).toDoubleArray();
             }
+            
             Matrix dataMatrix = new Matrix(dataArray);                        
             Matrix omega = (dataMatrix.transpose().times(dataMatrix)).inverse();
             LeveragesModel actualModel = new LeveragesModel();

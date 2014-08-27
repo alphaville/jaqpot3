@@ -246,7 +246,7 @@ public class PLSTrainer extends AbstractTrainer {
             
         //save the instances being predicted to abstract trainer for calculating DoA
         predictedInstances = data;
-        model.getActualModel().setExcludeFeatures(asList(targetUri));
+        //in pls target is not excluded
         
         return model;
     }

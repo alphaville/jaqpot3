@@ -78,6 +78,13 @@ public class ScalingFilter extends AbstractTrainer {
         scalingModel.setIndependentFeatures(independentFeatures);
         ScalingModel actualModel = new ScalingModel();
         
+        Attribute attr;
+        for(String attrName : excludeAttributesDoA) {
+            attr = dataInst.attribute(attrName);
+            if(attr!=null) {
+                dataInst.deleteAttributeAt(attr.index());
+            }
+        }
         int nAttr = dataInst.numAttributes();
         for (int i = 0; i < nAttr; i++) {
             Attribute attribute = dataInst.attribute(i);

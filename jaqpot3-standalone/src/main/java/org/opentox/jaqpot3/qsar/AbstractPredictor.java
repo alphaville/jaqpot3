@@ -110,7 +110,9 @@ public abstract class AbstractPredictor implements IPredictor {
                 pmmlObject = PMMLProcess.loadPMMLObject(pmml);
                 //IMPORTANT!!!! WekaInstancesProcess.getFilteredInstances removes compound URI that is needed
                 
-                inst = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+                Map<String,Object> resMap = WekaInstancesProcess.transformDataset(inst,pmmlObject);
+                inst = (Instances) resMap.get("instances");
+                
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
             }
             if(hasMVH) {
