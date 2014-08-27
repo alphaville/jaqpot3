@@ -303,7 +303,7 @@ public abstract class AbstractTrainer implements ITrainer {
                         break;
                     }
                 }
-                if (!fieldExists) {
+                if (!fieldExists && !excludeAttributesDoA.contains(inst.attribute(k).name())) {
                     excludeAttributesDoA.add(inst.attribute(k).name());
                 }
             }

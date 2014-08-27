@@ -43,6 +43,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.qsar.AbstractTrainer;
 import org.opentox.jaqpot3.qsar.IClientInput;
@@ -86,7 +87,7 @@ public class PLSTrainer extends AbstractTrainer {
     @Override protected boolean keepNominal() { return true; }
     @Override protected boolean keepString()  { return false; }
     @Override protected boolean pmmlSupported()  { return true; }
-    @Override protected boolean scalingSupported()  { return true; }
+    @Override protected boolean scalingSupported()  { return false; }
     @Override protected boolean normalizationSupported()  { return true; }
     @Override protected boolean DoASupported()  { return true; }
     @Override protected boolean performMVH()  { return false; }
@@ -170,6 +171,16 @@ public class PLSTrainer extends AbstractTrainer {
 
         data.setClass(data.attribute(targetUri.toString()));
 
+        Boolean targetURIIncluded = false;
+        for(Feature tempFeature : independentFeatures) {
+            if(StringUtils.equals(tempFeature.getUri().toString(), targetUri.toString())){
+                targetURIIncluded = true;
+                break;
+            }
+        }
+        if(!targetURIIncluded) {
+            independentFeatures.add(new Feature(targetUri));
+        }
         model.setIndependentFeatures(independentFeatures);
        
         /*

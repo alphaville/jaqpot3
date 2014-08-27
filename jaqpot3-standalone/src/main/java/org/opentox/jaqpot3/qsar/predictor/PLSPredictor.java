@@ -33,6 +33,7 @@
  */
 package org.opentox.jaqpot3.qsar.predictor;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.exception.JaqpotException;
@@ -48,6 +49,7 @@ import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilter;
 
 import static org.opentox.jaqpot3.qsar.util.AttributeCleanup.AttributeType.*;
+import org.opentox.jaqpot3.qsar.util.WekaInstancesProcess;
 
 /**
  *
@@ -59,7 +61,7 @@ public class PLSPredictor extends AbstractPredictor {
     public Instances predict(Instances input) throws JaqpotException {
         PLSModel actual = (PLSModel) model.getActualModel().getSerializableActualModel();
         PLSFilter plsFilter = actual.getPls();
-        Instances newData = InstancesUtil.sortForModel(model, input, -1);
+        Instances newData = InstancesUtil.sortForPMMLModel(model.getIndependentFeatures(),trFieldsAttrIndex, input, -1);
         try {
             newData = Filter.useFilter(newData, plsFilter);
         } catch (Exception ex) {
@@ -84,9 +86,11 @@ public class PLSPredictor extends AbstractPredictor {
                 target = p.getValue().toString();
             }
         }        
-        newData.renameAttribute(newData.attribute("Class"),target);        
+        newData.renameAttribute(newData.attribute("Class"),target);     
+         
+        List<Integer> trFieldsIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(newData, pmmlObject);
+        newData = WekaInstancesProcess.removeInstancesAttributes(newData, trFieldsIndex);
         newData = Instances.mergeInstances(compounds, newData);
-        
         return newData;
     }
 }
