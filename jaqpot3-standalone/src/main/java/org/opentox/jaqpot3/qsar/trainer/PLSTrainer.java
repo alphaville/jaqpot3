@@ -88,7 +88,7 @@ public class PLSTrainer extends AbstractTrainer {
     @Override protected boolean keepString()  { return false; }
     @Override protected boolean pmmlSupported()  { return true; }
     @Override protected boolean scalingSupported()  { return false; }
-    @Override protected boolean normalizationSupported()  { return true; }
+    @Override protected boolean normalizationSupported()  { return false; }
     @Override protected boolean DoASupported()  { return true; }
     @Override protected boolean performMVH()  { return false; }
     
