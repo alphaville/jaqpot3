@@ -130,6 +130,39 @@ public class Algorithms {
         return null;
         
     }
+    
+    
+    public static Set<Parameter> getGlobalParameters() {
+        Set<Parameter> setParams = new HashSet<Parameter>();
+        Parameter scalingParam =
+                new Parameter(
+                Configuration.getBaseUri().augment("prm", "scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                Parameter.ParameterScope.OPTIONAL);
+        scalingParam.getMeta().addDescription("Set scaling enabled");
+        setParams.add(scalingParam);
+
+        Parameter scalingMinParam =
+                new Parameter(
+                Configuration.getBaseUri().augment("prm", "scaling_min"), "scaling_min", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                Parameter.ParameterScope.OPTIONAL);
+        scalingMinParam.getMeta().addDescription("Set scaling min");
+        setParams.add(scalingMinParam);
+
+        Parameter scalingMaxParam =
+                new Parameter(
+                Configuration.getBaseUri().augment("prm", "scaling_max"), "scaling_max", new LiteralValue(2, XSDDatatype.XSDint)).setScope(
+                Parameter.ParameterScope.OPTIONAL);
+        scalingMaxParam.getMeta().addDescription("Set scaling max");
+        setParams.add(scalingMaxParam);
+
+        Parameter normalizationParam =
+                new Parameter(
+                Configuration.getBaseUri().augment("prm", "normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
+                Parameter.ParameterScope.OPTIONAL);
+        normalizationParam.getMeta().addDescription("Set normalization enabled");
+        setParams.add(normalizationParam);
+        return setParams;
+    }
 
     public static Algorithm fastRbfNn() {
         if (fastRbfNn == null) {
@@ -177,35 +210,7 @@ public class Algorithms {
                 e.getMeta().addDescription("Parameter used to implicitly determine the number of iterations and therefore the number hidden nodes the "
                         + "algorithm will find. The algorithm terminates when max_{i}P(i) is less than or equal to e*P*(L)");
                 fastRbfNn.getParameters().add(e);
-                /*
-                Parameter scalingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingParam.getMeta().addDescription("Set scaling enabled");
-                fastRbfNn.getParameters().add(scalingParam);
-                
-                Parameter scalingMinParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMinParam.getMeta().addDescription("Set scaling min");
-                fastRbfNn.getParameters().add(scalingMinParam);
-                
-                Parameter scalingMaxParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMaxParam.getMeta().addDescription("Set scaling max");
-                fastRbfNn.getParameters().add(scalingMaxParam);
-                
-                Parameter normalizationParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "fast_rbf_nn_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                normalizationParam.getMeta().addDescription("Set normalization enabled");
-                fastRbfNn.getParameters().add(normalizationParam);
-                 */               
+                        
                 Parameter missingValHandlingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "fast_rbf_nn_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
@@ -222,6 +227,7 @@ public class Algorithms {
                 fastRbfNn.getParameters().add(missingValHandlingIgnoreUriParam);
                 
                 
+                fastRbfNn.setGlobalParameters(getGlobalParameters());
                 fastRbfNn.getMeta().addRights(_LICENSE);
                 fastRbfNn.setEnabled(true);
 
@@ -314,35 +320,6 @@ public class Algorithms {
                 mlr.getOntologies().add(OTAlgorithmTypes.eagerLearning());
                 mlr.setParameters(new HashSet<Parameter>());
                 
-                /*
-                Parameter scalingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "mlr_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingParam.getMeta().addDescription("Set scaling enabled");
-                mlr.getParameters().add(scalingParam);
-                
-                Parameter scalingMinParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "mlr_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMinParam.getMeta().addDescription("Set scaling min");
-                mlr.getParameters().add(scalingMinParam);
-                
-                Parameter scalingMaxParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "mlr_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMaxParam.getMeta().addDescription("Set scaling max");
-                mlr.getParameters().add(scalingMaxParam);
-                
-                Parameter normalizationParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "mlr_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                normalizationParam.getMeta().addDescription("Set normalization enabled");
-                mlr.getParameters().add(normalizationParam);
-                */
                 Parameter missingValHandlingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "mlr_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
@@ -358,6 +335,7 @@ public class Algorithms {
                 missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
                 mlr.getParameters().add(missingValHandlingIgnoreUriParam);
                 
+                mlr.setGlobalParameters(getGlobalParameters());
                 mlr.getMeta().addRights(_LICENSE);
                 mlr.setEnabled(true);
                 
@@ -540,36 +518,7 @@ public class Algorithms {
                         addComment("To be used in combination with the polynomial kernel").
                         addIdentifier(degree.getUri().toString());
                 svm.getParameters().add(degree);
-                /*
-                Parameter scalingParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "svm_scaling"), "scaling", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingParam.getMeta().addDescription("Set scaling enabled");
-                svm.getParameters().add(scalingParam);
-                
-                Parameter scalingMinParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "svm_scaling_min"), "scaling_min", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMinParam.getMeta().addDescription("Set scaling min");
-                svm.getParameters().add(scalingMinParam);
-                
-                Parameter scalingMaxParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "svm_scaling_max"), "scaling_max", new LiteralValue(3, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                scalingMaxParam.getMeta().addDescription("Set scaling max");
-                svm.getParameters().add(scalingMaxParam);
-                
-                Parameter normalizationParam =
-                        new Parameter(
-                        Configuration.getBaseUri().augment("prm", "svm_normalization"), "normalization", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
-                        Parameter.ParameterScope.OPTIONAL);
-                normalizationParam.getMeta().addDescription("Set normalization enabled");
-                svm.getParameters().add(normalizationParam);
-                */
-                
+                               
                 Parameter missingValHandlingParam =
                         new Parameter(
                         Configuration.getBaseUri().augment("prm", "svm_mvh"), "mvh", new LiteralValue(0, XSDDatatype.XSDint)).setScope(
@@ -584,7 +533,7 @@ public class Algorithms {
                 missingValHandlingIgnoreUriParam.getMeta().addComment("You can specify multiple URIs to be ignored");
                 svm.getParameters().add(missingValHandlingIgnoreUriParam);
                 
-                
+                svm.setGlobalParameters(getGlobalParameters());
                 svm.setMeta(algorithmMeta);
                 svm.setOntologies(new HashSet<OntologicalClass>());
                 svm.getOntologies().add(OTAlgorithmTypes.regression());
