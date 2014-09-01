@@ -668,9 +668,7 @@ public class WekaInstancesProcess {
         return simpleMap;
     }
     
-    public static Matrix getLeverageDoAMatrix(Instances inst, Model m) throws JaqpotException {
-        Matrix omega = null;
-        Instances res = inst;
+    public static Instances getLeverageDoAInstances(Instances inst, Model m) throws JaqpotException {
         try {
             List<String> excludeAttributes = m.getActualModel().getExcludeAttributesDoA();
             if (excludeAttributes.size()>0) {
@@ -682,17 +680,23 @@ public class WekaInstancesProcess {
                         indices.add(attr.index());
                     }
                 }
-                res = removeInstancesAttributes(inst,indices);
+                inst = removeInstancesAttributes(inst,indices);
             }
         } catch(Exception ex) {
             throw new JaqpotException(ex);
         }
-        if(res!=null) {
-            int k = res.numInstances();
-            int n = res.numAttributes();
-            double[][] dataArray = new double[k][n];
-            for (int i = 0; i < k; i++) {
-                dataArray[i] = res.instance(i).toDoubleArray();
+        return inst;
+    }
+            
+    
+    public static Matrix getLeverageDoAMatrix(Instances inst) throws JaqpotException {
+        Matrix omega = null;
+        if(inst!=null) {
+            int noInstances = inst.numInstances();
+            int noAttributes = inst.numAttributes();
+            double[][] dataArray = new double[noInstances][noAttributes];
+            for (int i = 0; i < noInstances; i++) {
+                dataArray[i] = inst.instance(i).toDoubleArray();
             }
             Matrix dataMatrix = new Matrix(dataArray);            
             omega = (dataMatrix.transpose().times(dataMatrix)).inverse();

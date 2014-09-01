@@ -225,6 +225,4 @@ public abstract class AbstractPredictor implements IPredictor {
     public Instances getPredictedInstances() {
         return predictedInstances;
     }
-    
-    
 }

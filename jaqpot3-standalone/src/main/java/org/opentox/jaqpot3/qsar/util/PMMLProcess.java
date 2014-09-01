@@ -116,7 +116,7 @@ public class PMMLProcess {
             pmml.append("<?xml version=\"1.0\" ?>");
             pmml.append(PMMLIntro);
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"MLR Model\">\n");
-            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/mlr\"/>\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "algorithm/mlr\"/>\n");
 
             pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
@@ -206,7 +206,7 @@ public class PMMLProcess {
             pmml.append("<?xml version=\"1.0\" ?>");
             pmml.append(PMMLIntro);
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"SVM Model\">\n");
-            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/svm\"/>\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "algorithm/svm\"/>\n");
 
             pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
@@ -331,7 +331,7 @@ public class PMMLProcess {
             pmml.append("<?xml version=\"1.0\" ?>");
             pmml.append(PMMLIntro);
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"PLS Model\">\n");
-            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/pls\"/>\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "algorithm/pls\"/>\n");
           //  URI trainingDatasetURI = URI.create(model.getDataset().getUri());
 
             pmml.append("<DatasetID href=\"" + URLEncoder.encode(model.getDataset().toString(),
@@ -414,7 +414,7 @@ public class PMMLProcess {
             pmml.append("<?xml version=\"1.0\" ?>");
             pmml.append(PMMLIntro);
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"fastRbfNn Model\">\n");
-            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "/algorithm/fastRbfNn\"/>\n");
+            pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "algorithm/fastRbfNn\"/>\n");
 
             pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
