@@ -85,7 +85,7 @@ import weka.filters.supervised.attribute.PLSFilter;
  * @author Charalampos Chomenides
  */
 
-//TODO: PMML insert to pmml xml the statistics 
+
 public class PMMLProcess {
 
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PMMLProcess.class);

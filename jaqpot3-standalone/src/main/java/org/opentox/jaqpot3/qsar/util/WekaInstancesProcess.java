@@ -245,7 +245,7 @@ public class WekaInstancesProcess {
     }
     
     public static Map<String,Object> transformDataset(Instances inst,PMML pmmlObject) throws JaqpotException{
-        //TODO: PMML add new features when uris missing
+
         Map<String,Object> resMap = new HashMap<String, Object>();
         List<String> attributeNames = new ArrayList<String>();
         try {     
@@ -307,7 +307,7 @@ public class WekaInstancesProcess {
     }
     
     public static List<Integer> getTransformationFieldsAttrIndex(Instances inst,PMML pmmlObject) throws JaqpotException{
-        //TODO: PMML add new features when uris missing
+
         List<Integer> res = new ArrayList<Integer>();
         try {     
 

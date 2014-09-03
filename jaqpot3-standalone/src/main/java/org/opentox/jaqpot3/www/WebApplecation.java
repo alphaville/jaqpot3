@@ -95,7 +95,7 @@ final public class WebApplecation extends JaqpotWebApplication {
             propertiesIn.close();
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(WebApplecation.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
 
         System.out.println("*** KEY : " + props.getProperty("key"));
         org.opentox.toxotis.database.global.DbConfiguration.getInstance().setProperties(props);
