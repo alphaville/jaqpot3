@@ -181,7 +181,7 @@ public class AlgorithmResource extends JaqpotResource {
                 VRI resourceToProtect = Configuration.getBaseUri().augment("user", creator.getUid());
                 String policyOwner = PolicyManager.getPolicyOwner(resourceToProtect, null, getUserToken());
                 if (policyOwner == null) {
-                    PolicyManager.defaultSignleUserPolicy("user_" + creator.getUid(),
+                    PolicyManager.defaultSignleUserPolicy( "user_"+Configuration.getStringProperty("server.domainName")+ "_" + creator.getUid(),
                             resourceToProtect, getUserToken()).
                             publish(null, getUserToken());
                 }

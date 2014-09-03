@@ -179,7 +179,7 @@
         </repository>
         <repository>
             <id>opentox-ntua-gr</id>
-            <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
+            <url>http://147.102.82.124:8083/nexus/content/repositories/thirdparty</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
