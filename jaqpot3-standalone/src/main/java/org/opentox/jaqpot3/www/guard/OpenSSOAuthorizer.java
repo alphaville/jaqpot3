@@ -37,17 +37,23 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.logging.Level;
+import org.opentox.jaqpot3.resources.AlgorithmResource;
+import org.opentox.jaqpot3.resources.JaqpotResource;
 import org.opentox.jaqpot3.resources.publish.Publisher;
 import org.opentox.jaqpot3.util.Configuration;
 import org.opentox.toxotis.client.VRI;
 import org.opentox.toxotis.core.component.ErrorReport;
+import org.opentox.toxotis.core.component.User;
+import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.engine.user.FindUser;
+import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
 import org.opentox.toxotis.util.aa.SSLConfiguration;
+import org.opentox.toxotis.util.aa.policy.PolicyManager;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.Cookie;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -195,24 +201,75 @@ public class OpenSSOAuthorizer extends Authorizer {
         if (!doAuthentication) {
             return true;
         }
+        
         String clientAddress = request.getClientInfo().getAddress();
         String actionUri = request.getResourceRef().toString();
         AuthenticationToken userToken = getToken(request, response);
+       
+        User creator = null;
         try {
             VRI actionVri = new VRI(actionUri);
             actionVri.getUrlParams().clear();
             actionUri = actionVri.toString();
+            creator = userToken.getUser(); 
         } catch (URISyntaxException ex) {
             java.util.logging.Logger.getLogger(OpenSSOAuthorizer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServiceInvocationException ex) {
+            java.util.logging.Logger.getLogger(JaqpotResource.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ToxOtisException ex) {
+            java.util.logging.Logger.getLogger(JaqpotResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        if (userToken == null) {
+        if (userToken == null || creator ==null) {
             throwError(response, "(Client) " + clientAddress, "Anonymous", "Anonymous use of this service is not allowed. "
                     + "Please provide your authentication token using the HTTP Header 'subjectid' as "
                     + "specified in section 14.8 of RFC 2616.", "Client attempted to apply a " + clientRequest + " method "
                     + "on " + actionUri, 403);
             return false;
         }
+        
+        
+        boolean newUser = false;
+        
+        FindUser finder = new FindUser();
+        finder.setWhere("uid='" + creator.getUid() + "'");
+        try {
+            IDbIterator<User> iterator = finder.list();
+            if (iterator.hasNext()) {
+                creator = iterator.next();
+            } else {
+                newUser = true;
+            }
+        } catch (DbException ex) {
+            java.util.logging.Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                finder.close();
+            } catch (DbException ex) {
+                java.util.logging.Logger.getLogger(AlgorithmResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        /*  
+            Policy for new user has been added when attempts to access its /user  page 
+            Due to the policy check in the current class for /user page,
+            creating a policy for new users is placed here.
+        */
+        
+        if(newUser) {
+            try {
+                PolicyManager.defaultSignleUserPolicy(Configuration.getBaseUri().getHost() + "user_" + creator.getUid(), Configuration.getBaseUri().augment("user", creator.getUid()), userToken).
+                        publish(null, userToken);
+                PolicyManager.defaultSignleUserPolicy(Configuration.getBaseUri().getHost() + "user_quota_" + creator.getUid(), Configuration.getBaseUri().augment("user", creator.getUid(),"quota"), userToken).
+                        publish(null, userToken);
+            } catch (Exception ex) {
+                throwError(response, "(Client) " + clientAddress, "Anonymous", "Policy Creation Failed for user " + creator.getName(), "Client attempted to apply a " + clientRequest + " method "
+                    + "on " + actionUri, 403);
+                return false;
+            }
+        }
+        
+        
         try {
             boolean allowed = userToken.authorize("PATCH".equals(clientRequest) ? "POST" : clientRequest, actionUri);
             try {

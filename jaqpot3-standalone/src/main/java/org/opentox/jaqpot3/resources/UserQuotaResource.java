@@ -143,7 +143,7 @@ public class UserQuotaResource extends JaqpotResource {
 
         builder.addSubSubHeading("Quota Summary");
         HTMLTable table = builder.addTable(2);
-        table.setAtCursor(new HTMLTextImpl("User ID").formatBold(true)).setTextAtCursor("<a href=\"" + Configuration.getBaseUri().augment("user", primaryId) + "\">" + primaryId + "</a>").
+        table.setAtCursor(new HTMLTextImpl("User ID").formatBold(true)).setTextAtCursor("<a href=\"" + Configuration.getBaseUri().augment("user")+"/"+ primaryId + "\">" + primaryId + "</a>").
                 setAtCursor(new HTMLTextImpl("Usage Index").formatBold(true)).setTextAtCursor(String.format("%3.2f", percentage) + "%").
                 setAtCursor(new HTMLTextImpl("Nb. Models").formatBold(true)).setTextAtCursor(countModels + " / " + u.getMaxModels()).
                 setAtCursor(new HTMLTextImpl("Nb. BibTeX").formatBold(true)).setTextAtCursor(countBibTeX + " / " + u.getMaxBibTeX()).

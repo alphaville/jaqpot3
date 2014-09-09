@@ -102,6 +102,9 @@ public abstract class AbstractPredictor implements IPredictor {
         dependentFeature = (model.getDependentFeatures().isEmpty()) ? null : model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
         
+        if(hasMVH) {
+            inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
+        }
                 
         if(model.getActualModel()!=null) {
             pmml = model.getActualModel().getPmml();
@@ -114,9 +117,6 @@ public abstract class AbstractPredictor implements IPredictor {
                 inst = (Instances) resMap.get("instances");
                 
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
-            }
-            if(hasMVH) {
-                inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
             }
             if(model.getActualModel().hasScaling()) {
                 inst = WekaInstancesProcess.scaleInstances(inst,independentFeatures,model.getActualModel().getScalingMinVals2(),model.getActualModel().getScalingMaxVals2());

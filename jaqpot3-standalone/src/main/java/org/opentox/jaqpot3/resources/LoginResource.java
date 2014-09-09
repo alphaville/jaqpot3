@@ -101,12 +101,12 @@ public class LoginResource extends JaqpotResource {
         formBuilder.append("<input type=\"submit\" value=\"Login\">");
         formBuilder.append("</form>");
         if (token != null && !token.isEmpty()) {
-            formBuilder.append("<p>If you are already logged in and you need to logout click :</p>");
+            formBuilder.append("<p>If you are already logged in and you need to logout click :");
             formBuilder.append("<form method=\"POST\" actionUri=\"./\">");
-            formBuilder.append("<input name=\"logout\" value=\"logout\" type=\"hidden\"");
-            formBuilder.append("<input name=\"token\" value=\"").append(token).append("\" type=\"hidden\"");
+            formBuilder.append("<input name=\"logout\" value=\"logout\" type=\"hidden\"/>");
+            formBuilder.append("<input name=\"token\" value=\"").append(token).append("\" type=\"hidden\"/>");
             formBuilder.append("<input type=\"submit\" value=\"Logout\"/></form>");
-            formBuilder.append("<br/>");
+            formBuilder.append("<br/></p>");
         }
 
         formBuilder.append("<p>Click <a href=\"..\">here</a> to go back to the main page</p>");

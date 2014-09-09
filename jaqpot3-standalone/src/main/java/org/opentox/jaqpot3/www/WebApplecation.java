@@ -159,7 +159,8 @@ final public class WebApplecation extends JaqpotWebApplication {
         protectResource(router, BibTexAllResource.class, false, true);
         protectResource(router, ModelResource.class, true, true);
         protectResource(router, ShutDownResource.class, true, true);        
-        protectResource(router, UserResource.class, true, true);
+        protectResource(router, UserResource.class, true, true);    
+        protectResource(router, UserQuotaResource.class, true, true);
         protectResource(router, UsersResource.class, true, true);
 
 
