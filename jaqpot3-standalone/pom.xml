@@ -186,7 +186,7 @@
         </repository>
         <repository>
             <id>opentox-ntua-gr</id>
-            <url>http://147.102.82.124:8083/nexus/content/repositories/snapshots</url>
+            <url>http://enanomapper.ntua.gr:8083/nexus/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
