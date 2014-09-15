@@ -18,12 +18,12 @@
         <dependency>
             <groupId>org.opentox.toxotis</groupId>
             <artifactId>ToxOtis-core</artifactId>
-            <version>0.8.8-SNAPSHOT</version>
+            <version>0.8.9-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.4.2</version>
+            <version>0.4.3-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.opentox.toxotis</groupId>
@@ -41,11 +41,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>opentox-snapshots</id>
-            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/snapshots</url>
+            <url>http://147.102.82.124:8083/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>opentox-ntua-gr</id>
-            <url>http://opentox.ntua.gr:8081/nexus/content/repositories/releases/</url>
+            <url>http://147.102.82.124:8083/nexus/content/repositories/releases/</url>
         </repository>
     </distributionManagement>
 
@@ -61,6 +61,13 @@
             <url>http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty</url>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>opentox-ntua-gr</id>
+            <url>http://147.102.82.124:8083/nexus/content/repositories/thirdparty</url>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
         <repository>
