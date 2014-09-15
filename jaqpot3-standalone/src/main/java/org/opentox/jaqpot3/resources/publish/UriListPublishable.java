@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.opentox.toxotis.client.VRI;
-import org.opentox.toxotis.core.html.GoogleAnalytics;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.data.ReferenceList;
@@ -91,11 +90,15 @@ public class UriListPublishable extends AbstractPublishable {
     }
 
     private void serializeHtml(OutputStreamWriter writer, ReferenceList refList) throws IOException {
-        writer.write("<html>\n"
-                + "<head>\n");
-        writer.write(GoogleAnalytics.getGAjs());
-        writer.write("</head>\n"
-                + "<body>");
+        writer.write("<html>\n<head>\n");
+        
+        for(String temp : this.getHeadComponents()) {
+            writer.write(temp);
+        }
+        writer.write("</head>\n<body>");
+        writer.write(this.getHeader());
+        
+        writer.write("<div class=\"panel\">");
         if (heading == null) {
             writer.write("<h2>List of URIs</h2>\n");
         } else {
@@ -124,7 +127,7 @@ public class UriListPublishable extends AbstractPublishable {
 
         writer.write("</p>\n"
                 + "</boby>\n"
-                + "</html>");
+                + "</div></html>");
 
 
     }

@@ -61,7 +61,7 @@ public class JaqpotComponent extends WadlComponent {
     public JaqpotComponent(Context context, Application[] applications) {
         super();
         this.getClients().add(Protocol.HTTP);
-
+        this.getClients().add(Protocol.FILE);
         for (Application application : applications) {
             application.setContext(context == null ? getContext().createChildContext() : context);
             getDefaultHost().attach(application);

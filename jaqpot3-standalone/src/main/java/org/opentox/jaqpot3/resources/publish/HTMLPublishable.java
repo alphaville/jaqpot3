@@ -38,7 +38,9 @@ package org.opentox.jaqpot3.resources.publish;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.opentox.toxotis.core.html.HTMLContainer;
+import org.opentox.toxotis.core.html.HTMLHead;
 import org.opentox.toxotis.core.html.HTMLPage;
+import org.opentox.toxotis.core.html.impl.HTMLHeadImpl;
 import org.opentox.toxotis.core.html.impl.HTMLPageImpl;
 import org.restlet.data.MediaType;
 import org.restlet.representation.StringRepresentation;
@@ -80,7 +82,14 @@ public class HTMLPublishable extends AbstractPublishable {
     @Override
     public void publish(OutputStream stream) {
         document = new HTMLPageImpl();
+        HTMLHead head = new HTMLHeadImpl();
+        for(String temp : this.getHeadComponents()) {
+            head.addHeadComponent(temp);
+        }
+        
+        document.setHead(head);
         document.getHtmlBody().addComponent(div);
+        document.getHtmlBody().setHeader(this.getHeader());
         try {
             new StringRepresentation(document.toString()).write(stream);
         } catch (IOException ex) {

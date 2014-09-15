@@ -86,6 +86,7 @@ public class UserResource extends JaqpotResource {
                 u = iterator.next();
             }
             u.setUri(getCurrentVRI());
+            u.setTokenLogout(getUserToken().stringValue());
             Publisher p = new Publisher(variant.getMediaType());
             return p.createRepresentation(u, true);
         } catch (JaqpotException ex) {

@@ -106,6 +106,7 @@ public class TasksResource extends JaqpotResource {
         }        
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
+        publisher.setTitle("Tasks");
         publisher.setBaseUri(Configuration.getBaseUri().augment("task"));
         try {
             return publisher.process(lister);

@@ -1,0 +1,50 @@
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+body{
+	margin: 0;
+}
+
+.headerdiv {
+    background-color: rgb(28, 51, 90);
+    height: 82px;
+    margin-bottom: 38px;
+}
+
+.headerimg {
+    height: 82px; 
+    margin-left: auto; 
+    margin-right: auto; 
+    display: block;
+    border-radius: 20px;
+}
+
+.headerdiv a {
+	text-decoration: none;
+	min-height: 100px;
+	page-break-after: auto;
+        font-size:21px;
+	font-family: 'Tahoma';
+        color:#346086;
+}
+
+#content {
+	float: left;
+	width: 603px;
+}
+
+.style7{
+    color:#346086;
+    font-family: Verdana;
+}
+.panel {
+    margin-left: 20px;
+    margin-top: 80px;
+}
+
+h1,h2,h3 {
+    font-family: 'Tahoma';
+}

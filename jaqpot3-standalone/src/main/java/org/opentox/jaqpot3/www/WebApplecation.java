@@ -36,6 +36,7 @@ package org.opentox.jaqpot3.www;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.FileHandler;
@@ -52,7 +53,9 @@ import org.restlet.Component;
 import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.Server;
+import org.restlet.data.LocalReference;
 import org.restlet.data.Protocol;
+import org.restlet.resource.Directory;
 import org.restlet.routing.Filter;
 import org.restlet.routing.Router;
 import org.restlet.service.TunnelService;
@@ -130,8 +133,18 @@ final public class WebApplecation extends JaqpotWebApplication {
 
     @Override
     public Restlet createInboundRoot() {
+        
+        ClassLoader cl = WebApplecation.class.getClassLoader();
+        URL dirT = cl.getResource("server.properties");
+        String pth = dirT.getPath().split("/server.properties")[0];
+        pth+="/css/";
+
         Router router = new YaqpRouter(this.getContext().createChildContext());
         router.attachDefault(IndexResource.class);
+        Directory directory = new Directory(getContext(), "file://"+pth);
+        directory.setListingAllowed(true);
+        directory.setDeeplyAccessible(true);
+        router.attach("/static/", directory);
         router.attach(BibTexResource.template.toString(), BibTexResource.class);
         router.attach(AlgorithmsResource.template.toString(), AlgorithmsResource.class);
         router.attach(AlgorithmResource.template.toString(), AlgorithmResource.class);

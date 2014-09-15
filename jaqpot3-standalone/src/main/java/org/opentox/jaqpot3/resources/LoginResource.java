@@ -36,11 +36,11 @@ package org.opentox.jaqpot3.resources;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opentox.jaqpot3.qsar.IClientInput;
+import org.opentox.jaqpot3.resources.publish.HTMLPublishable;
+import org.opentox.jaqpot3.resources.publish.Publishable;
 import org.opentox.jaqpot3.www.ClientInput;
 import org.opentox.jaqpot3.www.URITemplate;
 import org.opentox.toxotis.core.component.User;
-import org.opentox.toxotis.core.html.GoogleAnalytics;
-import org.opentox.toxotis.database.engine.user.AddUser;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
 import org.opentox.toxotis.exceptions.impl.ToxOtisException;
 import org.opentox.toxotis.util.aa.AuthenticationToken;
@@ -72,12 +72,17 @@ public class LoginResource extends JaqpotResource {
     }
 
     private String getLoginForm(String userName, String pass, String token) {
+        Publishable p = new HTMLPublishable(null);
         StringBuilder formBuilder = new StringBuilder();
         formBuilder.append("<html><head><title>Jaqpot Login Page</title>");
-        formBuilder.append(GoogleAnalytics.getGAjs());
+        
+        for(String temp : p.getHeadComponents()) {
+            formBuilder.append(temp);
+        }
         formBuilder.append("</head>");
         formBuilder.append("<body>");
-        formBuilder.append("<h2>Login</h2>");
+        formBuilder.append(p.getHeader());
+        formBuilder.append("<div class=\"panel\"><h2>Login</h2>");
 
 
         formBuilder.append("<form method=\"POST\" actionUri=\"./\" style='margin-left:20px;'>");
@@ -124,7 +129,8 @@ public class LoginResource extends JaqpotResource {
                 Logger.getLogger(LoginResource.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        formBuilder.append("</body></html>");
+        
+        formBuilder.append("</div></body></html>");
         return formBuilder.toString();
     }
 

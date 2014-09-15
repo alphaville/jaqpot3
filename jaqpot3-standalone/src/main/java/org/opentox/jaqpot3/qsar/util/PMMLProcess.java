@@ -118,7 +118,6 @@ public class PMMLProcess {
             pmml.append("<Model ID=\"" + uuid + "\" Name=\"MLR Model\">\n");
             pmml.append("<AlgorithmID href=\"" + Configuration.BASE_URI + "algorithm/mlr\"/>\n");
 
-            pmml.append("<DatasetID href=\"" + model.getDataset().toString() + "\"/>\n");
             pmml.append("<AlgorithmParameters />\n");
             pmml.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
             pmml.append("</Model>\n");
@@ -175,6 +174,7 @@ public class PMMLProcess {
                 }
             }
             pmml.append("</RegressionTable>\n");
+            pmml = getPMMLStats(pmml,model.getDataset().toString(),model.getActualModel().getStatistics().toString());
             pmml.append("</RegressionModel>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {
@@ -302,7 +302,7 @@ public class PMMLProcess {
 
                 pmml.append("</SupportVectorMachine>\n");
             }
-            
+            pmml = getPMMLStats(pmml,model.getDataset().toString(),model.getActualModel().getStatistics().toString());
             pmml.append("</SupportVectorMachineModel>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {
@@ -382,6 +382,7 @@ public class PMMLProcess {
             pmml.append("<Parameter name=\"numComponents\" label=\"Number of Components\"/>");
             pmml.append("</ParameterList>");
             pmml.append("</RegressionTable>\n");
+            pmml = getPMMLStats(pmml,model.getDataset().toString(),model.getActualModel().getStatistics().toString());
             pmml.append("</RegressionModel>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {
@@ -478,6 +479,7 @@ public class PMMLProcess {
                 pmml.append("</DerivedField>");
                 pmml.append("</NeuralOutput>");
                 pmml.append("</NeuralOutputs>");
+            pmml = getPMMLStats(pmml,model.getDataset().toString(),model.getActualModel().getStatistics().toString());
             pmml.append("</NeuralNetwork>\n");
             pmml.append("</PMML>\n\n");
         } catch (UnsupportedEncodingException ex) {
@@ -564,6 +566,10 @@ public class PMMLProcess {
         return getStatisticsAttr("Correlation\\s*coefficient",stats);
     }
     
+    private static String getNoRecords(String stats) {
+        return getStatisticsAttr("Total\\s*Number\\s*of\\s*Instances",stats);
+    }
+    
     private static String getMeanAbsError(String stats) {
         return getStatisticsAttr("Mean\\s*absolute\\s*error",stats);
     }
@@ -638,6 +644,21 @@ public class PMMLProcess {
         res = res.replaceAll(" ","");
         return res;
     }
+    
+    private static StringBuilder getPMMLStats(StringBuilder pmml,String dsName,String stats) {
+        
+        pmml.append("<ModelExplanation>\n");
+        pmml.append("<PredictiveModelQuality dataName=\""+dsName+"\" dataUsage=\"training\" ");
+        pmml.append("meanAbsoluteError=\""+getMeanAbsError(stats)+"\" ");
+        pmml.append("rootMeanSquaredError=\""+getRootMeanSquaredError(stats)+"\" ");
+        
+        
+        pmml.append("/>\n");
+        pmml.append("</ModelExplanation>\n");
+        
+        return pmml;
+    }
+    
     //[-+]([0-9.]*|[0-9]*|[0-9.]*[eE]\-[0-9]*)\s*\*\s*\k\[[0-9]*\]  -?\d+(,\d+)*(\.\d+(E\-\d+)?)?
 }
 

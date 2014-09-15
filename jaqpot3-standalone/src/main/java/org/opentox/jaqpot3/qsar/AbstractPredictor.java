@@ -214,8 +214,8 @@ public abstract class AbstractPredictor implements IPredictor {
         //TODO: API EXT custom enanomapper
         String host = SubstanceDataset.getHostFromVRI(input.toString());
         //get the csv data and the owner for the dataset to be published
-        String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host);
         String ownerName = WekaInstancesProcess.getSubstanceKeyFromInstances(token,inst,"ownerName");
+        String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host,ownerName);
         
         ds.setCsv(csvData);
         ds.setOwnerName(ownerName);
