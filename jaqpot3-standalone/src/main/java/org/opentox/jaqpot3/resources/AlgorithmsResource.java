@@ -119,7 +119,6 @@ public class AlgorithmsResource extends JaqpotResource {
         
         MediaType media = variant.getMediaType();
         UriListPublishable publishable = new UriListPublishable(getAlgorithmUris(), media);
-        publishable.setHeading("Algorithms");
         Representer representer = new Representer(true);
         try {
             return representer.process(publishable);

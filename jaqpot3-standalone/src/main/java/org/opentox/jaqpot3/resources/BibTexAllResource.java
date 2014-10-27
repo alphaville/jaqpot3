@@ -40,6 +40,7 @@ import com.hp.hpl.jena.shared.JenaException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
+import java.util.logging.Level;
 import org.opentox.jaqpot3.exception.JaqpotException;
 import org.opentox.jaqpot3.pool.PolicyCreationPool;
 import org.opentox.jaqpot3.resources.publish.DbListStreamPublisher;
@@ -56,6 +57,9 @@ import org.opentox.toxotis.database.exception.DbException;
 import org.opentox.toxotis.ontology.collection.KnoufBibTex;
 import org.opentox.toxotis.ontology.impl.SimpleOntModelImpl;
 import org.opentox.toxotis.core.component.User;
+import org.opentox.toxotis.database.DbReader;
+import org.opentox.toxotis.database.IDbIterator;
+import org.opentox.toxotis.database.account.AccountManager;
 import org.opentox.toxotis.database.engine.bibtex.AddBibTeX;
 import org.opentox.toxotis.database.engine.bibtex.ListBibTeX;
 import org.opentox.toxotis.exceptions.impl.ServiceInvocationException;
@@ -141,7 +145,6 @@ public class BibTexAllResource extends JaqpotResource {
 
         DbListStreamPublisher publisher = new DbListStreamPublisher();
         publisher.setMedia(variant.getMediaType());
-        publisher.setTitle("BibTex");
         publisher.setBaseUri(Configuration.getBaseUri().augment("bibtex"));
         try {
             return publisher.process(lister);

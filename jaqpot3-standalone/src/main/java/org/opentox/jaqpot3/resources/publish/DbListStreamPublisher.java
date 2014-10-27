@@ -59,7 +59,6 @@ public class DbListStreamPublisher {
 
     private MediaType media = MediaType.TEXT_URI_LIST;
     private VRI baseUri;
-    private String title="";
 
     public MediaType getMedia() {
         return media;
@@ -84,25 +83,14 @@ public class DbListStreamPublisher {
             @Override
             public void write(OutputStream outputStream) throws IOException {
                 OutputStreamWriter writer = new OutputStreamWriter(outputStream);
-                Publishable p = new HTMLPublishable(null);
                 try {
-                    if (MediaType.TEXT_HTML.equals(media)) {
-                        writer.write("<html><head>");
-
-                        for(String temp : p.getHeadComponents()) {
-                            writer.write(temp);
-                        }
-                        writer.write("</head>");
-                        writer.write("<body>");
-                        writer.write(p.getHeader());
-                        writer.write("<div class=\"panel\"><h2>"+title+"</h2>");
-                    }
-                    
                     IDbIterator<String> iterator = reader.list();
                     if (iterator != null) {
                         try {
 
                             if (MediaType.TEXT_HTML.equals(media)) {
+                                writer.write("<h2>List of URIs</h2>");
+                                writer.write("<div style='margin-left:20px;'>");
                                 writer.write("<p><ol>");
                             }
                             while (iterator.hasNext()) {
@@ -127,14 +115,12 @@ public class DbListStreamPublisher {
                             }
                             if (MediaType.TEXT_HTML.equals(media)) {
                                 writer.write("</ol></p>");
+                                writer.write("</div>");
                             }
                             iterator.close();
                         } catch (DbException ex) {
                             Logger.getLogger(DbListStreamPublisher.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    }
-                    if (MediaType.TEXT_HTML.equals(media)) {
-                        writer.write("</div></body></html>");
                     }
                 } catch (DbException ex) {
                     throw new IOException(ex);
@@ -160,9 +146,4 @@ public class DbListStreamPublisher {
         return representation;
 
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-}
-    
 }

@@ -25,7 +25,6 @@
             <artifactId>jaqpot3-standalone</artifactId>
             <version>3.3.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.restlet.jee</groupId>
             <artifactId>org.restlet.ext.servlet</artifactId>
@@ -42,7 +41,7 @@
             <artifactId>Jama</artifactId>
             <version>1.0.2</version>
         </dependency>
-
+		
         <dependency>
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
@@ -167,26 +166,26 @@
         </resources>
 
         <plugins>
-		<plugin>
-		<artifactId>maven-war-plugin</artifactId>
-		<version>2.1.1</version>
-		<configuration>
-		    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-		    <archive>
-		        <manifestEntries>
-		            <Implementation-Build>${build.version}</Implementation-Build>
-		        </manifestEntries>
-		    </archive>
-		</configuration>
-		</plugin>
-		<plugin>
-		  <groupId>org.apache.tomcat.maven</groupId>
-		  <artifactId>tomcat7-maven-plugin</artifactId>
-		  <version>2.1</version>
-		  <configuration>
-		    <path>/</path>
-		  </configuration>
-		</plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Build>${build.version}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+			<plugin>
+			  <groupId>org.apache.tomcat.maven</groupId>
+			  <artifactId>tomcat7-maven-plugin</artifactId>
+			  <version>2.1</version>
+			  <configuration>
+			    <path>/</path>
+			  </configuration>
+			</plugin>
         </plugins>
 
         <pluginManagement>

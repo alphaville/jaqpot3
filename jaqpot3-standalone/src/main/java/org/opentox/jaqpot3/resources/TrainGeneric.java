@@ -226,6 +226,7 @@ public class TrainGeneric extends JaqpotResource {
         try {            
             nextUri = client.getResponseUriList().iterator().next().toString();
         } catch (ServiceInvocationException ex) {
+            //return ex.asErrorReport().;
         }
         try {
             client.close();

@@ -60,6 +60,7 @@ public class IndexResource extends JaqpotResource {
 
     private static final List LIST = new ArrayList() {
         {
+            add(Configuration.getBaseUri().augment("iface").toString());
             add(Configuration.getBaseUri().augment("algorithm").toString());
             add(Configuration.getBaseUri().augment("model").toString());
             add(Configuration.getBaseUri().augment("task").toString());

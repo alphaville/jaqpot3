@@ -102,9 +102,6 @@ public abstract class AbstractPredictor implements IPredictor {
         dependentFeature = (model.getDependentFeatures().isEmpty()) ? null : model.getDependentFeatures().get(0);
         justCompounds = WekaInstancesProcess.loadJustCompounds(inst);
         
-        if(hasMVH) {
-            inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
-        }
                 
         if(model.getActualModel()!=null) {
             pmml = model.getActualModel().getPmml();
@@ -117,6 +114,9 @@ public abstract class AbstractPredictor implements IPredictor {
                 inst = (Instances) resMap.get("instances");
                 
                 trFieldsAttrIndex = WekaInstancesProcess.getTransformationFieldsAttrIndex(inst, pmmlObject);
+            }
+            if(hasMVH) {
+                inst = WekaInstancesProcess.handleMissingValues(inst, ClientParams);
             }
             if(model.getActualModel().hasScaling()) {
                 inst = WekaInstancesProcess.scaleInstances(inst,independentFeatures,model.getActualModel().getScalingMinVals2(),model.getActualModel().getScalingMaxVals2());
@@ -214,8 +214,8 @@ public abstract class AbstractPredictor implements IPredictor {
         //TODO: API EXT custom enanomapper
         String host = SubstanceDataset.getHostFromVRI(input.toString());
         //get the csv data and the owner for the dataset to be published
+        String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host);
         String ownerName = WekaInstancesProcess.getSubstanceKeyFromInstances(token,inst,"ownerName");
-        String csvData = WekaInstancesProcess.getCSVOutput(model,token,inst,input,host,ownerName);
         
         ds.setCsv(csvData);
         ds.setOwnerName(ownerName);

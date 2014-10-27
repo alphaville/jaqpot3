@@ -37,7 +37,6 @@ package org.opentox.jaqpot3.resources.publish;
 
 import java.io.Closeable;
 import java.io.OutputStream;
-import java.util.List;
 import org.restlet.data.MediaType;
 
 public interface Publishable extends Closeable {
@@ -48,7 +47,4 @@ public interface Publishable extends Closeable {
 
     MediaType getMediaType();
 
-    List<String> getHeadComponents();
-        
-    String getHeader();
 }

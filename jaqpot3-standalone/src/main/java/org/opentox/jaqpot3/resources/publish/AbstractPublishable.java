@@ -35,9 +35,6 @@
 
 package org.opentox.jaqpot3.resources.publish;
 
-import java.util.Arrays;
-import java.util.List;
-import org.opentox.toxotis.core.html.GoogleAnalytics;
 import org.restlet.data.MediaType;
 /**
  *
@@ -46,16 +43,6 @@ import org.restlet.data.MediaType;
  */
 public abstract class AbstractPublishable implements Publishable{
 
-    private final List<String> headComponents = Arrays.asList(
-        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/styles.css\">",
-            GoogleAnalytics.getGAjs()
-    );
-    private final String header = 
-        "<div class='headerdiv'><img class='headerimg' src=\"/static/logo.png\">"+
-        "<p align=\"center\">\n" +
-        "  <a class=\"style7\" href=\"#\">National Technical University of Athens</a><br>\n" +
-        "  <a class=\"style7\" href=\"#\">Unit of Process Control &amp; Informatics</a></p></div>";
-    
     private MediaType media;
 
     public AbstractPublishable() {
@@ -72,14 +59,6 @@ public abstract class AbstractPublishable implements Publishable{
         this.media = media;
     }
 
-    @Override
-    public List<String> getHeadComponents() {
-        return headComponents;
-    }
 
-    @Override
-    public String getHeader() {
-        return header;
-    }
 
 }

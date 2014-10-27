@@ -146,15 +146,14 @@ public class Algorithms {
                 Configuration.getBaseUri().augment("prm", "scaling_min"), "scaling_min", new LiteralValue(1, XSDDatatype.XSDint)).setScope(
                 Parameter.ParameterScope.OPTIONAL);
         scalingMinParam.getMeta().addDescription("Set scaling min");
-        //TODO: PMML enable scaling and implement it
-        //setParams.add(scalingMinParam);
+        setParams.add(scalingMinParam);
 
         Parameter scalingMaxParam =
                 new Parameter(
                 Configuration.getBaseUri().augment("prm", "scaling_max"), "scaling_max", new LiteralValue(2, XSDDatatype.XSDint)).setScope(
                 Parameter.ParameterScope.OPTIONAL);
         scalingMaxParam.getMeta().addDescription("Set scaling max");
-        //setParams.add(scalingMaxParam);
+        setParams.add(scalingMaxParam);
 
         Parameter normalizationParam =
                 new Parameter(

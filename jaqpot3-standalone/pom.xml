@@ -65,16 +65,17 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.30</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.opentox.toxotis</groupId>
             <artifactId>ToxOtis-core</artifactId>
-            <version>0.8.9-SNAPSHOT</version>
+            <version>0.8.9</version>
         </dependency>
         <dependency>
             <groupId>org.opentox.toxotis.database</groupId>
             <artifactId>ToxOtis-db</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>0.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.studio</groupId>
@@ -90,7 +91,8 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.0.1</version>
-		<scope>provided</scope>
+				<scope>provided</scope>
+
         </dependency>
         
         <dependency>
@@ -109,7 +111,6 @@
                 <artifactId>json</artifactId>
                 <version>20140107</version>
         </dependency>
-
     </dependencies>
 
     <profiles>
@@ -186,7 +187,7 @@
         </repository>
         <repository>
             <id>opentox-ntua-gr</id>
-            <url>http://enanomapper.ntua.gr:8083/nexus/content/repositories/snapshots</url>
+            <url>http://147.102.82.124:8083/nexus/content/repositories/thirdparty</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>

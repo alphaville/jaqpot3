@@ -344,7 +344,7 @@ public class WekaInstancesProcess {
         Creates the csv data for a dataset to be published.
     */
     //TODO: API EXT fix endpoint category
-    public static String getCSVOutput(Model model,AuthenticationToken token,Instances inst,VRI datasetURI,String VRIprefix,String ownerName) {
+    public static String getCSVOutput(Model model,AuthenticationToken token,Instances inst,VRI datasetURI,String VRIprefix) {
         
         String res,name;
         Map<String,String> UUIDMap;
@@ -372,7 +372,7 @@ public class WekaInstancesProcess {
         //get the names of the substances and their values in the properties
         for(int i=0;i<noInstances;++i ) {
             if(StringUtils.isNotEmpty(UUIDMap.get(inst.attribute(0).value(i)))) {
-                name = ownerName + UUIDMap.get(inst.attribute(0).value(i));
+                name = UUIDMap.get(inst.attribute(0).value(i));
                 res +=name;
                 for(int k=1;k<noAttributes;++k ) {
                     res += ","+inst.instance(i).value(k);
